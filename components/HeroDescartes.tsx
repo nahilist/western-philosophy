@@ -2,27 +2,27 @@
 
 import React from "react";
 import Image from "next/image";
-import { ArrowDown } from "lucide-react";
+import Link from "next/link";
+import { ArrowDown, ArrowRight } from "lucide-react";
 
-interface HeroDescartesProps {
-  onSelectDescartes?: () => void;
-}
-
-export default function HeroDescartes({ onSelectDescartes }: HeroDescartesProps) {
+export default function HeroDescartes() {
   return (
     <section
       id="home"
       className="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 sm:px-12 bg-black overflow-hidden"
     >
       {/* Subtle background ambient radial light */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neutral-900/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neutral-900/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left Side: Descartes Framed Composition */}
         <div className="lg:col-span-6 flex justify-center lg:justify-start">
-          <div className="relative group cursor-pointer" onClick={onSelectDescartes}>
+          <Link
+            href="/course/descartes"
+            className="relative group cursor-pointer block"
+          >
             {/* White modern geometric frame offset behind the portrait */}
-            <div className="absolute -top-4 -left-4 sm:-top-7 sm:-left-7 w-64 sm:w-84 h-80 sm:h-104 border-2 border-white/90 z-0 transition-transform duration-700 ease-out group-hover:-translate-x-1 group-hover:-translate-y-1" />
+            <div className="absolute -top-4 -left-4 sm:-top-7 sm:-left-7 w-64 sm:w-84 h-80 sm:h-104 border-2 border-white/90 z-0 transition-transform duration-700 ease-out group-hover:-translate-x-1.5 group-hover:-translate-y-1.5" />
 
             {/* Subtle glow layer */}
             <div className="absolute inset-0 bg-neutral-900/40 z-0 blur-lg" />
@@ -42,13 +42,13 @@ export default function HeroDescartes({ onSelectDescartes }: HeroDescartesProps)
             </div>
 
             {/* Tooltip on hover */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px] tracking-[0.25em] text-neutral-400 uppercase whitespace-nowrap">
-              Click to view Cartesian syllabus
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px] tracking-[0.25em] text-neutral-400 uppercase whitespace-nowrap flex items-center gap-1.5">
+              <span>Click to open full Descartes page →</span>
             </div>
-          </div>
+          </Link>
         </div>
 
-        {/* Right Side: Iconic Quote & Philosophy Name */}
+        {/* Right Side: Iconic Quote & Typography */}
         <div className="lg:col-span-6 flex flex-col justify-center text-center lg:text-left space-y-6">
           <div className="space-y-3">
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.35em] text-neutral-400 font-medium">
@@ -57,12 +57,12 @@ export default function HeroDescartes({ onSelectDescartes }: HeroDescartesProps)
             <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[0.15em] text-white leading-tight uppercase">
               COGITO, ERGO SUM
             </h1>
-            <p className="font-serif-classic text-sm sm:text-base tracking-[0.3em] text-neutral-300 uppercase">
+            <p className="font-serif-classic text-sm sm:text-base tracking-[0.3em] text-neutral-300 uppercase font-semibold">
               RENÉ DESCARTES
             </p>
           </div>
 
-          <div className="w-16 h-px bg-neutral-800 mx-auto lg:mx-0 my-4" />
+          <div className="w-16 h-px bg-neutral-800 mx-auto lg:mx-0 my-2" />
 
           <p className="font-garamond text-neutral-400 text-base sm:text-lg italic max-w-lg leading-relaxed mx-auto lg:mx-0">
             &ldquo;I resolved to pretend that all the things that had ever entered into my mind were no more true than the illusions of my dreams. But immediately afterwards I noticed that whilst I thus wished to think all things false, it was absolutely necessary that I who thought so should be something.&rdquo;
@@ -71,16 +71,17 @@ export default function HeroDescartes({ onSelectDescartes }: HeroDescartesProps)
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
             <a
               href="#courses"
-              className="px-6 py-3 border border-white/80 text-white text-xs uppercase tracking-[0.25em] hover:bg-white hover:text-black transition-all duration-300"
+              className="px-6 py-3 border border-white/80 text-white text-xs uppercase tracking-[0.25em] hover:bg-white hover:text-black transition-all duration-300 shadow-md"
             >
               Explore Courses
             </a>
-            <button
-              onClick={onSelectDescartes}
-              className="px-6 py-3 text-neutral-400 hover:text-white text-xs uppercase tracking-[0.25em] transition-colors"
+            <Link
+              href="/course/descartes"
+              className="px-6 py-3 text-neutral-300 hover:text-white text-xs uppercase tracking-[0.25em] transition-colors cursor-pointer flex items-center gap-2 group"
             >
-              Read Biography →
-            </button>
+              <span>Read Full Dossier</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
         </div>
       </div>
@@ -98,4 +99,3 @@ export default function HeroDescartes({ onSelectDescartes }: HeroDescartesProps)
     </section>
   );
 }
-

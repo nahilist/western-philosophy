@@ -2,75 +2,50 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
-interface SocratesSectionProps {
-  onSelectSocrates?: () => void;
-}
-
-export default function SocratesSection({ onSelectSocrates }: SocratesSectionProps) {
+export default function SocratesSection() {
   return (
-    <section
-      id="socrates"
-      className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center bg-black overflow-hidden py-24"
-    >
-      {/* Background Image: The Death of Socrates by Jacques-Louis David */}
+    <section className="relative w-full min-h-[60vh] sm:min-h-[75vh] lg:min-h-[85vh] flex items-center justify-start bg-black overflow-hidden py-16 sm:py-24">
+      {/* Background Painting: The Death of Socrates by Jacques-Louis David */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/socrates_death.jpg"
           alt="The Death of Socrates by Jacques-Louis David"
           fill
           priority
-          className="object-cover object-center opacity-70 contrast-110 saturate-90"
+          className="object-cover object-center"
         />
 
-        {/* Cinematic Vignette Overlays */}
-        {/* Top Fade */}
-        <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black via-black/80 to-transparent" />
-        {/* Bottom Fade */}
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black via-black/80 to-transparent" />
-        {/* Left Heavy Vignette for High-Contrast Text Readability */}
-        <div className="absolute inset-y-0 left-0 w-full md:w-3/4 bg-gradient-to-r from-black via-black/75 to-transparent" />
-        {/* Subtle radial center vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.85)_100%)]" />
+        {/* Cinematic Vignettes */}
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black via-black/80 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black via-black/80 to-transparent" />
+        <div className="absolute inset-y-0 left-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-r from-black/95 via-black/80 to-transparent" />
       </div>
 
-      {/* Foreground Content */}
-      <div className="relative z-10 max-w-6xl w-full mx-auto px-6 sm:px-12">
-        <div className="max-w-xl text-left space-y-6">
-          <div className="inline-block border-b border-neutral-600 pb-1">
-            <span className="text-[10px] sm:text-xs uppercase tracking-[0.35em] text-neutral-300 font-light">
-              Classical Antiquity • Athens, 399 BCE
-            </span>
-          </div>
-
-          <blockquote className="font-serif-classic text-2xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white leading-tight uppercase drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
+      {/* Quote Container matching Screenshot 4 Bottom (Clickable Link to /course/socrates) */}
+      <div className="relative z-10 max-w-6xl w-full mx-auto px-8 sm:px-16">
+        <Link
+          href="/course/socrates"
+          className="group max-w-xl text-center sm:text-left space-y-4 block cursor-pointer"
+          title="Open full Socrates page"
+        >
+          <blockquote className="font-serif-classic text-xl sm:text-3xl lg:text-4xl font-normal tracking-[0.14em] text-white leading-relaxed uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] group-hover:text-neutral-200 transition-colors">
             I KNOW THAT I AM
             <br />
             INTELLIGENT, BECAUSE I KNOW
             <br />
             THAT I KNOW NOTHING.
           </blockquote>
-
-          <div className="pt-2">
-            <p className="font-serif-classic text-base sm:text-lg tracking-[0.35em] text-neutral-200 uppercase font-semibold">
+          <div className="flex items-center gap-2">
+            <p className="font-serif-classic text-sm sm:text-base tracking-[0.32em] text-neutral-200 uppercase font-semibold group-hover:text-white transition-colors">
               SÓCRATES
             </p>
-            <p className="font-garamond italic text-neutral-400 text-sm sm:text-base mt-1">
-              Plato&apos;s Apology (21d) — The Oracle at Delphi &amp; Socratic Ignorance
-            </p>
+            <ArrowRight className="w-4 h-4 text-neutral-400 group-hover:text-white transition-transform group-hover:translate-x-1" />
           </div>
-
-          <div className="pt-4 flex items-center gap-4">
-            <button
-              onClick={onSelectSocrates}
-              className="px-6 py-2.5 bg-white/10 hover:bg-white text-white hover:text-black border border-white/40 hover:border-white text-xs uppercase tracking-[0.25em] transition-all duration-300 backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-            >
-              Examine Dialogue
-            </button>
-          </div>
-        </div>
+        </Link>
       </div>
     </section>
   );
 }
-

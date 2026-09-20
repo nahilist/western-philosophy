@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles, Volume2, VolumeX } from "lucide-react";
+import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavbarProps {
   onOpenAbout?: () => void;
@@ -10,10 +11,10 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) {
+  const { user, openAuthModal, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,12 +24,8 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Ambient sound generator using Web Audio API (gentle ethereal drone)
   const toggleSound = () => {
     if (audioPlaying) {
-      if (audio) {
-        audio.pause();
-      }
       setAudioPlaying(false);
     } else {
       try {
@@ -36,8 +33,8 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(108, audioCtx.currentTime); // Deep resonant 108Hz harmonic
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(108, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.035, audioCtx.currentTime);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
@@ -70,8 +67,8 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-10">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8 lg:gap-10">
           <Link
             href="#home"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
@@ -97,23 +94,23 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             Contact
           </Link>
 
-          {/* Quick Wisdom Button */}
+          {/* Wisdom Modal Trigger */}
           {onOpenDailyWisdom && (
             <button
               onClick={onOpenDailyWisdom}
               title="Daily Philosophical Aphorism"
-              className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+              className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
               <span>Wisdom</span>
             </button>
           )}
 
-          {/* Ambience Toggle */}
+          {/* Sound Ambience */}
           <button
             onClick={toggleSound}
             title={audioPlaying ? "Silence Ambience" : "Enable Ambient Resonance"}
-            className="p-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors"
+            className="p-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors cursor-pointer"
           >
             {audioPlaying ? (
               <Volume2 className="w-3.5 h-3.5 text-neutral-200" />
@@ -121,16 +118,48 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               <VolumeX className="w-3.5 h-3.5" />
             )}
           </button>
+
+          {/* Auth Button: Sign In or User Profile */}
+          {user ? (
+            <div className="flex items-center gap-3 pl-2 border-l border-neutral-800">
+              <span className="text-xs tracking-wider text-neutral-300 font-serif-classic">
+                {user.name}
+              </span>
+              <button
+                onClick={logout}
+                title="Sign out of Academy"
+                className="p-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-red-400 hover:border-red-900 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => openAuthModal()}
+              className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] px-4 py-1.5 border border-white/60 text-white hover:bg-white hover:text-black transition-all duration-300 font-serif-classic cursor-pointer"
+            >
+              <UserIcon className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
         </nav>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile Menu Trigger & Auth */}
         <div className="flex md:hidden items-center gap-3">
-          {onOpenDailyWisdom && (
+          {user ? (
             <button
-              onClick={onOpenDailyWisdom}
-              className="p-2 text-neutral-400 hover:text-white"
+              onClick={logout}
+              className="text-xs text-neutral-400 p-1"
+              title="Sign Out"
             >
-              <Sparkles className="w-4 h-4" />
+              <LogOut className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              onClick={() => openAuthModal()}
+              className="text-xs tracking-wider uppercase text-neutral-300 p-1"
+            >
+              <UserIcon className="w-4 h-4" />
             </button>
           )}
           <button
@@ -176,9 +205,29 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           >
             Contact
           </Link>
+          {!user ? (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openAuthModal();
+              }}
+              className="w-full py-2.5 border border-white text-center text-xs uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-colors font-serif-classic"
+            >
+              Sign In / Register
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                logout();
+              }}
+              className="text-left text-xs tracking-[0.2em] uppercase text-red-400"
+            >
+              Sign Out ({user.name})
+            </button>
+          )}
         </div>
       )}
     </header>
   );
 }
-
