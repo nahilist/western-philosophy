@@ -22,13 +22,16 @@ export default function Footer({ onOpenAbout }: FooterProps) {
   };
 
   return (
-    <footer id="contact" className="w-full bg-black text-white pt-16 pb-24 px-8 sm:px-16">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-10 lg:gap-8 items-start">
+    <footer id="contact" className="w-full bg-black text-white pt-20 pb-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-t border-neutral-900">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-10 lg:gap-14 xl:gap-20 items-start">
         {/* Column 1: PHILOSOPHY */}
-        <div className="md:col-span-3">
-          <h4 className="font-serif-classic text-sm sm:text-base font-bold tracking-[0.3em] text-white uppercase">
+        <div className="md:col-span-3 space-y-2">
+          <h4 className="font-serif-classic text-base sm:text-lg font-bold tracking-[0.3em] text-white uppercase">
             PHILOSOPHY
           </h4>
+          <p className="font-garamond text-sm text-neutral-500 leading-relaxed">
+            Preserving classical inquiries into truth, reality, and morality.
+          </p>
         </div>
 
         {/* Column 2: Philosophy links */}
@@ -36,9 +39,9 @@ export default function Footer({ onOpenAbout }: FooterProps) {
           <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-300 uppercase">
             Philosophy
           </h5>
-          <ul className="space-y-2 text-xs tracking-wider text-neutral-400">
+          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-400">
             <li>
-              <Link href="#home" className="hover:text-white transition-colors">
+              <Link href="/#home" className="hover:text-white transition-colors">
                 Home
               </Link>
             </li>
@@ -50,6 +53,11 @@ export default function Footer({ onOpenAbout }: FooterProps) {
                 About
               </button>
             </li>
+            <li>
+              <Link href="/#courses" className="hover:text-white transition-colors">
+                Courses
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -58,7 +66,7 @@ export default function Footer({ onOpenAbout }: FooterProps) {
           <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-300 uppercase">
             Contact
           </h5>
-          <ul className="space-y-2 text-xs tracking-wider text-neutral-400">
+          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-400">
             <li>
               <a
                 href="mailto:contact@philosophy.org"
@@ -107,7 +115,7 @@ export default function Footer({ onOpenAbout }: FooterProps) {
           </h5>
 
           {/* Pill-shaped Newsletter Input matching Screenshot 1 */}
-          <form onSubmit={handleSubmit} className="relative w-full max-w-sm">
+          <form onSubmit={handleSubmit} className="relative w-full max-w-md">
             <div className="relative flex items-center rounded-full bg-gradient-to-b from-[#3a3a3a] to-[#202020] border border-neutral-700/80 p-1.5 shadow-inner">
               <input
                 type="email"
@@ -115,18 +123,18 @@ export default function Footer({ onOpenAbout }: FooterProps) {
                 placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent px-4 py-1.5 text-xs text-white placeholder:text-neutral-400 focus:outline-none tracking-wide"
+                className="w-full bg-transparent px-4 py-2 text-xs text-white placeholder:text-neutral-400 focus:outline-none tracking-wide"
               />
               <button
                 type="submit"
-                className="rounded-full bg-black/90 border border-neutral-700 px-5 py-1.5 text-[10px] font-serif-classic tracking-[0.2em] uppercase text-white hover:bg-white hover:text-black transition-all cursor-pointer flex-shrink-0"
+                className="rounded-full bg-black/90 border border-neutral-700 px-6 py-2 text-[10px] font-serif-classic tracking-[0.2em] uppercase text-white hover:bg-white hover:text-black transition-all cursor-pointer flex-shrink-0"
               >
                 {status === "submitted" ? "DONE" : "SUBMIT"}
               </button>
             </div>
             {status === "submitted" && (
-              <p className="text-[11px] text-neutral-300 mt-2 pl-2">
-                Thank you for subscribing.
+              <p className="text-[11px] text-neutral-300 mt-2 pl-2 font-garamond">
+                Thank you for subscribing to the weekly dialectic.
               </p>
             )}
           </form>

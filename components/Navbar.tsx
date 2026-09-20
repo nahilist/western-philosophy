@@ -47,13 +47,13 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 w-full ${
         scrolled
           ? "bg-black/90 backdrop-blur-md border-b border-neutral-900/80 py-4 shadow-2xl"
           : "bg-transparent py-7"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
+      <div className="w-full px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 flex items-center justify-between">
         {/* Brand Logo */}
         <Link
           href="/"
@@ -68,9 +68,9 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 lg:gap-10">
+        <nav className="hidden md:flex items-center gap-8 lg:gap-12">
           <Link
-            href="#home"
+            href="/#home"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
             Home
@@ -82,7 +82,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             About
           </button>
           <Link
-            href="#courses"
+            href="/#courses"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
             Courses
@@ -176,7 +176,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-x-0 top-[65px] bg-black/95 backdrop-blur-xl border-b border-neutral-900 px-8 py-8 flex flex-col gap-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <Link
-            href="#home"
+            href="/#home"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
@@ -192,7 +192,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             About
           </button>
           <Link
-            href="#courses"
+            href="/#courses"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
