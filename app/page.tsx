@@ -8,76 +8,47 @@ import CosmicSection from "@/components/CosmicSection";
 import CoursesSection from "@/components/CoursesSection";
 import CreationBanner from "@/components/CreationBanner";
 import Footer from "@/components/Footer";
-import CourseModal from "@/components/CourseModal";
 import JoinModal from "@/components/JoinModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
 import AboutModal from "@/components/AboutModal";
-import { PHILOSOPHER_COURSES, PhilosopherCourse } from "@/data/philosophers";
+import AuthModal from "@/components/AuthModal";
+import { AuthProvider } from "@/context/AuthContext";
 
-export default function Home() {
-  const [selectedCourse, setSelectedCourse] = useState<PhilosopherCourse | null>(null);
+function PhilosophyPlatform() {
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [dailyWisdomOpen, setDailyWisdomOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
 
-  const handleOpenCourseById = (id: string) => {
-    const course = PHILOSOPHER_COURSES.find((c) => c.id === id);
-    if (course) {
-      setSelectedCourse(course);
-    }
-  };
-
-  const handleEnrollFromCourse = (course: PhilosopherCourse) => {
-    setSelectedCourse(null);
-    setJoinModalOpen(true);
-  };
-
   return (
     <main className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
-      {/* Top Header Navigation */}
+      {/* 1. Header Navigation with Sign In, Wisdom & Ambience */}
       <Navbar
         onOpenAbout={() => setAboutModalOpen(true)}
         onOpenDailyWisdom={() => setDailyWisdomOpen(true)}
       />
 
-      {/* Hero Section: René Descartes (Matching Screenshot 4 Top) */}
-      <HeroDescartes
-        onSelectDescartes={() => handleOpenCourseById("descartes")}
-      />
+      {/* 2. Beloved Rich Hero Section: René Descartes (links to /course/descartes) */}
+      <HeroDescartes />
 
-      {/* Socrates Section: The Death of Socrates (Matching Screenshot 4 Bottom) */}
-      <SocratesSection
-        onSelectSocrates={() => handleOpenCourseById("socrates")}
-      />
+      {/* 3. Socrates Section */}
+      <SocratesSection />
 
-      {/* Cosmic Section: Angel, Nietzsche, Machiavelli (Matching Screenshot 3) */}
-      <CosmicSection
-        onSelectNietzsche={() => handleOpenCourseById("nietzsche")}
-        onSelectMachiavelli={() => handleOpenCourseById("machiavelli")}
-      />
+      {/* 4. Cosmic Section: Angel, Nietzsche, Machiavelli (Exact Screenshot Match) */}
+      <CosmicSection />
 
-      {/* Courses Grid: 4 Thinkers (Matching Screenshot 1 Top) */}
-      <CoursesSection
-        onSelectCourse={(course) => setSelectedCourse(course)}
-      />
+      {/* 5. Courses Grid: 4 Thinkers (opens dedicated Full Page /course/[id]) */}
+      <CoursesSection />
 
-      {/* Call to Action Banner: Michelangelo Hands + Kant (Matching Screenshot 1 Middle) */}
-      <CreationBanner
-        onJoinClick={() => setJoinModalOpen(true)}
-      />
+      {/* 6. Creation of Adam Banner: Michelangelo Hands + Kant */}
+      <CreationBanner onJoinClick={() => setJoinModalOpen(true)} />
 
-      {/* Footer & Newsletter (Matching Screenshot 1 Bottom) */}
-      <Footer
-        onOpenAbout={() => setAboutModalOpen(true)}
-      />
+      {/* 7. Footer */}
+      <Footer onOpenAbout={() => setAboutModalOpen(true)} />
 
-      {/* Interactive Modals */}
-      <CourseModal
-        course={selectedCourse}
-        onClose={() => setSelectedCourse(null)}
-        onEnroll={handleEnrollFromCourse}
-      />
+      {/* Login / Sign Up Modal (Ready for Supabase) */}
+      <AuthModal />
 
+      {/* Membership & Secondary Modals */}
       <JoinModal
         isOpen={joinModalOpen}
         onClose={() => setJoinModalOpen(false)}
@@ -93,5 +64,13 @@ export default function Home() {
         onClose={() => setAboutModalOpen(false)}
       />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <AuthProvider>
+      <PhilosophyPlatform />
+    </AuthProvider>
   );
 }
