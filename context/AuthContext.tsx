@@ -36,35 +36,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsSupabaseConnected(isConfigured);
 
     if (isConfigured && supabase) {
-      // 1. Get current active session
-      supabase.auth.getUser().then(({ data: { user: authUser }, error }) => {
-        if (!error && authUser) {
-          setUser({
-            id: authUser.id,
-            name: authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "Philosopher",
-            email: authUser.email || "",
-          });
-        }
-      });
+      // 1. Get current active session safely
+      supabase.auth
+        .getUser()
+        .then(({ data, error }) => {
+          if (!error && data?.user) {
+            setUser({
+              id: data.user.id,
+              name: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "Philosopher",
+              email: data.user.email || "",
+            });
+          }
+        })
+        .catch((err) => {
+          console.warn("Supabase auth session fetch warning:", err?.message || err);
+        });
 
       // 2. Listen to real-time auth changes (Sign in, Sign out, Token Refresh)
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Philosopher",
-            email: session.user.email || "",
-          });
-        } else {
-          setUser(null);
-        }
-      });
+      try {
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (session?.user) {
+            setUser({
+              id: session.user.id,
+              name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Philosopher",
+              email: session.user.email || "",
+            });
+          } else {
+            setUser(null);
+          }
+        });
 
-      return () => {
-        subscription.unsubscribe();
-      };
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (err) {
+        console.warn("Supabase auth listener warning:", err);
+      }
     } else {
       // Local fallback for testing before keys are entered
       try {
@@ -82,24 +91,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { isConfigured, client: supabase } = createClient();
 
     if (isConfigured && supabase) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password: pass,
-      });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          name: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "Philosopher",
-          email: data.user.email || "",
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password: pass,
         });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            name: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "Philosopher",
+            email: data.user.email || "",
+          });
+        }
+        setIsAuthModalOpen(false);
+        return { success: true };
+      } catch (networkErr: any) {
+        return {
+          success: false,
+          error: networkErr?.message || "Network error connecting to authentication service",
+        };
       }
-      setIsAuthModalOpen(false);
-      return { success: true };
     }
 
     // Demo Mode Fallback:
@@ -118,29 +134,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { isConfigured, client: supabase } = createClient();
 
     if (isConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password: pass,
-        options: {
-          data: {
-            full_name: name,
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password: pass,
+          options: {
+            data: {
+              full_name: name,
+            },
           },
-        },
-      });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          name: name || data.user.email?.split("@")[0] || "Seeker of Wisdom",
-          email: data.user.email || "",
         });
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        if (data.user) {
+          setUser({
+            id: data.user.id,
+            name: name || data.user.email?.split("@")[0] || "Seeker of Wisdom",
+            email: data.user.email || "",
+          });
+        }
+        setIsAuthModalOpen(false);
+        return { success: true };
+      } catch (networkErr: any) {
+        return {
+          success: false,
+          error: networkErr?.message || "Network error connecting to registration service",
+        };
       }
-      setIsAuthModalOpen(false);
-      return { success: true };
     }
 
     // Demo Mode Fallback:
