@@ -68,7 +68,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                   alt={course.name}
                   fill
                   priority
-                  className="object-cover object-top grayscale contrast-115 transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                  className="object-cover object-top grayscale-0 md:grayscale contrast-115 transition-all duration-700 group-hover:scale-105 md:group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-75" />
               </div>
