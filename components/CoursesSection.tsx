@@ -112,7 +112,7 @@ export default function CoursesSection() {
                   alt={item.name}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 14vw"
-                  className="object-cover object-top grayscale contrast-110 brightness-95 transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
+                  className="object-cover object-top grayscale-0 md:grayscale contrast-110 brightness-95 transition-all duration-700 group-hover:scale-105 md:group-hover:grayscale-0 group-hover:brightness-105"
                 />
 
                 {/* Vignette layer */}

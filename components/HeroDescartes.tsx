@@ -34,7 +34,7 @@ export default function HeroDescartes() {
                 alt="René Descartes by Frans Hals"
                 fill
                 priority
-                className="object-cover object-center grayscale contrast-115 transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                className="object-cover object-center grayscale-0 md:grayscale contrast-115 transition-all duration-700 group-hover:scale-105 md:group-hover:grayscale-0"
               />
 
               {/* Subtle inner dark gradient overlay */}
