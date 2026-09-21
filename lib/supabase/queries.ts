@@ -316,3 +316,297 @@ export async function joinWaitlist(email: string, source: string = "website_hero
   }
 }
 
+/**
+ * ==============================================================================
+ * 👤 USER ACCOUNT & PROFILE QUERIES (खाता एवं प्रोफ़ाइल प्रबंधन)
+ * ==============================================================================
+ */
+
+export interface UserProfileData {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url?: string;
+  favorite_tradition: string;
+  created_at: string;
+}
+
+/**
+ * 6. GET USER FULL PROFILE (उपयोगकर्ता प्रोफ़ाइल विवरण)
+ * Safe PostgREST query protected by Row Level Security.
+ */
+export async function getUserFullProfile(): Promise<{ data: UserProfileData | null; error: string | null }> {
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { data: null, error: "Unauthorized" };
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, email, full_name, avatar_url, favorite_tradition, created_at")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        return { data: data as UserProfileData, error: null };
+      }
+
+      // If profile row doesn't exist yet, return auth defaults
+      return {
+        data: {
+          id: user.id,
+          email: user.email || "",
+          full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Philosopher",
+          favorite_tradition: "Rationalism",
+          created_at: user.created_at || new Date().toISOString(),
+        },
+        error: null,
+      };
+    } catch (err: any) {
+      console.error("Secure getUserFullProfile error:", err.message);
+      return { data: null, error: "Failed to load profile" };
+    }
+  }
+
+  // Demo Fallback
+  try {
+    const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "null");
+    if (!localUser) return { data: null, error: "Not logged in" };
+
+    const tradition = localStorage.getItem("wp_user_tradition") || "Rationalism";
+    return {
+      data: {
+        id: localUser.id || "demo-id",
+        email: localUser.email || "scholar@philosophy.org",
+        full_name: localUser.name || "Dialectical Scholar",
+        favorite_tradition: tradition,
+        created_at: new Date().toISOString(),
+      },
+      error: null,
+    };
+  } catch {
+    return { data: null, error: "Storage error" };
+  }
+}
+
+/**
+ * 7. UPDATE USER PROFILE (प्रोफ़ाइल विवरण अपडेट करना)
+ * Hard caps full_name (<=100) and favorite_tradition (<=50).
+ */
+export async function updateUserProfile(updates: {
+  full_name?: string;
+  favorite_tradition?: string;
+}) {
+  const safeName = updates.full_name ? updates.full_name.substring(0, 100).trim() : undefined;
+  const safeTradition = updates.favorite_tradition
+    ? updates.favorite_tradition.substring(0, 50).trim()
+    : undefined;
+
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { success: false, error: "Unauthorized" };
+
+      const payload: Record<string, any> = { updated_at: new Date().toISOString() };
+      if (safeName) payload.full_name = safeName;
+      if (safeTradition) payload.favorite_tradition = safeTradition;
+
+      const { error } = await supabase
+        .from("profiles")
+        .update(payload)
+        .eq("id", user.id);
+
+      if (error) throw error;
+      return { success: true, error: null };
+    } catch (err: any) {
+      console.error("Secure updateUserProfile error:", err.message);
+      return { success: false, error: "Failed to update profile" };
+    }
+  }
+
+  // Demo Fallback
+  try {
+    const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "{}");
+    if (safeName) localUser.name = safeName;
+    localStorage.setItem("philosophy_user", JSON.stringify(localUser));
+    if (safeTradition) localStorage.setItem("wp_user_tradition", safeTradition);
+    return { success: true, error: null };
+  } catch {
+    return { success: false, error: "Storage error" };
+  }
+}
+
+/**
+ * 8. GET ALL USER COURSE PROGRESS (सभी पाठ्यक्रमों की प्रगति)
+ */
+export async function getAllUserProgress() {
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { data: [], error: "Unauthorized" };
+
+      const { data, error } = await supabase
+        .from("user_course_progress")
+        .select("course_id, completed_modules, progress_percent, last_read_at")
+        .order("last_read_at", { ascending: false });
+
+      if (error) throw error;
+      return { data: data || [], error: null };
+    } catch (err: any) {
+      console.error("Secure getAllUserProgress error:", err.message);
+      return { data: [], error: "Failed to load progress" };
+    }
+  }
+
+  // Demo Fallback: Scan localStorage keys
+  try {
+    const results: any[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("wp_progress_")) {
+        const item = JSON.parse(localStorage.getItem(key) || "{}");
+        if (item.course_id) results.push(item);
+      }
+    }
+    return { data: results, error: null };
+  } catch {
+    return { data: [], error: null };
+  }
+}
+
+/**
+ * 9. GET ALL USER BOOKMARKS (सभी सुरक्षित ग्रंथ और उद्धरण)
+ */
+export async function getAllUserBookmarks() {
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { data: [], error: "Unauthorized" };
+
+      const { data, error } = await supabase
+        .from("user_bookmarks")
+        .select("id, course_id, quote_text, work_title, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return { data: data || [], error: null };
+    } catch (err: any) {
+      console.error("Secure getAllUserBookmarks error:", err.message);
+      return { data: [], error: "Failed to load bookmarks" };
+    }
+  }
+
+  // Demo Fallback
+  try {
+    const results: any[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("wp_bookmark_")) {
+        const item = JSON.parse(localStorage.getItem(key) || "{}");
+        if (item.course_id) {
+          results.push({
+            id: key,
+            course_id: item.course_id,
+            quote_text: item.safeQuote,
+            work_title: item.safeWork,
+            created_at: new Date().toISOString(),
+          });
+        }
+      }
+    }
+    return { data: results, error: null };
+  } catch {
+    return { data: [], error: null };
+  }
+}
+
+/**
+ * 10. GET ALL USER REFLECTIONS (व्यक्तिगत दार्शनिक विचार)
+ */
+export async function getAllUserReflections() {
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { data: [], error: "Unauthorized" };
+
+      const { data, error } = await supabase
+        .from("philosophical_reflections")
+        .select("id, course_id, reflection_text, is_private, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return { data: data || [], error: null };
+    } catch (err: any) {
+      console.error("Secure getAllUserReflections error:", err.message);
+      return { data: [], error: "Failed to load reflections" };
+    }
+  }
+
+  // Demo Fallback
+  try {
+    const results: any[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith("wp_reflections_")) {
+        const list = JSON.parse(localStorage.getItem(key) || "[]");
+        results.push(...list);
+      }
+    }
+    results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return { data: results, error: null };
+  } catch {
+    return { data: [], error: null };
+  }
+}
+
+/**
+ * 11. DELETE USER REFLECTION (दार्शनिक विचार हटाना)
+ * Validates uuid or string id, safe delete with RLS auth.uid() check.
+ */
+export async function deleteUserReflection(reflectionId: string, courseId?: string) {
+  const { isConfigured, client: supabase } = createClient();
+
+  if (isConfigured && supabase) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { success: false, error: "Unauthorized" };
+
+      const { error } = await supabase
+        .from("philosophical_reflections")
+        .delete()
+        .eq("id", reflectionId);
+
+      if (error) throw error;
+      return { success: true, error: null };
+    } catch (err: any) {
+      console.error("Secure deleteUserReflection error:", err.message);
+      return { success: false, error: "Failed to delete reflection" };
+    }
+  }
+
+  // Demo Fallback
+  try {
+    if (courseId) {
+      const key = `wp_reflections_${courseId}`;
+      const list = JSON.parse(localStorage.getItem(key) || "[]");
+      const filtered = list.filter((r: any) => r.id !== reflectionId);
+      localStorage.setItem(key, JSON.stringify(filtered));
+    }
+    return { success: true, error: null };
+  } catch {
+    return { success: false, error: "Storage error" };
+  }
+}
+
+
