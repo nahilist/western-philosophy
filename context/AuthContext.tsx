@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export interface User {
   id: string;
@@ -12,11 +13,13 @@ interface AuthContextType {
   user: User | null;
   isAuthModalOpen: boolean;
   pendingCourseId: string | null;
-  login: (email: string, pass: string) => Promise<boolean>;
-  signUp: (name: string, email: string, pass: string) => Promise<boolean>;
-  logout: () => void;
+  login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  signUp: (name: string, email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
+  signInWithOAuth: (provider: "google" | "github") => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
   openAuthModal: (pendingCourseId?: string) => void;
   closeAuthModal: () => void;
+  isSupabaseConnected: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,22 +28,81 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [pendingCourseId, setPendingCourseId] = useState<string | null>(null);
+  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
 
-  // Check persisted demo login in localStorage
+  // Initialize Supabase Client
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("philosophy_user");
-      if (saved) {
-        setUser(JSON.parse(saved));
+    const { isConfigured, client: supabase } = createClient();
+    setIsSupabaseConnected(isConfigured);
+
+    if (isConfigured && supabase) {
+      // 1. Get current active session
+      supabase.auth.getUser().then(({ data: { user: authUser }, error }) => {
+        if (!error && authUser) {
+          setUser({
+            id: authUser.id,
+            name: authUser.user_metadata?.full_name || authUser.email?.split("@")[0] || "Philosopher",
+            email: authUser.email || "",
+          });
+        }
+      });
+
+      // 2. Listen to real-time auth changes (Sign in, Sign out, Token Refresh)
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Philosopher",
+            email: session.user.email || "",
+          });
+        } else {
+          setUser(null);
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    } else {
+      // Local fallback for testing before keys are entered
+      try {
+        const saved = localStorage.getItem("philosophy_user");
+        if (saved) {
+          setUser(JSON.parse(saved));
+        }
+      } catch {
+        // Ignore localStorage errors
       }
-    } catch {
-      // Ignore localStorage errors
     }
   }, []);
 
-  const login = async (email: string): Promise<boolean> => {
-    // Frontend mock - ready to plug into Supabase later:
-    // const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const login = async (email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    const { isConfigured, client: supabase } = createClient();
+
+    if (isConfigured && supabase) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: pass,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        setUser({
+          id: data.user.id,
+          name: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "Philosopher",
+          email: data.user.email || "",
+        });
+      }
+      setIsAuthModalOpen(false);
+      return { success: true };
+    }
+
+    // Demo Mode Fallback:
     const dummyUser: User = {
       id: "usr_" + Date.now(),
       name: email.split("@")[0] || "Philosopher",
@@ -49,12 +111,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(dummyUser);
     localStorage.setItem("philosophy_user", JSON.stringify(dummyUser));
     setIsAuthModalOpen(false);
-    return true;
+    return { success: true };
   };
 
-  const signUp = async (name: string, email: string): Promise<boolean> => {
-    // Frontend mock - ready to plug into Supabase later:
-    // const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
+  const signUp = async (name: string, email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    const { isConfigured, client: supabase } = createClient();
+
+    if (isConfigured && supabase) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: pass,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      if (data.user) {
+        setUser({
+          id: data.user.id,
+          name: name || data.user.email?.split("@")[0] || "Seeker of Wisdom",
+          email: data.user.email || "",
+        });
+      }
+      setIsAuthModalOpen(false);
+      return { success: true };
+    }
+
+    // Demo Mode Fallback:
     const dummyUser: User = {
       id: "usr_" + Date.now(),
       name: name || email.split("@")[0] || "Seeker of Wisdom",
@@ -63,11 +152,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(dummyUser);
     localStorage.setItem("philosophy_user", JSON.stringify(dummyUser));
     setIsAuthModalOpen(false);
-    return true;
+    return { success: true };
   };
 
-  const logout = () => {
-    // Supabase later: await supabase.auth.signOut();
+  const signInWithOAuth = async (provider: "google" | "github"): Promise<{ success: boolean; error?: string }> => {
+    const { isConfigured, client: supabase } = createClient();
+
+    if (isConfigured && supabase) {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      });
+
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    }
+
+    // Demo Mode fallback for OAuth
+    const dummyUser: User = {
+      id: `usr_${provider}_` + Date.now(),
+      name: `${provider.toUpperCase()} Scholar`,
+      email: `${provider.toLowerCase()}@philosophy.org`,
+    };
+    setUser(dummyUser);
+    localStorage.setItem("philosophy_user", JSON.stringify(dummyUser));
+    setIsAuthModalOpen(false);
+    return { success: true };
+  };
+
+  const logout = async () => {
+    const { isConfigured, client: supabase } = createClient();
+    if (isConfigured && supabase) {
+      await supabase.auth.signOut();
+    }
     setUser(null);
     localStorage.removeItem("philosophy_user");
   };
@@ -89,9 +208,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         pendingCourseId,
         login,
         signUp,
+        signInWithOAuth,
         logout,
         openAuthModal,
         closeAuthModal,
+        isSupabaseConnected,
       }}
     >
       {children}
@@ -106,4 +227,3 @@ export function useAuth() {
   }
   return context;
 }
-

@@ -1,26 +1,67 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Clock, Award, Library, ScrollText, CheckCircle, Quote, Sparkles } from "lucide-react";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Clock, 
+  Award, 
+  Library, 
+  ScrollText, 
+  CheckCircle, 
+  Quote, 
+  Sparkles,
+  Bookmark,
+  BookmarkCheck,
+  PenLine,
+  Send,
+  ShieldCheck,
+  Lock,
+  Loader2
+} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import JoinModal from "@/components/JoinModal";
 import AboutModal from "@/components/AboutModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { PhilosopherCourse, PHILOSOPHER_COURSES } from "@/data/philosophers";
+import { 
+  getCourseProgress, 
+  saveCourseProgress, 
+  toggleBookmark, 
+  saveReflection 
+} from "@/lib/supabase/queries";
 
 function CoursePageContent({ course }: { course: PhilosopherCourse }) {
   const { t, getPhilosopherData } = useLanguage();
+  const { user, openAuthModal } = useAuth();
+
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [dailyWisdomOpen, setDailyWisdomOpen] = useState(false);
 
+  // Supabase Backend States (Protected & Parameterized)
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [reflectionInput, setReflectionInput] = useState("");
+  const [isReflectionPrivate, setIsReflectionPrivate] = useState(true);
+  const [isSavingReflection, setIsSavingReflection] = useState(false);
+  const [reflectionFeedback, setReflectionFeedback] = useState<string | null>(null);
+  const [savedReflections, setSavedReflections] = useState<
+    Array<{ id: string; text: string; date: string; isPrivate: boolean }>
+  >([]);
+
   const pData = getPhilosopherData(course);
+
+  // Total lessons for progress tracking
+  const allLessons = course.modules.flatMap((m) => m.lessons);
+  const totalLessonsCount = allLessons.length || 1;
 
   // Next and previous thinkers for seamless editorial reading
   const currentIndex = PHILOSOPHER_COURSES.findIndex((c) => c.id === course.id);
@@ -29,6 +70,114 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
 
   const nextPData = getPhilosopherData(nextPhilosopher);
   const prevPData = getPhilosopherData(prevPhilosopher);
+
+  // Load progress & reflections on mount or user change
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadData() {
+      // 1. Fetch user progress
+      const progressRes = await getCourseProgress(course.id);
+      if (isMounted && progressRes.data) {
+        setCompletedLessons(progressRes.data.completed_modules || []);
+        setProgressPercent(progressRes.data.progress_percent || 0);
+      }
+
+      // 2. Check local bookmark status
+      try {
+        const savedBookmark = localStorage.getItem(`wp_bookmark_${course.id}`);
+        if (isMounted && savedBookmark) {
+          setIsBookmarked(true);
+        }
+      } catch {
+        // ignore
+      }
+
+      // 3. Check local reflections
+      try {
+        const savedRefls = localStorage.getItem(`wp_reflections_${course.id}`);
+        if (isMounted && savedRefls) {
+          const parsed = JSON.parse(savedRefls);
+          setSavedReflections(
+            parsed.map((r: any) => ({
+              id: r.id || String(Math.random()),
+              text: r.reflection_text,
+              date: new Date(r.created_at || Date.now()).toLocaleDateString(),
+              isPrivate: r.is_private ?? true,
+            }))
+          );
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    loadData();
+    return () => {
+      isMounted = false;
+    };
+  }, [course.id, user]);
+
+  const handleToggleBookmark = async () => {
+    if (!user) {
+      openAuthModal(course.id);
+      return;
+    }
+    const res = await toggleBookmark(course.id, pData.quote, course.title);
+    setIsBookmarked(res.bookmarked);
+  };
+
+  const handleToggleLesson = async (lessonName: string) => {
+    if (!user) {
+      openAuthModal(course.id);
+      return;
+    }
+
+    const nextCompleted = completedLessons.includes(lessonName)
+      ? completedLessons.filter((l) => l !== lessonName)
+      : [...completedLessons, lessonName];
+
+    const nextPercent = Math.round((nextCompleted.length / totalLessonsCount) * 100);
+
+    setCompletedLessons(nextCompleted);
+    setProgressPercent(nextPercent);
+
+    await saveCourseProgress(course.id, nextCompleted, nextPercent);
+  };
+
+  const handleSaveReflection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      openAuthModal(course.id);
+      return;
+    }
+
+    const trimmed = reflectionInput.trim();
+    if (!trimmed) return;
+
+    setIsSavingReflection(true);
+    setReflectionFeedback(null);
+
+    const res = await saveReflection(course.id, trimmed, isReflectionPrivate);
+    setIsSavingReflection(false);
+
+    if (res.success) {
+      setSavedReflections((prev) => [
+        {
+          id: "ref-" + Date.now(),
+          text: trimmed,
+          date: new Date().toLocaleDateString(),
+          isPrivate: isReflectionPrivate,
+        },
+        ...prev,
+      ]);
+      setReflectionInput("");
+      setReflectionFeedback("Contemplation inscribed into the eternal record.");
+      setTimeout(() => setReflectionFeedback(null), 4000);
+    } else {
+      setReflectionFeedback(res.error || "Failed to inscribe reflection");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-black text-white selection:bg-white selection:text-black overflow-x-hidden">
@@ -134,19 +283,39 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             </div>
 
             {/* CTAs */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
               <a
                 href="#biography"
-                className="px-8 py-3.5 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.25em] font-bold hover:bg-neutral-200 transition-colors shadow-lg"
+                className="px-7 py-3.5 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.25em] font-bold hover:bg-neutral-200 transition-colors shadow-lg"
               >
                 Read Odyssey
               </a>
               <a
                 href="#syllabus"
-                className="px-8 py-3.5 border border-white/70 hover:border-white text-white text-xs uppercase tracking-[0.25em] transition-colors"
+                className="px-7 py-3.5 border border-white/70 hover:border-white text-white text-xs uppercase tracking-[0.25em] transition-colors"
               >
                 View Syllabus
               </a>
+              <button
+                onClick={handleToggleBookmark}
+                className={`px-6 py-3.5 border text-xs uppercase tracking-[0.2em] transition-all flex items-center gap-2 cursor-pointer ${
+                  isBookmarked
+                    ? "bg-neutral-900 border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                    : "border-neutral-800 hover:border-neutral-500 text-neutral-400 hover:text-white"
+                }`}
+              >
+                {isBookmarked ? (
+                  <>
+                    <BookmarkCheck className="w-4 h-4 text-white" />
+                    <span>Saved to Codex</span>
+                  </>
+                ) : (
+                  <>
+                    <Bookmark className="w-4 h-4 text-neutral-400" />
+                    <span>Bookmark Thinker</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
@@ -294,6 +463,23 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               Structured into four sequential intellectual movements, moving from initial philosophical deconstruction to ontological certainty and ethical mastery.
             </p>
 
+            {/* Live Contemplation Progress Card */}
+            <div className="p-6 border border-neutral-800 space-y-4 bg-neutral-950">
+              <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider">
+                <span className="text-neutral-400">Mastery Progress</span>
+                <span className="text-white font-bold">{progressPercent}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-neutral-900 overflow-hidden">
+                <div 
+                  className="h-full bg-white transition-all duration-500 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-neutral-400 font-garamond">
+                {completedLessons.length} of {totalLessonsCount} lectures contemplated.
+              </p>
+            </div>
+
             <div className="p-8 border border-neutral-800 space-y-5 bg-neutral-950">
               <div className="flex items-center gap-2 font-serif-classic text-xs tracking-wider text-white">
                 <Sparkles className="w-4 h-4 text-neutral-300" />
@@ -331,17 +517,30 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                   {mod.description}
                 </p>
 
-                {/* Lecture Topics spanning wide horizontal space */}
+                {/* Lecture Topics spanning wide horizontal space (Interactive) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 pt-2">
-                  {mod.lessons.map((lesson, lIdx) => (
-                    <div
-                      key={lIdx}
-                      className="p-3.5 border border-neutral-900 bg-neutral-950/80 flex items-center gap-3 font-garamond text-sm lg:text-base text-neutral-300"
-                    >
-                      <CheckCircle className="w-4 h-4 text-neutral-400 flex-shrink-0" />
-                      <span>{lesson}</span>
-                    </div>
-                  ))}
+                  {mod.lessons.map((lesson, lIdx) => {
+                    const isDone = completedLessons.includes(lesson);
+                    return (
+                      <button
+                        type="button"
+                        key={lIdx}
+                        onClick={() => handleToggleLesson(lesson)}
+                        className={`p-3.5 border text-left flex items-center gap-3 font-garamond text-sm lg:text-base transition-all cursor-pointer group ${
+                          isDone
+                            ? "bg-neutral-900 border-neutral-600 text-white"
+                            : "border-neutral-900 bg-neutral-950/80 text-neutral-300 hover:border-neutral-700"
+                        }`}
+                      >
+                        <CheckCircle
+                          className={`w-4 h-4 flex-shrink-0 transition-colors ${
+                            isDone ? "text-white fill-white/20" : "text-neutral-600 group-hover:text-neutral-400"
+                          }`}
+                        />
+                        <span className={isDone ? "line-through text-neutral-400" : ""}>{lesson}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -439,6 +638,142 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 </span>
               </blockquote>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================
+          6. SECTION 06: THE CONTEMPLATIVE CODEX (Reflections Journal)
+         ======================================================== */}
+      <section id="reflections" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950">
+        <div className="w-full space-y-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
+                  06
+                </span>
+                <div className="w-8 h-px bg-neutral-800" />
+                <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
+                  Dialectical Journal
+                </span>
+              </div>
+              <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase">
+                The Contemplative Codex
+              </h2>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Row-Level Security Active • Parameterized Queries</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* Left: Input Form */}
+            <div className="lg:col-span-6 space-y-6">
+              <p className="font-garamond text-base sm:text-lg text-neutral-300 leading-relaxed font-light">
+                Inscribe your critical reflections, questions, or counter-arguments on {pData.name}’s philosophy.
+                Reflections are securely tied to your encrypted account identity.
+              </p>
+
+              <form onSubmit={handleSaveReflection} className="space-y-4">
+                <div className="relative">
+                  <textarea
+                    rows={5}
+                    maxLength={5000}
+                    value={reflectionInput}
+                    onChange={(e) => setReflectionInput(e.target.value)}
+                    placeholder={`What is your philosophical judgment on ${pData.name}'s ideas?`}
+                    className="w-full bg-black border border-neutral-800 p-4 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors resize-none font-garamond text-base sm:text-lg leading-relaxed"
+                  />
+                  {/* Anti-DDoS safety limit counter */}
+                  <div className="absolute bottom-3 right-3 text-[11px] font-mono text-neutral-500">
+                    {reflectionInput.length} / 5000 chars
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isReflectionPrivate}
+                      onChange={(e) => setIsReflectionPrivate(e.target.checked)}
+                      className="accent-white cursor-pointer"
+                    />
+                    <Lock className="w-3.5 h-3.5 text-neutral-500" />
+                    <span>Private to my personal codex</span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={isSavingReflection || !reflectionInput.trim()}
+                    className="px-8 py-3 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.2em] font-bold hover:bg-neutral-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer shadow-md"
+                  >
+                    {isSavingReflection ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Inscribing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <PenLine className="w-3.5 h-3.5" />
+                        <span>Inscribe Reflection</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {reflectionFeedback && (
+                  <p className="text-xs text-neutral-300 font-mono pt-1">
+                    {reflectionFeedback}
+                  </p>
+                )}
+              </form>
+            </div>
+
+            {/* Right: Inscribed List */}
+            <div className="lg:col-span-6 space-y-4">
+              <h3 className="font-serif-classic text-sm uppercase tracking-[0.25em] text-neutral-400 font-semibold pb-2 border-b border-neutral-900">
+                Inscribed Chronicles ({savedReflections.length})
+              </h3>
+
+              {savedReflections.length === 0 ? (
+                <div className="p-8 border border-neutral-900 bg-black/50 text-center space-y-2">
+                  <p className="font-garamond text-neutral-400 italic">
+                    No reflections recorded yet for this thinker.
+                  </p>
+                  <p className="text-xs text-neutral-600 font-mono">
+                    Pen your thoughts above to begin your philosophical treatise.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+                  {savedReflections.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-5 border border-neutral-900 bg-black/60 space-y-3 relative group hover:border-neutral-800 transition-colors"
+                    >
+                      <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                        <span>{item.date}</span>
+                        <span className="flex items-center gap-1 text-neutral-400">
+                          {item.isPrivate ? (
+                            <>
+                              <Lock className="w-3 h-3 text-neutral-500" />
+                              <span>Private</span>
+                            </>
+                          ) : (
+                            <span>Public</span>
+                          )}
+                        </span>
+                      </div>
+                      <p className="font-garamond text-base sm:text-lg text-neutral-200 leading-relaxed">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
