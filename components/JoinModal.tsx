@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Check, ArrowRight } from "lucide-react";
+import { X, Check, ArrowRight, AlertCircle } from "lucide-react";
+import { joinWaitlist } from "@/lib/supabase/queries";
 
 interface JoinModalProps {
   isOpen: boolean;
@@ -14,21 +15,29 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
   const [interest, setInterest] = useState("Existentialism");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMsg(null);
+
+    const res = await joinWaitlist(email, interest);
+    setLoading(false);
+
+    if (res.success) {
       setSubmitted(true);
-    }, 800);
+    } else {
+      setErrorMsg(res.error || "An error occurred. Please try again.");
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
+    setErrorMsg(null);
     setName("");
     setEmail("");
     onClose();
@@ -107,6 +116,13 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   <option value="Idealism">German Idealism &amp; Kantian Ethics</option>
                 </select>
               </div>
+
+              {errorMsg && (
+                <div className="p-3 bg-red-950/50 border border-red-800/80 text-red-300 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
 
               <div className="pt-2">
                 <button

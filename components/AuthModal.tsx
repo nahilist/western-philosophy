@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, Lock, User as UserIcon, Mail, ArrowRight, ShieldCheck } from "lucide-react";
+import { X, Lock, User as UserIcon, Mail, ArrowRight, ShieldCheck, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 interface AuthModalProps {
@@ -11,11 +11,21 @@ interface AuthModalProps {
 
 export default function AuthModal({ onSuccess }: AuthModalProps) {
   const router = useRouter();
-  const { isAuthModalOpen, closeAuthModal, login, signUp, pendingCourseId } = useAuth();
+  const {
+    isAuthModalOpen,
+    closeAuthModal,
+    login,
+    signUp,
+    signInWithOAuth,
+    pendingCourseId,
+    isSupabaseConnected,
+  } = useAuth();
+
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   if (!isAuthModalOpen) return null;
@@ -29,20 +39,50 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg(null);
     setLoading(true);
+
     try {
       if (tab === "login") {
-        await login(email, password);
+        const res = await login(email, password);
+        if (!res.success) {
+          setErrorMsg(res.error || "Login failed. Please check credentials.");
+          return;
+        }
       } else {
-        await signUp(name, email, password);
+        const res = await signUp(name, email, password);
+        if (!res.success) {
+          setErrorMsg(res.error || "Sign up failed. Please check details.");
+          return;
+        }
       }
       handleComplete();
+    } catch {
+      setErrorMsg("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOAuth = async (provider: "google" | "github") => {
+    setErrorMsg(null);
+    setLoading(true);
+    try {
+      const res = await signInWithOAuth(provider);
+      if (!res.success) {
+        setErrorMsg(res.error || `Failed to sign in with ${provider}`);
+      } else if (!isSupabaseConnected) {
+        handleComplete();
+      }
+    } catch {
+      setErrorMsg(`Failed to connect with ${provider}`);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDemoLogin = async () => {
+    setErrorMsg(null);
     setLoading(true);
     try {
       await login("scholar@philosophy-phi.org", "demo12345");
@@ -67,13 +107,24 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
         </button>
 
         {/* Modal Header */}
-        <div className="text-center space-y-2 mb-8">
+        <div className="text-center space-y-2 mb-6">
           <div className="w-12 h-12 rounded-full border border-neutral-800 mx-auto flex items-center justify-center mb-3">
             <Lock className="w-5 h-5 text-neutral-300" />
           </div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-medium">
-            Philosophy Φ Academy
-          </span>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-medium">
+              Philosophy Φ Academy
+            </span>
+            <span
+              className={`text-[9px] px-2 py-0.5 rounded-full border ${
+                isSupabaseConnected
+                  ? "bg-emerald-950/80 border-emerald-800 text-emerald-300"
+                  : "bg-neutral-900 border-neutral-800 text-neutral-400"
+              }`}
+            >
+              {isSupabaseConnected ? "● Supabase Live" : "○ Demo Mode"}
+            </span>
+          </div>
           <h3 className="font-serif-classic text-2xl font-bold tracking-[0.15em] text-white uppercase">
             {tab === "login" ? "ACADEMY SIGN IN" : "JOIN THE DIALECTIC"}
           </h3>
@@ -84,11 +135,22 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
           </p>
         </div>
 
+        {/* Error Alert if any */}
+        {errorMsg && (
+          <div className="mb-4 p-3 border border-red-900/80 bg-red-950/50 text-red-300 text-xs flex items-center gap-2.5">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+
         {/* Tabs: Login vs Sign Up */}
         <div className="flex border-b border-neutral-800 mb-6">
           <button
             type="button"
-            onClick={() => setTab("login")}
+            onClick={() => {
+              setTab("login");
+              setErrorMsg(null);
+            }}
             className={`flex-1 pb-3 text-xs uppercase tracking-[0.25em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
               tab === "login"
                 ? "text-white border-b-2 border-white"
@@ -99,7 +161,10 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
           </button>
           <button
             type="button"
-            onClick={() => setTab("signup")}
+            onClick={() => {
+              setTab("signup");
+              setErrorMsg(null);
+            }}
             className={`flex-1 pb-3 text-xs uppercase tracking-[0.25em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
               tab === "signup"
                 ? "text-white border-b-2 border-white"
@@ -157,6 +222,7 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
               <input
                 type="password"
                 required
+                minLength={6}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -169,13 +235,13 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.25em] font-bold hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              className="w-full py-3 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.25em] font-bold hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
             >
               {loading ? (
                 <span>Entering Academy...</span>
               ) : (
                 <>
-                  <span>{tab === "login" ? "Open Full Page" : "Register & Open Page"}</span>
+                  <span>{tab === "login" ? "Sign In & Enter" : "Register & Open Page"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -183,19 +249,38 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
           </div>
         </form>
 
-        {/* Instant Demo Access */}
-        <div className="mt-5 pt-4 border-t border-neutral-900 text-center">
-          <button
-            type="button"
-            onClick={handleDemoLogin}
-            className="flex items-center justify-center gap-2 mx-auto text-[11px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors cursor-pointer py-1"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
-            <span>Instant Demo Access (Skip for now)</span>
-          </button>
-          <p className="text-[10px] text-neutral-600 mt-2 font-mono">
-            * Frontend ready for Supabase Auth integration
-          </p>
+        {/* Social Logins (Google / GitHub) */}
+        <div className="mt-5 pt-4 border-t border-neutral-900">
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <button
+              type="button"
+              onClick={() => handleOAuth("google")}
+              disabled={loading}
+              className="py-2 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-300 hover:text-white text-[11px] tracking-wider uppercase font-serif-classic flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/40"
+            >
+              <span>Google</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth("github")}
+              disabled={loading}
+              className="py-2 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-300 hover:text-white text-[11px] tracking-wider uppercase font-serif-classic flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/40"
+            >
+              <span>GitHub</span>
+            </button>
+          </div>
+
+          {/* Instant Demo Access Button */}
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              className="flex items-center justify-center gap-2 mx-auto text-[11px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors cursor-pointer py-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
+              <span>Instant Demo Access (One Click)</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
