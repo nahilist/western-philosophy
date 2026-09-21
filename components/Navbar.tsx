@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { NavbarLanguageTranslator } from "@/components/LanguageTranslator";
 
 interface NavbarProps {
   onOpenAbout?: () => void;
@@ -12,6 +14,7 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) {
   const { user, openAuthModal, logout } = useAuth();
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
@@ -73,25 +76,25 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             href="/#home"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
-            Home
+            {t.nav.home}
           </Link>
           <button
             onClick={onOpenAbout}
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase cursor-pointer"
           >
-            About
+            {t.nav.about}
           </button>
           <Link
             href="/#courses"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
-            Courses
+            {t.nav.courses}
           </Link>
           <Link
             href="#contact"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
-            Contact
+            {t.nav.contact}
           </Link>
 
           {/* Wisdom Modal Trigger */}
@@ -102,7 +105,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-              <span>Wisdom</span>
+              <span>{t.nav.wisdom}</span>
             </button>
           )}
 
@@ -118,6 +121,9 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               <VolumeX className="w-3.5 h-3.5" />
             )}
           </button>
+
+          {/* Hindi / English Language Translator */}
+          <NavbarLanguageTranslator />
 
           {/* Auth Button: Sign In or User Profile */}
           {user ? (
@@ -139,18 +145,21 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] px-4 py-1.5 border border-white/60 text-white hover:bg-white hover:text-black transition-all duration-300 font-serif-classic cursor-pointer"
             >
               <UserIcon className="w-3.5 h-3.5" />
-              <span>Sign In</span>
+              <span>{t.nav.signIn}</span>
             </button>
           )}
         </nav>
 
         {/* Mobile Menu Trigger & Auth */}
-        <div className="flex md:hidden items-center gap-3">
+        <div className="flex md:hidden items-center gap-2.5">
+          {/* Mobile Hindi Translator Pill */}
+          <NavbarLanguageTranslator />
+
           {user ? (
             <button
               onClick={logout}
               className="text-xs text-neutral-400 p-1"
-              title="Sign Out"
+              title={t.nav.signOut}
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -180,7 +189,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
-            Home
+            {t.nav.home}
           </Link>
           <button
             onClick={() => {
@@ -189,21 +198,21 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             }}
             className="text-left text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
-            About
+            {t.nav.about}
           </button>
           <Link
             href="/#courses"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
-            Courses
+            {t.nav.courses}
           </Link>
           <Link
             href="#contact"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
-            Contact
+            {t.nav.contact}
           </Link>
           {!user ? (
             <button
@@ -213,7 +222,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               }}
               className="w-full py-2.5 border border-white text-center text-xs uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-colors font-serif-classic"
             >
-              Sign In / Register
+              {t.nav.signIn}
             </button>
           ) : (
             <button
@@ -223,7 +232,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               }}
               className="text-left text-xs tracking-[0.2em] uppercase text-red-400"
             >
-              Sign Out ({user.name})
+              {t.nav.signOut} ({user.name})
             </button>
           )}
         </div>

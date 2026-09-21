@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface CreationBannerProps {
   onJoinClick?: () => void;
 }
 
 export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
+  const { t } = useLanguage();
   return (
     <section className="relative w-full bg-black text-white py-16 sm:py-24 overflow-hidden">
       {/* Background Michelangelo Hands & Root/Lightning Texture */}
@@ -73,10 +75,10 @@ export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
         <div className="relative z-10 text-center flex flex-col items-center space-y-5 px-4">
           <div className="space-y-2">
             <h2 className="font-serif-classic text-xl sm:text-3xl lg:text-4xl font-bold tracking-[0.2em] text-white uppercase">
-              TO BE IS TO DO.
+              {t.creation.quote}
             </h2>
             <p className="font-serif-classic text-[11px] sm:text-xs tracking-[0.32em] text-neutral-300 uppercase">
-              IMMANUEL KANT
+              {t.creation.author}
             </p>
           </div>
 
@@ -85,7 +87,7 @@ export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
             onClick={onJoinClick}
             className="px-10 py-2.5 sm:py-3 bg-white text-black font-serif-classic text-xs sm:text-sm font-bold tracking-[0.25em] uppercase hover:bg-neutral-200 transition-colors cursor-pointer shadow-lg"
           >
-            JOIN US!
+            {t.creation.joinBtn}
           </button>
         </div>
       </div>

@@ -4,8 +4,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function HeroDescartes() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="home"
@@ -43,7 +46,7 @@ export default function HeroDescartes() {
 
             {/* Tooltip on hover */}
             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px] tracking-[0.25em] text-neutral-400 uppercase whitespace-nowrap flex items-center gap-1.5">
-              <span>Click to open full Descartes page →</span>
+              <span>{t.heroDescartes.hoverTooltip}</span>
             </div>
           </Link>
         </div>
@@ -52,20 +55,20 @@ export default function HeroDescartes() {
         <div className="lg:col-span-6 flex flex-col justify-center text-center lg:text-left space-y-6">
           <div className="space-y-3">
             <span className="text-[11px] sm:text-xs uppercase tracking-[0.35em] text-neutral-400 font-medium">
-              Rationalism & Epistemology
+              {t.heroDescartes.tag}
             </span>
             <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[0.15em] text-white leading-tight uppercase">
-              COGITO, ERGO SUM
+              {t.heroDescartes.quote}
             </h1>
             <p className="font-serif-classic text-sm sm:text-base tracking-[0.3em] text-neutral-300 uppercase font-semibold">
-              RENÉ DESCARTES
+              {t.heroDescartes.author}
             </p>
           </div>
 
           <div className="w-16 h-px bg-neutral-800 mx-auto lg:mx-0 my-2" />
 
           <p className="font-garamond text-neutral-400 text-base sm:text-lg italic max-w-lg leading-relaxed mx-auto lg:mx-0">
-            &ldquo;I resolved to pretend that all the things that had ever entered into my mind were no more true than the illusions of my dreams. But immediately afterwards I noticed that whilst I thus wished to think all things false, it was absolutely necessary that I who thought so should be something.&rdquo;
+            &ldquo;{t.heroDescartes.body}&rdquo;
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -73,13 +76,13 @@ export default function HeroDescartes() {
               href="#courses"
               className="px-6 py-3 border border-white/80 text-white text-xs uppercase tracking-[0.25em] hover:bg-white hover:text-black transition-all duration-300 shadow-md"
             >
-              Explore Courses
+              {t.heroDescartes.btnBrowse}
             </a>
             <Link
               href="/course/descartes"
               className="px-6 py-3 text-neutral-300 hover:text-white text-xs uppercase tracking-[0.25em] transition-colors cursor-pointer flex items-center gap-2 group"
             >
-              <span>Read Full Dossier</span>
+              <span>{t.heroDescartes.btnTreatise}</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>

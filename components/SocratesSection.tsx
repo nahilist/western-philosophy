@@ -4,8 +4,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function SocratesSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative w-full min-h-[60vh] sm:min-h-[75vh] lg:min-h-[85vh] flex items-center justify-start bg-black overflow-hidden py-16 sm:py-24">
       {/* Background Painting: The Death of Socrates by Jacques-Louis David */}
@@ -31,16 +34,12 @@ export default function SocratesSection() {
           className="group max-w-xl text-center sm:text-left space-y-4 block cursor-pointer"
           title="Open full Socrates page"
         >
-          <blockquote className="font-serif-classic text-xl sm:text-3xl lg:text-4xl font-normal tracking-[0.14em] text-white leading-relaxed uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] group-hover:text-neutral-200 transition-colors">
-            I KNOW THAT I AM
-            <br />
-            INTELLIGENT, BECAUSE I KNOW
-            <br />
-            THAT I KNOW NOTHING.
+          <blockquote className="font-serif-classic text-xl sm:text-3xl lg:text-4xl font-normal tracking-[0.14em] text-white leading-relaxed uppercase drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] group-hover:text-neutral-200 transition-colors whitespace-pre-line">
+            {t.socrates.quote}
           </blockquote>
           <div className="flex items-center gap-2">
             <p className="font-serif-classic text-sm sm:text-base tracking-[0.32em] text-neutral-200 uppercase font-semibold group-hover:text-white transition-colors">
-              SÓCRATES
+              {t.socrates.author}
             </p>
             <ArrowRight className="w-4 h-4 text-neutral-400 group-hover:text-white transition-transform group-hover:translate-x-1" />
           </div>

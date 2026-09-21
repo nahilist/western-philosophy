@@ -3,8 +3,10 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function CosmicSection() {
+  const { t } = useLanguage();
   return (
     <section className="relative w-full bg-black text-white py-20 sm:py-32 px-6 sm:px-12 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col items-center space-y-28 sm:space-y-36">
@@ -47,10 +49,10 @@ export default function CosmicSection() {
           <div className="md:col-span-6 text-center md:text-left space-y-3 md:pl-4">
             <Link href="/course/nietzsche" className="group inline-block">
               <h2 className="font-serif-classic text-xl sm:text-2xl lg:text-3xl font-bold tracking-[0.2em] text-white uppercase group-hover:text-neutral-300 transition-colors">
-                BECOME WHO YOU ARE.
+                {t.cosmic.nietzscheQuote}
               </h2>
               <p className="font-serif-classic text-xs sm:text-sm tracking-[0.32em] text-neutral-300 uppercase mt-1">
-                FRIEDRICH NIETZSCHE →
+                {t.cosmic.nietzscheAuthor} →
               </p>
             </Link>
           </div>
@@ -68,14 +70,10 @@ export default function CosmicSection() {
             <div className="md:col-span-6 text-center md:text-right space-y-3 md:pr-10">
               <Link href="/course/machiavelli" className="group inline-block">
                 <h2 className="font-serif-classic text-base sm:text-xl lg:text-2xl font-bold tracking-[0.14em] text-white uppercase leading-snug group-hover:text-neutral-300 transition-colors">
-                  EVERYONE SEES WHAT YOU
-                  <br />
-                  APPEAR TO BE, FEW EXPERIENCE
-                  <br />
-                  WHAT YOU REALLY ARE.
+                  {t.cosmic.machiavelliQuote}
                 </h2>
                 <p className="font-serif-classic text-xs sm:text-sm tracking-[0.32em] text-neutral-300 uppercase mt-1">
-                  ← NICOLAU MAQUIAVEL
+                  ← {t.cosmic.machiavelliAuthor}
                 </p>
               </Link>
             </div>

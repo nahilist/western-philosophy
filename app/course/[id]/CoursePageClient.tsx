@@ -11,17 +11,24 @@ import JoinModal from "@/components/JoinModal";
 import AboutModal from "@/components/AboutModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
 import { AuthProvider } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { PhilosopherCourse, PHILOSOPHER_COURSES } from "@/data/philosophers";
 
 function CoursePageContent({ course }: { course: PhilosopherCourse }) {
+  const { t, getPhilosopherData } = useLanguage();
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [dailyWisdomOpen, setDailyWisdomOpen] = useState(false);
+
+  const pData = getPhilosopherData(course);
 
   // Next and previous thinkers for seamless editorial reading
   const currentIndex = PHILOSOPHER_COURSES.findIndex((c) => c.id === course.id);
   const nextPhilosopher = PHILOSOPHER_COURSES[(currentIndex + 1) % PHILOSOPHER_COURSES.length];
   const prevPhilosopher = PHILOSOPHER_COURSES[(currentIndex - 1 + PHILOSOPHER_COURSES.length) % PHILOSOPHER_COURSES.length];
+
+  const nextPData = getPhilosopherData(nextPhilosopher);
+  const prevPData = getPhilosopherData(prevPhilosopher);
 
   return (
     <div className="min-h-screen w-full bg-black text-white selection:bg-white selection:text-black overflow-x-hidden">
@@ -38,12 +45,12 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
           className="flex items-center gap-2.5 text-xs uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-colors group"
         >
           <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-          <span>Academy Home</span>
+          <span>{t.coursePage.homeLink}</span>
         </Link>
         <div className="flex items-center gap-4 text-xs tracking-widest text-neutral-400 uppercase">
-          <span>{course.school.split(",")[0]}</span>
+          <span>{pData.school.split(",")[0]}</span>
           <span className="text-neutral-600">•</span>
-          <span>{course.era}</span>
+          <span>{pData.era}</span>
         </div>
       </div>
 
@@ -65,7 +72,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               <div className="relative z-10 w-64 sm:w-80 lg:w-96 xl:w-[420px] h-80 sm:h-100 lg:h-116 xl:h-[500px] overflow-hidden bg-neutral-950 border border-neutral-800 shadow-[0_20px_60px_rgba(0,0,0,0.95)]">
                 <Image
                   src={course.image}
-                  alt={course.name}
+                  alt={pData.name}
                   fill
                   priority
                   className="object-cover object-top grayscale-0 md:grayscale contrast-115 transition-all duration-700 group-hover:scale-105 md:group-hover:grayscale-0"
@@ -80,26 +87,26 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             <div className="space-y-3">
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
                 <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-300 font-medium px-3 py-1 border border-neutral-800 bg-neutral-950">
-                  {course.school}
+                  {pData.school}
                 </span>
                 <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-400 font-light">
-                  {course.era}
+                  {pData.era}
                 </span>
               </div>
 
               <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-[0.14em] text-white leading-tight uppercase">
-                {course.quote.split(".")[0].replace("(", "").replace(")", "")}
+                {pData.quote.split(".")[0].replace("(", "").replace(")", "")}
               </h1>
 
               <p className="font-serif-classic text-base sm:text-xl xl:text-2xl tracking-[0.3em] text-neutral-300 uppercase font-semibold">
-                {course.name}
+                {pData.name}
               </p>
             </div>
 
             <div className="w-20 h-px bg-neutral-800 mx-auto lg:mx-0" />
 
             <blockquote className="font-garamond text-lg sm:text-2xl xl:text-3xl italic text-neutral-200 leading-relaxed font-light">
-              &ldquo;{course.quote}&rdquo;
+              &ldquo;{pData.quote}&rdquo;
             </blockquote>
 
             <p className="font-garamond text-sm text-neutral-400">
@@ -159,11 +166,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
-                  Historical Odyssey
+                  {t.coursePage.section01}
                 </span>
               </div>
               <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-[0.12em] text-white uppercase leading-tight">
-                THE LIFE &amp; THE INTELLECTUAL MISSION
+                {t.coursePage.section01Title}
               </h2>
             </div>
 
@@ -174,7 +181,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 &ldquo;{course.famousQuotes[0]}&rdquo;
               </p>
               <span className="text-xs tracking-[0.25em] text-neutral-400 uppercase font-serif-classic block">
-                — {course.name}
+                — {pData.name}
               </span>
             </div>
           </div>
@@ -183,10 +190,10 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
           <div className="lg:col-span-7 space-y-10 font-garamond text-lg sm:text-xl lg:text-2xl xl:text-3xl text-neutral-200 leading-[1.9] font-light">
             <div className="space-y-4 pb-8 border-b border-neutral-900">
               <span className="text-xs uppercase tracking-[0.3em] text-neutral-400 font-serif-classic block font-semibold">
-                The Philosophical Mission
+                {t.coursePage.section01}
               </span>
               <p className="first-letter:font-serif-classic first-letter:text-6xl first-letter:font-bold first-letter:float-left first-letter:mr-4 first-letter:text-white">
-                {course.overview}
+                {pData.overview}
               </p>
             </div>
 
@@ -216,11 +223,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
-                  Axiomatic Framework
+                  {t.coursePage.section02}
                 </span>
               </div>
               <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase">
-                FOUNDATIONAL CONCEPTS
+                {t.coursePage.section02Title}
               </h2>
             </div>
             <p className="text-xs text-neutral-400 tracking-widest uppercase font-mono">
@@ -275,11 +282,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
-                  Curriculum
+                  {t.coursePage.section03}
                 </span>
               </div>
               <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase leading-tight">
-                DIALECTICAL SYLLABUS
+                {t.coursePage.section03Title}
               </h2>
             </div>
 
@@ -356,11 +363,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
-                  Primary Sources
+                  {t.coursePage.section04}
                 </span>
               </div>
               <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase">
-                SEMINAL TREATISES &amp; BOOKS
+                {t.coursePage.section04Title}
               </h2>
             </div>
             <p className="text-xs text-neutral-400 tracking-widest uppercase font-mono">
@@ -411,11 +418,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               </span>
               <div className="w-8 h-px bg-neutral-800" />
               <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
-                Timeless Maxims
+                {t.coursePage.section05}
               </span>
             </div>
             <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase">
-              APHORISMS FOR CONTEMPLATION
+              {t.coursePage.section05Title}
             </h2>
           </div>
 
@@ -428,7 +435,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               >
                 <p>&ldquo;{q}&rdquo;</p>
                 <span className="text-xs uppercase tracking-[0.25em] text-neutral-400 not-italic font-serif-classic block">
-                  — {course.name}
+                  — {pData.name}
                 </span>
               </blockquote>
             ))}
@@ -447,9 +454,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <div>
-              <span className="text-[10px] text-neutral-500 block">Previous Inquiries</span>
+              <span className="text-[10px] text-neutral-500 block">{t.coursePage.prevThinker}</span>
               <span className="font-serif-classic text-sm sm:text-base font-semibold text-neutral-300 group-hover:text-white">
-                {prevPhilosopher.name}
+                {prevPData.name}
               </span>
             </div>
           </Link>
@@ -459,9 +466,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             className="group flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-neutral-300 hover:text-white transition-colors text-right"
           >
             <div>
-              <span className="text-[10px] text-neutral-500 block">Next Inquiries</span>
+              <span className="text-[10px] text-neutral-500 block">{t.coursePage.nextThinker}</span>
               <span className="font-serif-classic text-sm sm:text-base font-semibold text-white">
-                {nextPhilosopher.name}
+                {nextPData.name}
               </span>
             </div>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
