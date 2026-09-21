@@ -1,0 +1,86 @@
+# ==============================================================================
+# GitHub Actions CI Workflow for Western Philosophy Next.js Platform
+# ------------------------------------------------------------------------------
+# यह Workflow जब भी आप GitHub पर नया कोड Push करेंगे या Pull Request बनाएंगे,
+# तब अपने आप (automatically) चलेगा और चेक करेगा कि कोड में कोई Error या Bug तो नहीं है।
+# ==============================================================================
+
+name: CI Build & Verify
+
+# 1. TRIGGER EVENTS (यह Workflow कब-कब चलेगा?)
+on:
+  # जब 'main' या 'master' ब्रांच पर नया कोड PUSH किया जाएगा
+  push:
+    branches:
+      - main
+      - master
+
+  # जब 'main' या 'master' ब्रांच के लिए कोई PULL REQUEST बनाई जाएगी
+  pull_request:
+    branches:
+      - main
+      - master
+
+  # GitHub की वेबसाइट से MANUALLY (खुद से) रन करने की सुविधा देता है
+  workflow_dispatch:
+
+# 2. JOBS (क्या-क्या काम करना है?)
+jobs:
+  build-and-test:
+    name: 🚀 Verify TypeScript & Next.js Build
+    # यह जॉब GitHub के Ubuntu Linux सर्वर पर चलेगा
+    runs-on: ubuntu-latest
+
+    # टाइमआउट: अगर 15 मिनट से ज्यादा समय लगा तो अपने आप रुक जाएगा
+    timeout-minutes: 15
+
+    steps:
+      # Step 1: GitHub Repository से आपका कोड डाउनलोड (Checkout) करना
+      - name: 📥 Checkout Repository Code
+        uses: actions/checkout@v4
+
+      # Step 2: सर्वर पर Node.js (Version 20) इनस्टॉल और NPM Cache सेटअप करना
+      # Caching से हर बार NPM packages दोबारा डाउनलोड नहीं होते, जिससे बिल्ड बहुत फास्ट होता है
+      - name: ⚙️ Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      # Step 3: Next.js Build Cache को रिस्टोर करना
+      # इससे Next.js की पहले से कंपाइल हुई फाइल्स (.next/cache) बच जाती हैं और बिल्ड सुपर-फास्ट हो जाता है
+      - name: ⚡ Restore Next.js Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Cache Key: package-lock.json और सोर्स फाइल्स के हैश पर निर्भर करता है
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      # Step 4: Clean Install (सारे packages को package-lock.json के अनुसार सही तरीके से इनस्टॉल करना)
+      - name: 📦 Install Project Dependencies
+        run: npm ci
+
+      # Step 5: TypeScript Type-Check (चेक करेगा कि कोड में कोई टाइपिंग मिस्टेक तो नहीं है)
+      - name: 🔍 Run TypeScript Type Check
+        run: npx tsc --noEmit
+
+      # Step 6: Next.js Production Build (वेबसाइट का प्रोडक्शन बिल्ड बनाना और 18 स्टैटिक पेज जनरेट करना)
+      - name: 🏗️ Compile & Build Next.js Application
+        run: npm run build
+        env:
+          # Next.js को CI मोड में चलाने के लिए पर्यावरण चर (Environment Variables)
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+
+      # Step 7: सफल होने पर कंफर्मेशन मैसेज दिखाना
+      - name: ✅ Build Verification Succeeded
+        run: |
+          echo "=========================================================="
+          echo "🎉 All 14 Philosophers courses and pages compiled successfully!"
+          echo "🚀 Your Next.js Western Philosophy app is ready for deployment."
+          echo "=========================================================="
+
