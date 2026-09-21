@@ -6,6 +6,7 @@ import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut } from "l
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { NavbarLanguageTranslator } from "@/components/LanguageTranslator";
+import AccountModal from "@/components/AccountModal";
 
 interface NavbarProps {
   onOpenAbout?: () => void;
@@ -14,9 +15,11 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) {
   const { user, openAuthModal, logout } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isHi = language === "hi";
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
 
   useEffect(() => {
@@ -127,13 +130,22 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
 
           {/* Auth Button: Sign In or User Profile */}
           {user ? (
-            <div className="flex items-center gap-3 pl-2 border-l border-neutral-800">
-              <span className="text-xs tracking-wider text-neutral-300 font-serif-classic">
-                {user.name}
-              </span>
+            <div className="flex items-center gap-2.5 pl-2 border-l border-neutral-800">
+              <button
+                onClick={() => setAccountModalOpen(true)}
+                title={isHi ? "खाता एवं दार्शनिक डायरी देखें" : "View Scholar Account & Codex"}
+                className="flex items-center gap-2 px-3 py-1.5 border border-neutral-800 hover:border-neutral-500 bg-neutral-950/70 hover:bg-neutral-900 transition-all font-serif-classic cursor-pointer group"
+              >
+                <div className="w-5 h-5 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[10px] text-white font-bold group-hover:border-white transition-colors">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-xs tracking-wider text-neutral-300 group-hover:text-white transition-colors">
+                  {user.name}
+                </span>
+              </button>
               <button
                 onClick={logout}
-                title="Sign out of Academy"
+                title={t.nav.signOut}
                 className="p-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-red-400 hover:border-red-900 transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -156,13 +168,25 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           <NavbarLanguageTranslator />
 
           {user ? (
-            <button
-              onClick={logout}
-              className="text-xs text-neutral-400 p-1"
-              title={t.nav.signOut}
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setAccountModalOpen(true)}
+                title={isHi ? "मेरा खाता" : "My Account"}
+                className="flex items-center gap-1 text-xs text-neutral-300 py-1 px-2 border border-neutral-800 bg-neutral-950/80 rounded"
+              >
+                <UserIcon className="w-3.5 h-3.5 text-white" />
+                <span className="text-[11px] font-serif-classic tracking-wider">
+                  {user.name.split(" ")[0]}
+                </span>
+              </button>
+              <button
+                onClick={logout}
+                className="text-xs text-neutral-400 p-1"
+                title={t.nav.signOut}
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <button
               onClick={() => openAuthModal()}
@@ -214,13 +238,27 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           >
             {t.nav.contact}
           </Link>
+
+          {user && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setAccountModalOpen(true);
+              }}
+              className="w-full py-2.5 bg-neutral-900 border border-neutral-700 text-center text-xs uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-colors font-serif-classic flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <UserIcon className="w-3.5 h-3.5" />
+              <span>{isHi ? "मेरा खाता एवं डायरी" : "My Account & Codex"}</span>
+            </button>
+          )}
+
           {!user ? (
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 openAuthModal();
               }}
-              className="w-full py-2.5 border border-white text-center text-xs uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-colors font-serif-classic"
+              className="w-full py-2.5 border border-white text-center text-xs uppercase tracking-[0.25em] text-white hover:bg-white hover:text-black transition-colors font-serif-classic cursor-pointer"
             >
               {t.nav.signIn}
             </button>
@@ -230,13 +268,19 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
                 setMobileMenuOpen(false);
                 logout();
               }}
-              className="text-left text-xs tracking-[0.2em] uppercase text-red-400"
+              className="text-left text-xs tracking-[0.2em] uppercase text-red-400 cursor-pointer"
             >
               {t.nav.signOut} ({user.name})
             </button>
           )}
         </div>
       )}
+
+      {/* Account Modal accessible from everywhere */}
+      <AccountModal
+        isOpen={accountModalOpen}
+        onClose={() => setAccountModalOpen(false)}
+      />
     </header>
   );
 }
