@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import { X, ThumbsUp, Sparkles, BookOpen } from "lucide-react";
+import React from "react";
+import Link from "next/link";
+import { X, Compass, ArrowRight, BookOpen, Layers } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface AboutModalProps {
   isOpen: boolean;
@@ -10,109 +11,92 @@ interface AboutModalProps {
 }
 
 export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
-  const [likes, setLikes] = useState(33);
-  const [hasLiked, setHasLiked] = useState(false);
+  const { language } = useLanguage();
+  const isHi = language === "hi";
 
   if (!isOpen) return null;
-
-  const handleLike = () => {
-    if (!hasLiked) {
-      setLikes((prev) => prev + 1);
-      setHasLiked(true);
-    } else {
-      setLikes((prev) => prev - 1);
-      setHasLiked(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
       <div
-        className="relative w-full max-w-2xl bg-neutral-950 border border-neutral-800 text-white shadow-[0_30px_80px_rgba(0,0,0,0.95)] overflow-hidden"
+        className="relative w-full max-w-2xl bg-neutral-950 border border-neutral-800 text-white shadow-[0_30px_90px_rgba(0,0,0,0.98)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 text-white bg-black/60 backdrop-blur-md border border-white/20 hover:border-white transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Fallen Angel Banner matching screenshot 2 */}
-        <div className="relative w-full h-52 sm:h-64 overflow-hidden border-b border-neutral-800">
-          <Image
-            src="/images/fallen_angel.jpg"
-            alt="Alexandre Cabanel - Fallen Angel (1847)"
-            fill
-            className="object-cover object-top contrast-115"
-          />
-          {/* Subtle dark gradient overlay */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex flex-col items-center justify-center text-center p-4">
-            <h2 className="font-serif-classic text-2xl sm:text-4xl font-bold tracking-[0.2em] text-white uppercase drop-shadow-[0_2px_15px_rgba(0,0,0,0.9)]">
-              THANKS FOR WATCHING!
-            </h2>
-            <p className="text-xs uppercase tracking-[0.3em] text-neutral-200 mt-2">
-              PHILOSOPHY (UI WebDesign)
-            </p>
+        {/* Header Bar */}
+        <div className="px-6 py-4 border-b border-neutral-900 bg-black flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-neutral-400">
+            <Compass className="w-3.5 h-3.5 text-neutral-400" />
+            <span>{isHi ? "पाश्चात्य दर्शन परिचय" : "About Western Philosophy"}</span>
           </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-600 transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 sm:p-10 space-y-6">
-          {/* Interactive Behance / Design Showcase Like Button from Screenshot 2 */}
-          <div className="flex flex-col items-center justify-center space-y-2 -mt-12 sm:-mt-14 relative z-10">
-            <button
-              onClick={handleLike}
-              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl cursor-pointer ${
-                hasLiked
-                  ? "bg-blue-500 text-white scale-105 shadow-blue-500/50"
-                  : "bg-blue-600 hover:bg-blue-500 text-white hover:scale-105"
-              }`}
+        {/* Content Body (Clean & Minimalist, No Ultra-Realistic Clutter) */}
+        <div className="p-6 sm:p-8 space-y-6">
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-500">
+              EST. 600 BCE • ATHENS TO MODERNITY
+            </span>
+            <h2 className="font-serif-classic text-2xl sm:text-3xl font-bold tracking-[0.14em] text-white uppercase leading-snug">
+              {isHi ? "सत्य, विवेक एवं स्वतंत्र चिंतन की परंपरा" : "The Quest for Unexamined Truth"}
+            </h2>
+          </div>
+
+          <p className="font-garamond text-base sm:text-lg text-neutral-300 leading-relaxed font-light">
+            {isHi
+              ? "पाश्चात्य दर्शन की शुरुआत 2,500 वर्ष पूर्व प्राचीन यूनान में अंधविश्वासों (Mythos) से विवेक (Logos) की ओर संक्रमण के साथ हुई। यह केवल सैद्धांतिक अध्ययन नहीं, बल्कि जीवन, वास्तविकता, ज्ञान और नैतिकता की निरंतर तार्किक परीक्षा है।"
+              : "Western philosophy originated twenty-five centuries ago as humanity’s daring departure from supernatural myth into rational critique (Logos). It is the systematic interrogation of existence, consciousness, morality, and justice through unyielding logic and radical skepticism."}
+          </p>
+
+          {/* Minimal 3-Point Pillar Overview */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
+              <span className="font-mono text-neutral-500 text-[10px] block">01. EPOCHS</span>
+              <h4 className="font-serif-classic font-semibold text-white uppercase">4 Great Eras</h4>
+              <p className="text-neutral-400 font-garamond">
+                {isHi ? "प्राचीन काल से आधुनिक युग तक।" : "From Classical Antiquity to Modernity."}
+              </p>
+            </div>
+
+            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
+              <span className="font-mono text-neutral-500 text-[10px] block">02. DISCIPLINES</span>
+              <h4 className="font-serif-classic font-semibold text-white uppercase">5 Core Pillars</h4>
+              <p className="text-neutral-400 font-garamond">
+                {isHi ? "तत्व, ज्ञान, नीति, तर्क और राजनीति।" : "Metaphysics, Epistemology, Ethics & Logic."}
+              </p>
+            </div>
+
+            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
+              <span className="font-mono text-neutral-500 text-[10px] block">03. CANON</span>
+              <h4 className="font-serif-classic font-semibold text-white uppercase">14 Thinkers</h4>
+              <p className="text-neutral-400 font-garamond">
+                {isHi ? "सुकरात से कामू तक का संग्रह।" : "From Socrates to Albert Camus."}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Links */}
+          <div className="pt-4 border-t border-neutral-900 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <Link
+              href="/about"
+              onClick={onClose}
+              className="w-full sm:w-auto px-6 py-3 bg-white text-black font-serif-classic text-xs uppercase tracking-[0.25em] font-bold hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
-              <ThumbsUp className="w-6 h-6 sm:w-7 sm:h-7" />
-            </button>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-neutral-400">
-              PHILOSOPHY (UI WebDesign) • {likes} Applauds
-            </div>
-          </div>
+              <span>{isHi ? "सम्पूर्ण परिचय पृष्ठ खोलें" : "Open Full Editorial Page"}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
 
-          <div className="space-y-3 text-center sm:text-left">
-            <h3 className="font-serif-classic text-xl font-bold tracking-[0.15em] text-white uppercase">
-              The Philosophy Manifesto
-            </h3>
-            <p className="font-garamond text-neutral-300 text-base sm:text-lg leading-relaxed">
-              Western philosophy began not as an academic credential, but as a burning inquiry into being, virtue, and existence. From Socratic cross-examination on the streets of Athens to Descartes&apos; solitary fire in Holland, to Nietzsche&apos;s mountain solitude in Sils Maria, our project revives these monumental dialogues through classical aesthetics and modern digital craft.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 pt-2 text-xs">
-            <div className="p-3 bg-neutral-900/60 border border-neutral-800 space-y-1">
-              <div className="flex items-center gap-2 font-serif-classic text-white">
-                <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-                <span>Renaissance Aesthetics</span>
-              </div>
-              <p className="text-neutral-400">
-                Crafted with museum-grade public domain masterpieces.
-              </p>
-            </div>
-            <div className="p-3 bg-neutral-900/60 border border-neutral-800 space-y-1">
-              <div className="flex items-center gap-2 font-serif-classic text-white">
-                <BookOpen className="w-3.5 h-3.5 text-neutral-400" />
-                <span>Primary Sources</span>
-              </div>
-              <p className="text-neutral-400">
-                Direct quotes from the seminal treatises of history.
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-4 flex justify-end">
             <button
               onClick={onClose}
-              className="px-6 py-2 border border-neutral-700 hover:border-white text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors"
+              className="text-xs uppercase font-mono tracking-wider text-neutral-400 hover:text-white transition-colors cursor-pointer"
             >
-              Close
+              {isHi ? "बंद करें" : "Dismiss"}
             </button>
           </div>
         </div>
@@ -120,4 +104,3 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
     </div>
   );
 }
-

@@ -102,6 +102,7 @@ drop policy if exists "Users can update own course progress" on public.user_cour
 create policy "Users can update own course progress"
   on public.user_course_progress for update
   using ( auth.uid() = user_id )
+  
   with check ( auth.uid() = user_id );
 
 drop policy if exists "Users can delete own course progress" on public.user_course_progress;

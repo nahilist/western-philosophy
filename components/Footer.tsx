@@ -46,16 +46,18 @@ export default function Footer({ onOpenAbout }: FooterProps) {
               </Link>
             </li>
             <li>
-              <button
-                onClick={onOpenAbout}
-                className="hover:text-white transition-colors cursor-pointer text-left"
-              >
+              <Link href="/about" className="hover:text-white transition-colors">
                 About
-              </button>
+              </Link>
             </li>
             <li>
               <Link href="/#courses" className="hover:text-white transition-colors">
                 Courses
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-white transition-colors">
+                Contact &amp; Inquiries
               </Link>
             </li>
           </ul>

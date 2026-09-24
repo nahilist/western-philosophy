@@ -81,12 +81,12 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           >
             {t.nav.home}
           </Link>
-          <button
-            onClick={onOpenAbout}
-            className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase cursor-pointer"
+          <Link
+            href="/about"
+            className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
             {t.nav.about}
-          </button>
+          </Link>
           <Link
             href="/#courses"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
@@ -94,7 +94,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             {t.nav.courses}
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
             {t.nav.contact}
@@ -215,15 +215,13 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           >
             {t.nav.home}
           </Link>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenAbout?.();
-            }}
+          <Link
+            href="/about"
+            onClick={() => setMobileMenuOpen(false)}
             className="text-left text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
             {t.nav.about}
-          </button>
+          </Link>
           <Link
             href="/#courses"
             onClick={() => setMobileMenuOpen(false)}
@@ -232,7 +230,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             {t.nav.courses}
           </Link>
           <Link
-            href="#contact"
+            href="/contact"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
