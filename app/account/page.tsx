@@ -378,7 +378,7 @@ function AccountContent() {
                                 <h4 className="font-serif-classic text-base font-bold text-white uppercase">
                                   {course.name}
                                 </h4>
-                                <p className="text-xs text-neutral-500 font-mono">
+                                <p className="text-xs text-neutral-400 font-medium font-mono">
                                   {item.progress_percent || 0}% Contemplated
                                 </p>
                               </div>

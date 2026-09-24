@@ -327,7 +327,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
                   <div>
-                    <span className="text-neutral-500 block uppercase font-mono tracking-wider mb-1">
+                    <span className="text-neutral-400 font-medium block uppercase font-mono tracking-wider mb-1">
                       {isHi ? "प्राथमिक विचारधारा" : "Favored Tradition"}
                     </span>
                     <span className="font-serif-classic text-sm text-neutral-200">
@@ -336,17 +336,17 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   </div>
 
                   <div>
-                    <span className="text-neutral-500 block uppercase font-mono tracking-wider mb-1">
+                    <span className="text-neutral-400 font-medium block uppercase font-mono tracking-wider mb-1">
                       {isHi ? "सुरक्षा स्तर" : "Security Architecture"}
                     </span>
-                    <span className="font-mono text-emerald-400 flex items-center gap-1.5">
+                    <span className="font-mono text-emerald-400 flex items-center gap-1.5 font-medium">
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Row-Level Security Active
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-neutral-500 block uppercase font-mono tracking-wider mb-1">
+                    <span className="text-neutral-400 font-medium block uppercase font-mono tracking-wider mb-1">
                       {isHi ? "पंजीकरण तिथि" : "Academy Member Since"}
                     </span>
                     <span className="font-mono text-neutral-300">
@@ -462,7 +462,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   <p className="font-garamond text-base text-neutral-400 italic">
                     {isHi ? "कोई सक्रिय अध्ययन नहीं मिला।" : "No active courses commenced."}
                   </p>
-                  <p className="text-xs text-neutral-500 font-mono">
+                  <p className="text-xs text-neutral-400 font-medium font-mono">
                     {isHi
                       ? "किसी भी दार्शनिक के पाठ्यक्रम में जाकर लेक्चर्स पर टिक करें।"
                       : "Open any philosopher's treatise and check off lectures to begin tracking."}
@@ -567,7 +567,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   <p className="font-garamond text-base text-neutral-400 italic">
                     {isHi ? "कोई बुकमार्क नहीं मिला।" : "No treatises currently bookmarked."}
                   </p>
-                  <p className="text-xs text-neutral-500 font-mono">
+                  <p className="text-xs text-neutral-400 font-medium font-mono">
                     {isHi
                       ? "किसी भी दार्शनिक के पेज पर 'Bookmark Thinker' बटन दबाएं।"
                       : "Click 'Bookmark Thinker' on any philosopher's page to save here."}
@@ -583,8 +583,8 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                         className="p-5 border border-neutral-900 bg-black/60 space-y-4 flex flex-col justify-between"
                       >
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
-                            <span className="uppercase tracking-widest text-neutral-400">
+                          <div className="flex items-center justify-between text-xs font-mono text-neutral-400 font-medium">
+                            <span className="uppercase tracking-widest text-neutral-300">
                               {course?.name || bkmk.course_id}
                             </span>
                             <Bookmark className="w-3.5 h-3.5 text-neutral-400 fill-neutral-400/20" />
@@ -595,7 +595,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                           </blockquote>
 
                           {bkmk.work_title && (
-                            <p className="text-xs text-neutral-500 font-mono">
+                            <p className="text-xs text-neutral-400 font-medium font-mono">
                               Source: {bkmk.work_title}
                             </p>
                           )}
@@ -641,7 +641,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   <p className="font-garamond text-base text-neutral-400 italic">
                     {isHi ? "अभी तक कोई विचार दर्ज नहीं किया गया है।" : "No reflections recorded yet."}
                   </p>
-                  <p className="text-xs text-neutral-500 font-mono">
+                  <p className="text-xs text-neutral-400 font-medium font-mono">
                     {isHi
                       ? "किसी भी दार्शनिक के पेज पर Section 06 में जाकर विचार लिखें।"
                       : "Visit any course page and use Section 06 to inscribe your contemplation."}
@@ -656,13 +656,13 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                         key={refl.id}
                         className="p-5 border border-neutral-900 bg-black/60 space-y-3 hover:border-neutral-800 transition-colors"
                       >
-                        <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
+                        <div className="flex items-center justify-between text-xs font-mono text-neutral-400 font-medium">
                           <div className="flex items-center gap-2">
                             <span className="text-neutral-300 uppercase tracking-widest font-semibold">
                               {course?.name || refl.course_id}
                             </span>
                             <span>•</span>
-                            <span>{new Date(refl.created_at).toLocaleDateString()}</span>
+                            <span className="text-neutral-400 font-mono">{new Date(refl.created_at).toLocaleDateString()}</span>
                           </div>
 
                           <div className="flex items-center gap-3">
