@@ -10,15 +10,21 @@
     scroll-behavior: smooth;
     color-scheme: dark;
     background-color: #000000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: #000000;
     color: #ffffff;
-    font-family: var(--font-inter), sans-serif;
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", "Nirmala UI", sans-serif;
     overflow-x: hidden;
     selection-background-color: #ffffff;
     selection-color: #000000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
@@ -27,13 +33,30 @@
   }
 }
 
-/* Custom Serif Typography */
+/* Custom Serif Typography with Devanagari & high-legibility fallbacks */
 .font-serif-classic {
-  font-family: var(--font-cinzel), "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-cinzel), "Cormorant Garamond", "Nirmala UI", Georgia, serif;
 }
 
 .font-garamond {
-  font-family: var(--font-cormorant), "Times New Roman", serif;
+  font-family: var(--font-cormorant), "Nirmala UI", "Times New Roman", serif;
+}
+
+/* Ensure Devanagari / Hindi script preserves unbroken shirorekha (top headline) */
+:lang(hi),
+[lang="hi"],
+.translated-ltr,
+.translated-rtl {
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+}
+
+/* Premium readability for micro text and badges across platforms */
+.caption-crisp {
+  font-size: 0.75rem; /* 12px minimum */
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  font-weight: 500;
 }
 
 /* Atmospheric Glows & Animations */

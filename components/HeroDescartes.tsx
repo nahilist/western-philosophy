@@ -45,7 +45,7 @@ export default function HeroDescartes() {
             </div>
 
             {/* Tooltip on hover */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px] tracking-[0.25em] text-neutral-400 uppercase whitespace-nowrap flex items-center gap-1.5">
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-xs tracking-wider text-neutral-300 font-medium uppercase whitespace-nowrap flex items-center gap-1.5">
               <span>{t.heroDescartes.hoverTooltip}</span>
             </div>
           </Link>
@@ -54,33 +54,33 @@ export default function HeroDescartes() {
         {/* Right Side: Iconic Quote & Typography */}
         <div className="lg:col-span-6 flex flex-col justify-center text-center lg:text-left space-y-6">
           <div className="space-y-3">
-            <span className="text-[11px] sm:text-xs uppercase tracking-[0.35em] text-neutral-400 font-medium">
+            <span className="text-xs sm:text-sm uppercase tracking-[0.2em] text-neutral-300 font-medium">
               {t.heroDescartes.tag}
             </span>
-            <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[0.15em] text-white leading-tight uppercase">
+            <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[0.14em] text-white leading-tight uppercase">
               {t.heroDescartes.quote}
             </h1>
-            <p className="font-serif-classic text-sm sm:text-base tracking-[0.3em] text-neutral-300 uppercase font-semibold">
+            <p className="font-serif-classic text-base sm:text-lg tracking-[0.25em] text-neutral-200 uppercase font-semibold">
               {t.heroDescartes.author}
             </p>
           </div>
 
           <div className="w-16 h-px bg-neutral-800 mx-auto lg:mx-0 my-2" />
 
-          <p className="font-garamond text-neutral-400 text-base sm:text-lg italic max-w-lg leading-relaxed mx-auto lg:mx-0">
+          <p className="font-garamond text-neutral-200 text-base sm:text-xl italic max-w-lg leading-relaxed mx-auto lg:mx-0">
             &ldquo;{t.heroDescartes.body}&rdquo;
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
             <a
               href="#courses"
-              className="px-6 py-3 border border-white/80 text-white text-xs uppercase tracking-[0.25em] hover:bg-white hover:text-black transition-all duration-300 shadow-md"
+              className="px-6 py-3 border border-white/80 text-white text-xs uppercase tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300 shadow-md"
             >
               {t.heroDescartes.btnBrowse}
             </a>
             <Link
               href="/course/descartes"
-              className="px-6 py-3 text-neutral-300 hover:text-white text-xs uppercase tracking-[0.25em] transition-colors cursor-pointer flex items-center gap-2 group"
+              className="px-6 py-3 text-neutral-200 hover:text-white text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer flex items-center gap-2 group"
             >
               <span>{t.heroDescartes.btnTreatise}</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -94,10 +94,10 @@ export default function HeroDescartes() {
         href="#socrates"
         className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-400 hover:text-white transition-colors duration-300 group"
       >
-        <span className="text-[9px] uppercase tracking-[0.3em] text-neutral-400 group-hover:text-neutral-300">
+        <span className="text-xs uppercase tracking-[0.2em] text-neutral-300 font-medium group-hover:text-white">
           Scroll
         </span>
-        <ArrowDown className="w-3.5 h-3.5 text-neutral-400 group-hover:text-white animate-bounce" />
+        <ArrowDown className="w-3.5 h-3.5 text-neutral-300 group-hover:text-white animate-bounce" />
       </a>
     </section>
   );

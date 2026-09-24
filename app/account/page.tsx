@@ -193,11 +193,11 @@ function AccountContent() {
                 <h1 className="font-serif-classic text-2xl sm:text-3xl font-bold tracking-[0.15em] text-white uppercase">
                   {profile?.full_name || user?.name}
                 </h1>
-                <span className="text-[10px] uppercase tracking-widest px-2.5 py-0.5 border border-neutral-800 bg-black text-neutral-400 font-mono">
+                <span className="text-xs uppercase tracking-wider px-2.5 py-0.5 border border-neutral-800 bg-black text-neutral-300 font-mono font-medium">
                   {profile?.favorite_tradition || "Rationalist"}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 font-mono tracking-wider">
+              <p className="text-xs text-neutral-300 font-mono tracking-wider">
                 {profile?.email || user?.email}
               </p>
             </div>
@@ -298,39 +298,39 @@ function AccountContent() {
           {activeTab === "overview" && (
             <div className="space-y-8 animate-in fade-in duration-300">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div className="p-6 border border-neutral-900 bg-neutral-950 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "अध्ययन पाठ्यक्रम" : "Courses Commenced"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-4xl font-bold text-white">
                       {progressList.length}
                     </span>
-                    <span className="text-xs text-neutral-500 font-mono">/ 14 Thinkers</span>
+                    <span className="text-xs text-neutral-400 font-mono">/ 14 Thinkers</span>
                   </div>
                 </div>
 
-                <div className="p-6 border border-neutral-900 bg-neutral-950 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "सहेजे गए सूत्र" : "Preserved Bookmarks"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-4xl font-bold text-white">
                       {bookmarksList.length}
                     </span>
-                    <Bookmark className="w-4 h-4 text-neutral-600" />
+                    <Bookmark className="w-4 h-4 text-neutral-400" />
                   </div>
                 </div>
 
-                <div className="p-6 border border-neutral-900 bg-neutral-950 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "लिखित दार्शनिक चिंतन" : "Reflections Recorded"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-4xl font-bold text-white">
                       {reflectionsList.length}
                     </span>
-                    <PenLine className="w-4 h-4 text-neutral-600" />
+                    <PenLine className="w-4 h-4 text-neutral-400" />
                   </div>
                 </div>
               </div>
@@ -435,13 +435,13 @@ function AccountContent() {
                             />
                           </div>
                           <div>
-                            <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                            <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                               {course.school}
                             </span>
                             <h4 className="font-serif-classic text-lg font-bold text-white uppercase">
                               {course.name}
                             </h4>
-                            <p className="text-xs text-neutral-400 font-garamond">{course.title}</p>
+                            <p className="text-xs text-neutral-300 font-garamond">{course.title}</p>
                           </div>
                         </div>
 
@@ -450,7 +450,7 @@ function AccountContent() {
                             <span className="font-mono text-lg font-bold text-white">
                               {item.progress_percent || 0}%
                             </span>
-                            <span className="text-[10px] text-neutral-500 block uppercase font-mono">
+                            <span className="text-xs text-neutral-400 block uppercase font-mono">
                               Mastery
                             </span>
                           </div>
@@ -486,7 +486,7 @@ function AccountContent() {
                       className="p-6 border border-neutral-900 bg-neutral-950 space-y-4 flex flex-col justify-between"
                     >
                       <div className="space-y-3">
-                        <span className="text-[11px] font-mono uppercase tracking-widest text-neutral-400 block">
+                        <span className="text-xs font-mono uppercase tracking-wider text-neutral-300 font-medium block">
                           {course?.name || bkmk.course_id}
                         </span>
                         <blockquote className="font-garamond text-lg text-neutral-200 italic leading-relaxed border-l-2 border-neutral-700 pl-4">
@@ -496,10 +496,10 @@ function AccountContent() {
                       <div className="pt-3 border-t border-neutral-900 flex justify-between items-center">
                         <Link
                           href={`/course/${bkmk.course_id}`}
-                          className="text-xs uppercase font-mono tracking-wider text-neutral-400 hover:text-white flex items-center gap-1.5"
+                          className="text-xs uppercase font-mono tracking-wider text-neutral-300 hover:text-white flex items-center gap-1.5"
                         >
                           <span>Go to Treatise</span>
-                          <ExternalLink className="w-3 h-3" />
+                          <ExternalLink className="w-3.5 h-3.5" />
                         </Link>
                       </div>
                     </div>
@@ -522,9 +522,9 @@ function AccountContent() {
                   return (
                     <div
                       key={refl.id}
-                      className="p-6 border border-neutral-900 bg-neutral-950 space-y-3"
+                      className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-3"
                     >
-                      <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
+                      <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
                         <div className="flex items-center gap-2">
                           <span className="text-white uppercase font-bold">
                             {course?.name || refl.course_id}
@@ -533,10 +533,10 @@ function AccountContent() {
                           <span>{new Date(refl.created_at).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-[11px]">
+                          <span className="flex items-center gap-1.5 text-xs text-neutral-300">
                             {refl.is_private ? (
                               <>
-                                <Lock className="w-3 h-3 text-neutral-500" />
+                                <Lock className="w-3.5 h-3.5 text-neutral-400" />
                                 <span>Private</span>
                               </>
                             ) : (

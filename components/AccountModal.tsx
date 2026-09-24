@@ -150,11 +150,11 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                 <h2 className="font-serif-classic text-lg sm:text-xl font-bold tracking-[0.15em] text-white uppercase">
                   {profile?.full_name || user.name}
                 </h2>
-                <span className="hidden sm:inline-block text-[10px] tracking-widest uppercase px-2 py-0.5 border border-neutral-800 text-neutral-400 font-mono">
+                <span className="hidden sm:inline-block text-xs tracking-wider uppercase px-2 py-0.5 border border-neutral-800 text-neutral-300 font-mono font-medium">
                   {isSupabaseConnected ? "PostgreSQL Active" : "Local Codex"}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 font-mono tracking-wider">
+              <p className="text-xs text-neutral-300 font-mono tracking-wider">
                 {profile?.email || user.email}
               </p>
             </div>
@@ -267,39 +267,39 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Quick Stat Metric Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-5 border border-neutral-900 bg-black/60 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "शुरू किए गए पाठ्यक्रम" : "Courses In Progress"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-3xl font-bold text-white">
                       {progressList.length}
                     </span>
-                    <span className="text-xs text-neutral-500">/ 14 Thinkers</span>
+                    <span className="text-xs text-neutral-400 font-mono">/ 14 Thinkers</span>
                   </div>
                 </div>
 
-                <div className="p-5 border border-neutral-900 bg-black/60 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "सहेजे गए सूत्र व उद्धरण" : "Bookmarks Preserved"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-3xl font-bold text-white">
                       {bookmarksList.length}
                     </span>
-                    <Bookmark className="w-4 h-4 text-neutral-600" />
+                    <Bookmark className="w-4 h-4 text-neutral-400" />
                   </div>
                 </div>
 
-                <div className="p-5 border border-neutral-900 bg-black/60 space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500">
+                <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {isHi ? "लिखित दार्शनिक विचार" : "Reflections Inscribed"}
                   </span>
                   <div className="flex items-baseline justify-between">
                     <span className="font-serif-classic text-3xl font-bold text-white">
                       {reflectionsList.length}
                     </span>
-                    <PenLine className="w-4 h-4 text-neutral-600" />
+                    <PenLine className="w-4 h-4 text-neutral-400" />
                   </div>
                 </div>
               </div>
@@ -308,7 +308,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
               <div className="p-6 sm:p-8 border border-neutral-800 bg-neutral-950 space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-900">
                   <div className="space-y-1">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-mono">
+                    <span className="text-xs uppercase tracking-wider text-neutral-300 font-mono font-medium">
                       {isHi ? "दार्शनिक पहचान" : "Scholar Dossier"}
                     </span>
                     <h3 className="font-serif-classic text-2xl font-bold text-white uppercase tracking-wider">
@@ -415,7 +415,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                               <h5 className="font-serif-classic text-sm font-semibold text-white uppercase">
                                 {course.name}
                               </h5>
-                              <p className="text-[11px] text-neutral-500 font-mono">
+                              <p className="text-xs text-neutral-300 font-mono">
                                 {item.progress_percent || 0}% Contemplated
                               </p>
                             </div>
@@ -498,13 +498,13 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                               />
                             </div>
                             <div className="space-y-1">
-                              <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                              <span className="text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                                 {course.school.split(",")[0]}
                               </span>
                               <h4 className="font-serif-classic text-base sm:text-lg font-bold text-white uppercase">
                                 {course.name}
                               </h4>
-                              <p className="text-xs text-neutral-400 font-garamond line-clamp-1">
+                              <p className="text-xs text-neutral-300 font-garamond line-clamp-1">
                                 {course.title}
                               </p>
                             </div>
@@ -515,7 +515,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                               <span className="font-mono text-sm font-bold text-white">
                                 {percent}%
                               </span>
-                              <span className="text-[10px] text-neutral-500 block uppercase font-mono">
+                              <span className="text-xs text-neutral-400 block uppercase font-mono">
                                 Mastered
                               </span>
                             </div>
@@ -666,10 +666,10 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1 text-[11px] text-neutral-400">
+                            <span className="flex items-center gap-1.5 text-xs text-neutral-300 font-mono">
                               {refl.is_private ? (
                                 <>
-                                  <Lock className="w-3 h-3 text-neutral-500" />
+                                  <Lock className="w-3.5 h-3.5 text-neutral-400" />
                                   <span>Private</span>
                                 </>
                               ) : (
@@ -716,7 +716,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
               {/* Profile Edit Form */}
               <form onSubmit={handleSaveProfile} className="space-y-5">
                 <div>
-                  <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400 mb-2">
+                  <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium mb-2">
                     {isHi ? "पूरा नाम" : "Full Name"}
                   </label>
                   <input
@@ -725,24 +725,24 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     required
-                    className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400 mb-2">
+                  <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium mb-2">
                     {isHi ? "ईमेल पता (संरक्षित)" : "Email Address (Locked)"}
                   </label>
                   <input
                     type="email"
                     value={profile?.email || user.email}
                     disabled
-                    className="w-full bg-neutral-900/60 border border-neutral-800 px-4 py-3 text-sm text-neutral-400 cursor-not-allowed font-mono"
+                    className="w-full bg-neutral-900/60 border border-neutral-800 px-4 py-3 text-sm text-neutral-300 cursor-not-allowed font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400 mb-2">
+                  <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium mb-2">
                     {isHi ? "प्राथमिक दार्शनिक परंपरा" : "Primary Philosophical Tradition"}
                   </label>
                   <select
@@ -795,7 +795,7 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                   <span className="text-xs font-serif-classic text-neutral-300 block">
                     {isHi ? "अकादमी से प्रस्थान" : "Terminate Active Session"}
                   </span>
-                  <span className="text-[11px] text-neutral-500 font-mono">
+                  <span className="text-xs text-neutral-400 font-mono">
                     {isHi ? "अपने खाते से सुरक्षित लॉग आउट करें" : "Sign out safely from all devices"}
                   </span>
                 </div>

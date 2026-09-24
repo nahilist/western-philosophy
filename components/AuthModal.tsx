@@ -112,14 +112,14 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
             <Lock className="w-5 h-5 text-neutral-300" />
           </div>
           <div className="flex items-center justify-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-medium">
+            <span className="text-xs uppercase tracking-[0.2em] text-neutral-300 font-medium">
               Philosophy Φ Academy
             </span>
             <span
-              className={`text-[9px] px-2 py-0.5 rounded-full border ${
+              className={`text-xs px-2.5 py-0.5 rounded-full border font-mono font-medium ${
                 isSupabaseConnected
                   ? "bg-emerald-950/80 border-emerald-800 text-emerald-300"
-                  : "bg-neutral-900 border-neutral-800 text-neutral-400"
+                  : "bg-neutral-900 border-neutral-800 text-neutral-300"
               }`}
             >
               {isSupabaseConnected ? "● Supabase Live" : "○ Demo Mode"}
@@ -128,7 +128,7 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
           <h3 className="font-serif-classic text-2xl font-bold tracking-[0.15em] text-white uppercase">
             {tab === "login" ? "ACADEMY SIGN IN" : "JOIN THE DIALECTIC"}
           </h3>
-          <p className="font-garamond text-neutral-400 text-sm">
+          <p className="font-garamond text-neutral-300 text-sm">
             {pendingCourseId
               ? "Sign in to open the complete full-page philosophical dossier."
               : "Access the complete library of classical inquiries and seminars."}
@@ -151,10 +151,10 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
               setTab("login");
               setErrorMsg(null);
             }}
-            className={`flex-1 pb-3 text-xs uppercase tracking-[0.25em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
+            className={`flex-1 pb-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
               tab === "login"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Sign In
@@ -165,10 +165,10 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
               setTab("signup");
               setErrorMsg(null);
             }}
-            className={`flex-1 pb-3 text-xs uppercase tracking-[0.25em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
+            className={`flex-1 pb-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-semibold transition-colors cursor-pointer text-center ${
               tab === "signup"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Create Account
@@ -179,46 +179,46 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {tab === "signup" && (
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
+              <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5 font-mono">
                 Full Name / Scholar Alias
               </label>
               <div className="relative flex items-center">
-                <UserIcon className="w-4 h-4 text-neutral-500 absolute left-3.5" />
+                <UserIcon className="w-4 h-4 text-neutral-400 absolute left-3.5" />
                 <input
                   type="text"
                   required
                   placeholder="e.g. Marcus Aurelius"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 tracking-wide"
+                  className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-400 tracking-wide"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
+            <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5 font-mono">
               Email Address
             </label>
             <div className="relative flex items-center">
-              <Mail className="w-4 h-4 text-neutral-500 absolute left-3.5" />
+              <Mail className="w-4 h-4 text-neutral-400 absolute left-3.5" />
               <input
                 type="email"
                 required
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 tracking-wide"
+                className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-400 tracking-wide font-mono"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.2em] text-neutral-400 mb-1.5">
+            <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-1.5 font-mono">
               Password
             </label>
             <div className="relative flex items-center">
-              <Lock className="w-4 h-4 text-neutral-500 absolute left-3.5" />
+              <Lock className="w-4 h-4 text-neutral-400 absolute left-3.5" />
               <input
                 type="password"
                 required
@@ -226,7 +226,7 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 tracking-wide"
+                className="w-full bg-neutral-900/90 border border-neutral-800 pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-400 tracking-wide"
               />
             </div>
           </div>
@@ -256,7 +256,7 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
               type="button"
               onClick={() => handleOAuth("google")}
               disabled={loading}
-              className="py-2 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-300 hover:text-white text-[11px] tracking-wider uppercase font-serif-classic flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/40"
+              className="py-2.5 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-200 hover:text-white text-xs tracking-wider uppercase font-serif-classic font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/60"
             >
               <span>Google</span>
             </button>
@@ -264,7 +264,7 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
               type="button"
               onClick={() => handleOAuth("github")}
               disabled={loading}
-              className="py-2 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-300 hover:text-white text-[11px] tracking-wider uppercase font-serif-classic flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/40"
+              className="py-2.5 px-3 border border-neutral-800 hover:border-neutral-600 text-neutral-200 hover:text-white text-xs tracking-wider uppercase font-serif-classic font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer bg-neutral-900/60"
             >
               <span>GitHub</span>
             </button>
@@ -275,9 +275,9 @@ export default function AuthModal({ onSuccess }: AuthModalProps) {
             <button
               type="button"
               onClick={handleDemoLogin}
-              className="flex items-center justify-center gap-2 mx-auto text-[11px] uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors cursor-pointer py-1"
+              className="flex items-center justify-center gap-2 mx-auto text-xs uppercase tracking-[0.15em] text-neutral-300 hover:text-white font-medium transition-colors cursor-pointer py-1"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>Instant Demo Access (One Click)</span>
             </button>
           </div>

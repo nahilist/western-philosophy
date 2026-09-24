@@ -235,10 +235,10 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
           <div className="lg:col-span-7 flex flex-col justify-center text-center lg:text-left space-y-6">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
-                <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-300 font-medium px-3 py-1 border border-neutral-800 bg-neutral-950">
+                <span className="text-xs sm:text-sm uppercase tracking-[0.18em] text-neutral-200 font-medium px-3.5 py-1.5 border border-neutral-800 bg-neutral-950">
                   {pData.school}
                 </span>
-                <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-400 font-light">
+                <span className="text-xs sm:text-sm uppercase tracking-[0.18em] text-neutral-300 font-mono font-medium">
                   {pData.era}
                 </span>
               </div>
@@ -475,7 +475,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <p className="text-[11px] text-neutral-400 font-garamond">
+              <p className="text-xs sm:text-sm text-neutral-300 font-garamond">
                 {completedLessons.length} of {totalLessonsCount} lectures contemplated.
               </p>
             </div>
@@ -684,23 +684,23 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                     value={reflectionInput}
                     onChange={(e) => setReflectionInput(e.target.value)}
                     placeholder={`What is your philosophical judgment on ${pData.name}'s ideas?`}
-                    className="w-full bg-black border border-neutral-800 p-4 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors resize-none font-garamond text-base sm:text-lg leading-relaxed"
+                    className="w-full bg-black border border-neutral-800 p-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors resize-none font-garamond text-base sm:text-lg leading-relaxed"
                   />
                   {/* Anti-DDoS safety limit counter */}
-                  <div className="absolute bottom-3 right-3 text-[11px] font-mono text-neutral-500">
+                  <div className="absolute bottom-3 right-3 text-xs font-mono text-neutral-400">
                     {reflectionInput.length} / 5000 chars
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                  <label className="flex items-center gap-2 text-xs text-neutral-400 cursor-pointer select-none">
+                  <label className="flex items-center gap-2 text-xs sm:text-sm text-neutral-300 cursor-pointer select-none font-medium">
                     <input
                       type="checkbox"
                       checked={isReflectionPrivate}
                       onChange={(e) => setIsReflectionPrivate(e.target.checked)}
                       className="accent-white cursor-pointer"
                     />
-                    <Lock className="w-3.5 h-3.5 text-neutral-500" />
+                    <Lock className="w-3.5 h-3.5 text-neutral-400" />
                     <span>Private to my personal codex</span>
                   </label>
 
@@ -733,16 +733,16 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
 
             {/* Right: Inscribed List */}
             <div className="lg:col-span-6 space-y-4">
-              <h3 className="font-serif-classic text-sm uppercase tracking-[0.25em] text-neutral-400 font-semibold pb-2 border-b border-neutral-900">
+              <h3 className="font-serif-classic text-sm uppercase tracking-wider text-neutral-300 font-semibold pb-2 border-b border-neutral-900">
                 Inscribed Chronicles ({savedReflections.length})
               </h3>
 
               {savedReflections.length === 0 ? (
                 <div className="p-8 border border-neutral-900 bg-black/50 text-center space-y-2">
-                  <p className="font-garamond text-neutral-400 italic">
+                  <p className="font-garamond text-neutral-300 italic text-base">
                     No reflections recorded yet for this thinker.
                   </p>
-                  <p className="text-xs text-neutral-600 font-mono">
+                  <p className="text-xs text-neutral-400 font-mono">
                     Pen your thoughts above to begin your philosophical treatise.
                   </p>
                 </div>
@@ -751,14 +751,14 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                   {savedReflections.map((item) => (
                     <div
                       key={item.id}
-                      className="p-5 border border-neutral-900 bg-black/60 space-y-3 relative group hover:border-neutral-800 transition-colors"
+                      className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-3 relative group hover:border-neutral-700 transition-colors"
                     >
-                      <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                      <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
                         <span>{item.date}</span>
-                        <span className="flex items-center gap-1 text-neutral-400">
+                        <span className="flex items-center gap-1.5 text-neutral-300">
                           {item.isPrivate ? (
                             <>
-                              <Lock className="w-3 h-3 text-neutral-500" />
+                              <Lock className="w-3.5 h-3.5 text-neutral-400" />
                               <span>Private</span>
                             </>
                           ) : (
@@ -785,12 +785,12 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
         <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-8">
           <Link
             href={`/course/${prevPhilosopher.id}`}
-            className="group flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-colors"
+            className="group flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <div>
-              <span className="text-[10px] text-neutral-500 block">{t.coursePage.prevThinker}</span>
-              <span className="font-serif-classic text-sm sm:text-base font-semibold text-neutral-300 group-hover:text-white">
+              <span className="text-xs text-neutral-400 block font-mono">{t.coursePage.prevThinker}</span>
+              <span className="font-serif-classic text-sm sm:text-base font-semibold text-neutral-200 group-hover:text-white">
                 {prevPData.name}
               </span>
             </div>
@@ -798,10 +798,10 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
 
           <Link
             href={`/course/${nextPhilosopher.id}`}
-            className="group flex items-center gap-4 text-xs uppercase tracking-[0.25em] text-neutral-300 hover:text-white transition-colors text-right"
+            className="group flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white transition-colors text-right"
           >
             <div>
-              <span className="text-[10px] text-neutral-500 block">{t.coursePage.nextThinker}</span>
+              <span className="text-xs text-neutral-400 block font-mono">{t.coursePage.nextThinker}</span>
               <span className="font-serif-classic text-sm sm:text-base font-semibold text-white">
                 {nextPData.name}
               </span>

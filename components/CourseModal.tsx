@@ -48,20 +48,20 @@ export default function CourseModal({
           </div>
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] uppercase tracking-[0.25em] px-2.5 py-0.5 border border-neutral-700 text-neutral-400">
+              <span className="text-xs uppercase tracking-wider px-2.5 py-0.5 border border-neutral-700 text-neutral-200 font-medium">
                 {course.school}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+              <span className="text-xs uppercase tracking-wider text-neutral-400 font-mono">
                 {course.era}
               </span>
             </div>
             <h3 className="font-serif-classic text-2xl sm:text-3xl font-bold tracking-[0.15em] text-white uppercase">
               {course.name}
             </h3>
-            <p className="font-garamond text-base sm:text-lg italic text-neutral-300">
+            <p className="font-garamond text-base sm:text-lg italic text-neutral-200">
               &ldquo;{course.quote}&rdquo;
             </p>
-            <p className="text-xs text-neutral-500 font-garamond">
+            <p className="text-xs text-neutral-400 font-garamond">
               Source: {course.quoteSource}
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function CourseModal({
             className={`pb-3 px-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-medium whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === "bio"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Biography &amp; Overview
@@ -104,7 +104,7 @@ export default function CourseModal({
             className={`pb-3 px-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-medium whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === "concepts"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Core Concepts ({course.keyConcepts.length})
@@ -114,7 +114,7 @@ export default function CourseModal({
             className={`pb-3 px-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-medium whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === "syllabus"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Complete Syllabus ({course.modules.length} Modules)
@@ -124,7 +124,7 @@ export default function CourseModal({
             className={`pb-3 px-3 text-xs uppercase tracking-[0.2em] font-serif-classic font-medium whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === "works"
                 ? "text-white border-b-2 border-white"
-                : "text-neutral-500 hover:text-neutral-300"
+                : "text-neutral-400 hover:text-white"
             }`}
           >
             Seminal Books &amp; Quotes
@@ -173,12 +173,12 @@ export default function CourseModal({
                       {concept.name}
                     </span>
                     {concept.latinOrGreek && (
-                      <span className="text-[10px] italic text-neutral-400 font-garamond">
+                      <span className="text-xs italic text-neutral-300 font-garamond">
                         {concept.latinOrGreek}
                       </span>
                     )}
                   </div>
-                  <p className="font-garamond text-sm text-neutral-300 leading-relaxed">
+                  <p className="font-garamond text-sm text-neutral-200 leading-relaxed">
                     {concept.explanation}
                   </p>
                 </div>
@@ -190,7 +190,7 @@ export default function CourseModal({
         {/* Tab 3: Complete Syllabus & Lessons */}
         {activeTab === "syllabus" && (
           <div className="space-y-4 animate-in fade-in duration-200">
-            <h4 className="text-xs uppercase tracking-[0.25em] text-neutral-400 font-semibold">
+            <h4 className="text-xs uppercase tracking-[0.2em] text-neutral-300 font-semibold font-mono">
               Dialectical Curriculum &amp; Lecture Breakdown
             </h4>
             <div className="space-y-4">
@@ -203,14 +203,14 @@ export default function CourseModal({
                     <CheckCircle className="w-4 h-4 text-neutral-300 flex-shrink-0" />
                     <span>{mod.title}</span>
                   </div>
-                  <p className="text-xs text-neutral-400 pl-6 leading-relaxed">
+                  <p className="text-xs text-neutral-300 pl-6 leading-relaxed">
                     {mod.description}
                   </p>
                   <div className="pl-6 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {mod.lessons.map((lesson, lIdx) => (
                       <div
                         key={lIdx}
-                        className="text-[11px] text-neutral-300 font-garamond py-1 px-2.5 bg-black/60 border border-neutral-800"
+                        className="text-xs text-neutral-200 font-garamond py-1.5 px-3 bg-black/70 border border-neutral-800"
                       >
                         {lesson}
                       </div>

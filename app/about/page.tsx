@@ -208,8 +208,8 @@ function AboutPageContent() {
       <section className="w-full py-20 sm:py-28 lg:py-36 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
         <div className="w-full max-w-6xl space-y-8">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 border border-neutral-800 bg-neutral-950 text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-300 font-mono">
-              <Compass className="w-3.5 h-3.5 text-neutral-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-neutral-800 bg-neutral-950 text-xs uppercase tracking-[0.2em] text-neutral-200 font-mono font-medium">
+              <Compass className="w-3.5 h-3.5 text-neutral-300" />
               <span>{t.aboutPage?.tag || "THE TRADITION OF FREE INQUIRY"}</span>
             </div>
 
@@ -228,42 +228,42 @@ function AboutPageContent() {
 
           {/* Etymological & Methodological Monograph Box (Minimal, No Realistic Gimmicks) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-neutral-900 text-xs">
-            <div className="p-6 border border-neutral-900 bg-neutral-950/60 space-y-2">
-              <span className="font-mono text-neutral-500 uppercase tracking-widest text-[10px] block">
+            <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+              <span className="font-mono text-neutral-300 uppercase tracking-wider text-xs font-medium block">
                 01. ETYMOLOGY
               </span>
               <h3 className="font-serif-classic text-base font-bold text-white uppercase">
                 Φιλοσοφία (Philosophia)
               </h3>
-              <p className="font-garamond text-sm text-neutral-400 leading-relaxed">
+              <p className="font-garamond text-base text-neutral-300 leading-relaxed">
                 {isHi
                   ? "यूनानी शब्द 'फ़िलोस' (प्रेम) और 'सोफ़िया' (बुद्धि)। इसका शाब्दिक अर्थ है 'ज्ञान के प्रति अगाध प्रेम'।"
                   : "From the ancient Greek 'philos' (love) and 'sophia' (wisdom)—literally: 'the enduring love of wisdom'."}
               </p>
             </div>
 
-            <div className="p-6 border border-neutral-900 bg-neutral-950/60 space-y-2">
-              <span className="font-mono text-neutral-500 uppercase tracking-widest text-[10px] block">
+            <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+              <span className="font-mono text-neutral-300 uppercase tracking-wider text-xs font-medium block">
                 02. COGNITIVE REVOLUTION
               </span>
               <h3 className="font-serif-classic text-base font-bold text-white uppercase">
                 Mythos to Logos
               </h3>
-              <p className="font-garamond text-sm text-neutral-400 leading-relaxed">
+              <p className="font-garamond text-base text-neutral-300 leading-relaxed">
                 {isHi
                   ? "अलौकिक मिथकों और अंधविश्वासों के स्थान पर प्राकृतिक प्रमाणों और तर्कसंगत तर्कों (Logos) की सार्वभौमिक स्वीकार्यता।"
                   : "The historical pivot from accepting mythological folklore to demanding systematic, reasoned justification (Logos)."}
               </p>
             </div>
 
-            <div className="p-6 border border-neutral-900 bg-neutral-950/60 space-y-2">
-              <span className="font-mono text-neutral-500 uppercase tracking-widest text-[10px] block">
+            <div className="p-6 border border-neutral-800 bg-neutral-950/80 space-y-2">
+              <span className="font-mono text-neutral-300 uppercase tracking-wider text-xs font-medium block">
                 03. ESSENCE
               </span>
               <h3 className="font-serif-classic text-base font-bold text-white uppercase">
                 Radical Inquiry
               </h3>
-              <p className="font-garamond text-sm text-neutral-400 leading-relaxed">
+              <p className="font-garamond text-base text-neutral-300 leading-relaxed">
                 {isHi
                   ? "कोई भी मान्यता इतनी पवित्र नहीं कि उस पर प्रश्न न उठाया जा सके। प्रत्येक विचार को निष्पक्ष परीक्षा से गुजरना पड़ता है।"
                   : "No belief is too sacred or customary to escape interrogation. Certainty must be earned through critical dialogue."}
@@ -308,15 +308,15 @@ function AboutPageContent() {
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-neutral-400 tracking-widest font-semibold">
+                    <span className="font-mono text-xs text-neutral-300 tracking-wider font-semibold">
                       EPOCH {epoch.num}
                     </span>
-                    <span className="text-[10px] font-mono text-neutral-500 uppercase">
+                    <span className="text-xs font-mono text-neutral-400 uppercase font-medium">
                       Era
                     </span>
                   </div>
 
-                  <span className="text-[11px] font-mono text-neutral-400 tracking-wider block">
+                  <span className="text-xs font-mono text-neutral-300 tracking-wider font-medium block">
                     {epoch.period}
                   </span>
 
@@ -327,21 +327,21 @@ function AboutPageContent() {
                   <div className="w-10 h-px bg-neutral-800" />
 
                   <div className="space-y-1">
-                    <span className="text-[10px] uppercase font-mono tracking-widest text-neutral-500 block">
+                    <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 font-medium block">
                       {isHi ? "प्रमुख चिंतक" : "Prominent Thinkers"}
                     </span>
-                    <p className="font-serif-classic text-xs text-neutral-300">
+                    <p className="font-serif-classic text-sm text-neutral-200 font-medium">
                       {epoch.thinkers}
                     </p>
                   </div>
 
-                  <p className="font-garamond text-base text-neutral-400 leading-relaxed font-light pt-1">
+                  <p className="font-garamond text-base text-neutral-300 leading-relaxed font-light pt-1">
                     {epoch.focus}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-neutral-900/80">
-                  <span className="text-[11px] font-garamond italic text-neutral-300 block">
+                <div className="pt-4 border-t border-neutral-800">
+                  <span className="text-xs sm:text-sm font-garamond italic text-neutral-200 block">
                     {epoch.axiom}
                   </span>
                 </div>
@@ -384,8 +384,8 @@ function AboutPageContent() {
                 className="p-6 border border-neutral-900 bg-black/60 space-y-4 hover:border-neutral-700 transition-colors flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
-                    <span className="border border-neutral-800 px-2 py-0.5 text-neutral-400 font-semibold">
+                  <div className="flex items-center justify-between text-xs font-mono text-neutral-400 font-medium">
+                    <span className="border border-neutral-800 px-2 py-0.5 text-neutral-300 font-semibold">
                       {pillar.code}
                     </span>
                     <span>0{idx + 1}</span>
@@ -440,9 +440,9 @@ function AboutPageContent() {
                 key={idx}
                 className="p-6 border border-neutral-900 bg-neutral-950/70 space-y-3 hover:border-neutral-800 transition-colors"
               >
-                <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
+                <div className="flex items-center justify-between text-xs font-mono text-neutral-400 font-medium">
                   <span className="tracking-widest">INSTRUMENT 0{idx + 1}</span>
-                  <span>{inst.origin}</span>
+                  <span className="text-neutral-300">{inst.origin}</span>
                 </div>
 
                 <h3 className="font-serif-classic text-lg font-bold text-white uppercase tracking-wider">
@@ -492,18 +492,18 @@ function AboutPageContent() {
                 className="p-6 border border-neutral-900 bg-black/60 space-y-4 hover:border-neutral-800 transition-colors flex flex-col justify-between"
               >
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-500 block">
+                  <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-medium block">
                     AXIOM 0{idx + 1}
                   </span>
                   <h3 className="font-serif-classic text-xl font-bold text-white tracking-wide">
                     {maxim.original}
                   </h3>
-                  <p className="font-garamond text-base text-neutral-300 italic">
+                  <p className="font-garamond text-base text-neutral-200 italic">
                     &ldquo;{maxim.translation}&rdquo;
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-neutral-900 text-xs font-mono text-neutral-500">
+                <div className="pt-3 border-t border-neutral-900 text-xs font-mono text-neutral-400">
                   {maxim.source}
                 </div>
               </div>
@@ -517,7 +517,7 @@ function AboutPageContent() {
          ======================================================== */}
       <section className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black text-center">
         <div className="max-w-3xl mx-auto space-y-6">
-          <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-400">
+          <span className="text-xs uppercase font-mono tracking-[0.2em] text-neutral-300 font-medium">
             {isHi ? "दार्शनिक परंपरा में प्रवेश करें" : "CONTINUE YOUR INTELLECTUAL EXPEDITION"}
           </span>
 
@@ -525,7 +525,7 @@ function AboutPageContent() {
             {t.aboutPage?.ctaTitle || "BEGIN YOUR DIALECTICAL INQUIRY"}
           </h2>
 
-          <p className="font-garamond text-base sm:text-xl text-neutral-400 leading-relaxed font-light">
+          <p className="font-garamond text-base sm:text-xl text-neutral-300 leading-relaxed font-light">
             {t.aboutPage?.ctaBody ||
               "Examine our curated monographs on 14 legendary thinkers spanning from Antiquity to Modernity."}
           </p>

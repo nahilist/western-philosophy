@@ -124,8 +124,8 @@ function ContactPageContent() {
          ======================================================== */}
       <section className="w-full py-16 sm:py-24 lg:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
         <div className="w-full max-w-6xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-neutral-800 bg-neutral-950 text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-300 font-mono">
-            <ScrollText className="w-3.5 h-3.5 text-neutral-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-neutral-800 bg-neutral-950 text-xs uppercase tracking-[0.2em] text-neutral-200 font-mono font-medium">
+            <ScrollText className="w-3.5 h-3.5 text-neutral-300" />
             <span>{t.contactPage?.tag || "THE EPISTOLARY TRADITION"}</span>
           </div>
 
@@ -135,15 +135,15 @@ function ContactPageContent() {
 
           <div className="w-20 h-px bg-neutral-800" />
 
-          <p className="font-garamond text-lg sm:text-2xl text-neutral-300 leading-relaxed font-light max-w-4xl">
+          <p className="font-garamond text-lg sm:text-2xl text-neutral-200 leading-relaxed font-light max-w-4xl">
             {t.contactPage?.subtitle ||
               "Philosophical thought has always progressed through the rigorous exchange of written correspondence. Whether seeking clarification on classical treatises, proposing dialectical seminars, or submitting critical corrections—inscribe your dispatch below."}
           </p>
 
-          <blockquote className="pt-2 text-xs sm:text-sm font-garamond italic text-neutral-400 border-l border-neutral-800 pl-4 max-w-3xl">
+          <blockquote className="pt-2 text-sm sm:text-base font-garamond italic text-neutral-300 border-l border-neutral-800 pl-4 max-w-3xl">
             {t.contactPage?.leadQuote ||
               "“Letters speak with absent friends as if they were present before us.”"}
-            <span className="not-italic text-[11px] font-mono text-neutral-500 block mt-1">
+            <span className="not-italic text-xs font-mono text-neutral-400 block mt-1.5 font-medium">
               {t.contactPage?.leadQuoteAuthor || "— Seneca the Younger, Epistulae Morales"}
             </span>
           </blockquote>
@@ -160,13 +160,13 @@ function ContactPageContent() {
              ---------------------------------------------------- */}
           <div className="lg:col-span-5 space-y-10 lg:sticky lg:top-32">
             <div className="space-y-3">
-              <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-500 block">
+              <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 font-medium block">
                 COORDINATES
               </span>
               <h2 className="font-serif-classic text-2xl sm:text-3xl font-bold uppercase tracking-wider text-white">
                 {t.contactPage?.secretariatTitle || "ACADEMY SECRETARIAT"}
               </h2>
-              <p className="font-garamond text-sm sm:text-base text-neutral-400 leading-relaxed">
+              <p className="font-garamond text-base text-neutral-300 leading-relaxed">
                 {t.contactPage?.secretariatDesc ||
                   "Direct epistolary channels guarded by cryptographic privacy and academic fidelity."}
               </p>
@@ -174,60 +174,60 @@ function ContactPageContent() {
 
             {/* Direct Digital Epistles */}
             <div className="space-y-4 pt-2">
-              <div className="p-5 border border-neutral-900 bg-neutral-950/80 space-y-2 hover:border-neutral-800 transition-colors">
-                <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
-                  <span className="uppercase tracking-widest text-neutral-400">
+              <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2 hover:border-neutral-700 transition-colors">
+                <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+                  <span className="uppercase tracking-wider text-neutral-300 font-medium">
                     GENERAL INQUIRIES
                   </span>
-                  <Mail className="w-3.5 h-3.5 text-neutral-400" />
+                  <Mail className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
                   href="mailto:inquiries@philosophy.org"
-                  className="font-mono text-sm text-neutral-200 hover:text-white transition-colors block"
+                  className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
                   inquiries@philosophy.org
                 </a>
-                <p className="text-[11px] text-neutral-500 font-garamond">
+                <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
                     ? "सामान्य दार्शनिक जिज्ञासा एवं अकादमिक सहयोग।"
                     : "For discourse, curricula, and institutional partnership."}
                 </p>
               </div>
 
-              <div className="p-5 border border-neutral-900 bg-neutral-950/80 space-y-2 hover:border-neutral-800 transition-colors">
-                <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
-                  <span className="uppercase tracking-widest text-neutral-400">
+              <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2 hover:border-neutral-700 transition-colors">
+                <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+                  <span className="uppercase tracking-wider text-neutral-300 font-medium">
                     MANUSCRIPT &amp; TRANSLATION CODEX
                   </span>
-                  <ScrollText className="w-3.5 h-3.5 text-neutral-400" />
+                  <ScrollText className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
                   href="mailto:translations@philosophy.org"
-                  className="font-mono text-sm text-neutral-200 hover:text-white transition-colors block"
+                  className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
                   translations@philosophy.org
                 </a>
-                <p className="text-[11px] text-neutral-500 font-garamond">
+                <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
                     ? "ग्रंथों, मूल पाठ व अनुवाद संबंधी सुधार एवं समालोचना।"
                     : "For philological feedback, Greek/Latin corrections, and Hindi treatises."}
                 </p>
               </div>
 
-              <div className="p-5 border border-neutral-900 bg-neutral-950/80 space-y-2 hover:border-neutral-800 transition-colors">
-                <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
-                  <span className="uppercase tracking-widest text-neutral-400">
+              <div className="p-5 border border-neutral-800 bg-neutral-950/80 space-y-2 hover:border-neutral-700 transition-colors">
+                <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+                  <span className="uppercase tracking-wider text-neutral-300 font-medium">
                     SEMINARS &amp; READING CHAPTERS
                   </span>
-                  <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
                   href="mailto:seminars@philosophy.org"
-                  className="font-mono text-sm text-neutral-200 hover:text-white transition-colors block"
+                  className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
                   seminars@philosophy.org
                 </a>
-                <p className="text-[11px] text-neutral-500 font-garamond">
+                <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
                     ? "साप्ताहिक ऑनलाइन अध्ययन सत्र एवं विद्वत परिसंवाद।"
                     : "For dialetical seminar registration and colloquium schedules."}
@@ -236,14 +236,14 @@ function ContactPageContent() {
             </div>
 
             {/* Security Guarantee Box */}
-            <div className="p-5 border border-neutral-900 bg-black space-y-2 text-xs font-mono text-neutral-400">
+            <div className="p-5 border border-neutral-800 bg-black space-y-2 text-xs font-mono text-neutral-300">
               <div className="flex items-center gap-2 text-emerald-400">
                 <ShieldCheck className="w-4 h-4 flex-shrink-0" />
                 <span className="uppercase tracking-wider font-semibold">
                   100% Parameterized &amp; Encrypted
                 </span>
               </div>
-              <p className="text-[11px] text-neutral-500 leading-relaxed font-mono">
+              <p className="text-xs text-neutral-300 leading-relaxed font-mono">
                 {isHi
                   ? "सभी प्रेषण SQL इंजेक्शन व स्पैम सुरक्षा मानकों से सुरक्षित हैं। कोई बाहरी ट्रैकर सक्रिय नहीं है।"
                   : "Protected against query exploits, injection, and denial-of-service. Transmissions are archived with strict schema constraints."}
@@ -258,13 +258,13 @@ function ContactPageContent() {
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2 pb-4 border-b border-neutral-900">
-                  <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-500">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 font-medium">
                     DISPATCH TRANSMISSION
                   </span>
                   <h3 className="font-serif-classic text-2xl sm:text-3xl font-bold uppercase tracking-wider text-white">
                     {t.contactPage?.formTitle || "INSCRIBE AN EPISTLE"}
                   </h3>
-                  <p className="font-garamond text-xs sm:text-sm text-neutral-400">
+                  <p className="font-garamond text-sm text-neutral-300">
                     {t.contactPage?.formDesc ||
                       "All correspondence is reviewed with dialectical rigor. Dispatches receive response within two to three celestial rotations."}
                   </p>
@@ -280,7 +280,7 @@ function ContactPageContent() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Sender's Name */}
                   <div className="space-y-2">
-                    <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                    <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                       {t.contactPage?.nameLabel || "Sender's Full Name"} *
                     </label>
                     <input
@@ -290,13 +290,13 @@ function ContactPageContent() {
                       placeholder="e.g. Baruch Spinoza"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors"
+                      className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
                     />
                   </div>
 
                   {/* Electronic Mail Address */}
                   <div className="space-y-2">
-                    <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                    <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                       {t.contactPage?.emailLabel || "Electronic Mail Address"} *
                     </label>
                     <input
@@ -306,14 +306,14 @@ function ContactPageContent() {
                       placeholder="scholar@academy.org"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors font-mono"
+                      className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors font-mono"
                     />
                   </div>
                 </div>
 
                 {/* Discipline of Inquiry */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                  <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {t.contactPage?.disciplineLabel || "Discipline of Inquiry"}
                   </label>
                   <select
@@ -332,7 +332,7 @@ function ContactPageContent() {
 
                 {/* Subject of Treatise */}
                 <div className="space-y-2">
-                  <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                  <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                     {t.contactPage?.subjectLabel || "Subject of Treatise"}
                   </label>
                   <input
@@ -341,17 +341,17 @@ function ContactPageContent() {
                     placeholder="e.g. On the Synthesis of A Priori Judgments in Kant"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-black border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
                   />
                 </div>
 
                 {/* Message / Treatise Body */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-[10px] uppercase font-mono tracking-widest text-neutral-400">
+                    <label className="block text-xs uppercase font-mono tracking-wider text-neutral-300 font-medium">
                       {t.contactPage?.messageLabel || "The Dispatch / Inquiry Text"} *
                     </label>
-                    <span className="text-[10px] font-mono text-neutral-500">
+                    <span className="text-xs font-mono text-neutral-400">
                       {message.length} / 3000 chars
                     </span>
                   </div>
@@ -366,12 +366,12 @@ function ContactPageContent() {
                     }
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full bg-black border border-neutral-800 p-4 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors resize-none font-garamond text-base leading-relaxed"
+                    className="w-full bg-black border border-neutral-800 p-4 text-base text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors resize-none font-garamond leading-relaxed"
                   />
                 </div>
 
                 {/* Checkbox: Critique option */}
-                <label className="flex items-center gap-3 text-xs text-neutral-400 cursor-pointer select-none">
+                <label className="flex items-center gap-3 text-xs sm:text-sm text-neutral-300 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={requestCritique}
@@ -414,19 +414,19 @@ function ContactPageContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-500 block">
+                  <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 font-medium block">
                     ARCHIVAL CONFIRMATION
                   </span>
                   <h3 className="font-serif-classic text-2xl sm:text-3xl font-bold uppercase tracking-wider text-white">
                     {t.contactPage?.successTitle || "Epistle Successfully Transmitted"}
                   </h3>
-                  <p className="font-garamond text-neutral-300 text-base max-w-md mx-auto leading-relaxed">
+                  <p className="font-garamond text-neutral-200 text-base max-w-md mx-auto leading-relaxed">
                     {t.contactPage?.successDesc ||
                       "Your dispatch has been preserved in the Academy’s intellectual register. A scholar shall review your inquiry."}
                   </p>
                 </div>
 
-                <div className="p-4 bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-400 max-w-sm mx-auto">
+                <div className="p-4 bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300 max-w-sm mx-auto">
                   <span>DISPATCH RECEIPT: #{Math.floor(100000 + Math.random() * 900000)}</span>
                 </div>
 
@@ -475,7 +475,7 @@ function ContactPageContent() {
                 key={idx}
                 className="p-8 border border-neutral-900 bg-black/60 space-y-3 hover:border-neutral-800 transition-colors"
               >
-                <div className="flex items-center gap-3 text-xs font-mono text-neutral-500">
+                <div className="flex items-center gap-3 text-xs font-mono text-neutral-400 font-medium">
                   <HelpCircle className="w-3.5 h-3.5 text-neutral-400" />
                   <span>INQUIRY 0{idx + 1}</span>
                 </div>

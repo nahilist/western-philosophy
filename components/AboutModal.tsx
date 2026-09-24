@@ -40,7 +40,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
         {/* Content Body (Clean & Minimalist, No Ultra-Realistic Clutter) */}
         <div className="p-6 sm:p-8 space-y-6">
           <div className="space-y-2">
-            <span className="text-[10px] uppercase font-mono tracking-[0.3em] text-neutral-500">
+            <span className="text-xs uppercase font-mono tracking-wider text-neutral-400 font-medium">
               EST. 600 BCE • ATHENS TO MODERNITY
             </span>
             <h2 className="font-serif-classic text-2xl sm:text-3xl font-bold tracking-[0.14em] text-white uppercase leading-snug">
@@ -48,7 +48,7 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
             </h2>
           </div>
 
-          <p className="font-garamond text-base sm:text-lg text-neutral-300 leading-relaxed font-light">
+          <p className="font-garamond text-base sm:text-lg text-neutral-200 leading-relaxed font-light">
             {isHi
               ? "पाश्चात्य दर्शन की शुरुआत 2,500 वर्ष पूर्व प्राचीन यूनान में अंधविश्वासों (Mythos) से विवेक (Logos) की ओर संक्रमण के साथ हुई। यह केवल सैद्धांतिक अध्ययन नहीं, बल्कि जीवन, वास्तविकता, ज्ञान और नैतिकता की निरंतर तार्किक परीक्षा है।"
               : "Western philosophy originated twenty-five centuries ago as humanity’s daring departure from supernatural myth into rational critique (Logos). It is the systematic interrogation of existence, consciousness, morality, and justice through unyielding logic and radical skepticism."}
@@ -56,26 +56,26 @@ export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
 
           {/* Minimal 3-Point Pillar Overview */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
-            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
-              <span className="font-mono text-neutral-500 text-[10px] block">01. EPOCHS</span>
+            <div className="p-3.5 border border-neutral-800 bg-neutral-950/80 space-y-1">
+              <span className="font-mono text-neutral-300 text-xs font-medium block">01. EPOCHS</span>
               <h4 className="font-serif-classic font-semibold text-white uppercase">4 Great Eras</h4>
-              <p className="text-neutral-400 font-garamond">
+              <p className="text-neutral-300 font-garamond text-sm">
                 {isHi ? "प्राचीन काल से आधुनिक युग तक।" : "From Classical Antiquity to Modernity."}
               </p>
             </div>
 
-            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
-              <span className="font-mono text-neutral-500 text-[10px] block">02. DISCIPLINES</span>
+            <div className="p-3.5 border border-neutral-800 bg-neutral-950/80 space-y-1">
+              <span className="font-mono text-neutral-300 text-xs font-medium block">02. DISCIPLINES</span>
               <h4 className="font-serif-classic font-semibold text-white uppercase">5 Core Pillars</h4>
-              <p className="text-neutral-400 font-garamond">
+              <p className="text-neutral-300 font-garamond text-sm">
                 {isHi ? "तत्व, ज्ञान, नीति, तर्क और राजनीति।" : "Metaphysics, Epistemology, Ethics & Logic."}
               </p>
             </div>
 
-            <div className="p-3.5 border border-neutral-900 bg-black/60 space-y-1">
-              <span className="font-mono text-neutral-500 text-[10px] block">03. CANON</span>
+            <div className="p-3.5 border border-neutral-800 bg-neutral-950/80 space-y-1">
+              <span className="font-mono text-neutral-300 text-xs font-medium block">03. CANON</span>
               <h4 className="font-serif-classic font-semibold text-white uppercase">14 Thinkers</h4>
-              <p className="text-neutral-400 font-garamond">
+              <p className="text-neutral-300 font-garamond text-sm">
                 {isHi ? "सुकरात से कामू तक का संग्रह।" : "From Socrates to Albert Camus."}
               </p>
             </div>

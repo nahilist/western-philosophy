@@ -77,7 +77,7 @@ export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
             <h2 className="font-serif-classic text-xl sm:text-3xl lg:text-4xl font-bold tracking-[0.2em] text-white uppercase">
               {t.creation.quote}
             </h2>
-            <p className="font-serif-classic text-[11px] sm:text-xs tracking-[0.32em] text-neutral-300 uppercase">
+            <p className="font-serif-classic text-xs sm:text-sm tracking-[0.2em] text-neutral-200 uppercase font-medium">
               {t.creation.author}
             </p>
           </div>

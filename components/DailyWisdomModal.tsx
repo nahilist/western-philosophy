@@ -38,10 +38,10 @@ export default function DailyWisdomModal({
 
         <div className="flex flex-col items-center text-center space-y-6">
           <div className="w-12 h-12 rounded-full border border-neutral-800 flex items-center justify-center">
-            <Quote className="w-5 h-5 text-neutral-400" />
+            <Quote className="w-5 h-5 text-neutral-300" />
           </div>
 
-          <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-medium">
+          <span className="text-xs uppercase tracking-[0.2em] text-neutral-300 font-medium font-mono">
             Daily Philosophical Aphorism
           </span>
 
@@ -50,10 +50,10 @@ export default function DailyWisdomModal({
           </blockquote>
 
           <div className="space-y-1">
-            <p className="font-serif-classic text-sm sm:text-base font-semibold tracking-[0.25em] text-white uppercase">
+            <p className="font-serif-classic text-sm sm:text-base font-semibold tracking-[0.2em] text-white uppercase">
               {item.author}
             </p>
-            <p className="text-xs text-neutral-400 tracking-wider">
+            <p className="text-xs text-neutral-300 tracking-wider font-mono">
               {item.era}
             </p>
           </div>

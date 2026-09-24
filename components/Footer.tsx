@@ -29,17 +29,17 @@ export default function Footer({ onOpenAbout }: FooterProps) {
           <h4 className="font-serif-classic text-base sm:text-lg font-bold tracking-[0.3em] text-white uppercase">
             PHILOSOPHY
           </h4>
-          <p className="font-garamond text-sm text-neutral-500 leading-relaxed">
+          <p className="font-garamond text-sm text-neutral-300 leading-relaxed">
             Preserving classical inquiries into truth, reality, and morality.
           </p>
         </div>
 
         {/* Column 2: Philosophy links */}
         <div className="md:col-span-2 space-y-3">
-          <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-300 uppercase">
+          <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-200 uppercase">
             Philosophy
           </h5>
-          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-400">
+          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-300">
             <li>
               <Link href="/#home" className="hover:text-white transition-colors">
                 Home
@@ -65,10 +65,10 @@ export default function Footer({ onOpenAbout }: FooterProps) {
 
         {/* Column 3: Contact links */}
         <div className="md:col-span-2 space-y-3">
-          <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-300 uppercase">
+          <h5 className="font-serif-classic text-xs font-semibold tracking-[0.2em] text-neutral-200 uppercase">
             Contact
           </h5>
-          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-400">
+          <ul className="space-y-2.5 text-xs tracking-wider text-neutral-300">
             <li>
               <a
                 href="mailto:contact@philosophy.org"
@@ -129,13 +129,13 @@ export default function Footer({ onOpenAbout }: FooterProps) {
               />
               <button
                 type="submit"
-                className="rounded-full bg-black/90 border border-neutral-700 px-6 py-2 text-[10px] font-serif-classic tracking-[0.2em] uppercase text-white hover:bg-white hover:text-black transition-all cursor-pointer flex-shrink-0"
+                className="rounded-full bg-black/90 border border-neutral-700 px-6 py-2 text-xs font-serif-classic tracking-[0.16em] uppercase font-semibold text-white hover:bg-white hover:text-black transition-all cursor-pointer flex-shrink-0"
               >
                 {status === "submitted" ? "DONE" : "SUBMIT"}
               </button>
             </div>
             {status === "submitted" && (
-              <p className="text-[11px] text-neutral-300 mt-2 pl-2 font-garamond">
+              <p className="text-xs text-neutral-200 mt-2 pl-2 font-garamond">
                 Thank you for subscribing to the weekly dialectic.
               </p>
             )}

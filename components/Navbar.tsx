@@ -134,19 +134,19 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               <button
                 onClick={() => setAccountModalOpen(true)}
                 title={isHi ? "खाता एवं दार्शनिक डायरी देखें" : "View Scholar Account & Codex"}
-                className="flex items-center gap-2 px-3 py-1.5 border border-neutral-800 hover:border-neutral-500 bg-neutral-950/70 hover:bg-neutral-900 transition-all font-serif-classic cursor-pointer group"
+                className="flex items-center gap-2 px-3 py-1.5 border border-neutral-800 hover:border-neutral-500 bg-neutral-950/80 hover:bg-neutral-900 transition-all font-serif-classic cursor-pointer group"
               >
-                <div className="w-5 h-5 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[10px] text-white font-bold group-hover:border-white transition-colors">
+                <div className="w-5 h-5 rounded-full bg-neutral-800 border border-neutral-600 flex items-center justify-center text-xs text-white font-bold group-hover:border-white transition-colors">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-xs tracking-wider text-neutral-300 group-hover:text-white transition-colors">
+                <span className="text-xs font-medium tracking-wide text-neutral-200 group-hover:text-white transition-colors">
                   {user.name}
                 </span>
               </button>
               <button
                 onClick={logout}
                 title={t.nav.signOut}
-                className="p-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-red-400 hover:border-red-900 transition-colors cursor-pointer"
+                className="p-1.5 rounded-full border border-neutral-800 text-neutral-300 hover:text-red-400 hover:border-red-900 transition-colors cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -154,7 +154,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           ) : (
             <button
               onClick={() => openAuthModal()}
-              className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] px-4 py-1.5 border border-white/60 text-white hover:bg-white hover:text-black transition-all duration-300 font-serif-classic cursor-pointer"
+              className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] px-4 py-1.5 border border-white/70 text-white hover:bg-white hover:text-black transition-all duration-300 font-serif-classic font-semibold cursor-pointer"
             >
               <UserIcon className="w-3.5 h-3.5" />
               <span>{t.nav.signIn}</span>
@@ -172,16 +172,16 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
               <button
                 onClick={() => setAccountModalOpen(true)}
                 title={isHi ? "मेरा खाता" : "My Account"}
-                className="flex items-center gap-1 text-xs text-neutral-300 py-1 px-2 border border-neutral-800 bg-neutral-950/80 rounded"
+                className="flex items-center gap-1 text-xs text-neutral-200 py-1 px-2.5 border border-neutral-800 bg-neutral-950/90 rounded"
               >
                 <UserIcon className="w-3.5 h-3.5 text-white" />
-                <span className="text-[11px] font-serif-classic tracking-wider">
+                <span className="text-xs font-serif-classic font-medium tracking-wide">
                   {user.name.split(" ")[0]}
                 </span>
               </button>
               <button
                 onClick={logout}
-                className="text-xs text-neutral-400 p-1"
+                className="text-xs text-neutral-300 p-1"
                 title={t.nav.signOut}
               >
                 <LogOut className="w-4 h-4" />

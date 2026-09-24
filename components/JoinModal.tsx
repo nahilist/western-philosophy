@@ -60,20 +60,20 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
         {!submitted ? (
           <div>
             <div className="space-y-2 mb-8">
-              <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-medium">
+              <span className="text-xs uppercase tracking-[0.2em] text-neutral-300 font-medium">
                 Academy of Free Inquiry
               </span>
               <h3 className="font-serif-classic text-2xl sm:text-3xl font-bold tracking-[0.15em] text-white uppercase">
                 JOIN PHILOSOPHY Φ
               </h3>
-              <p className="font-garamond text-neutral-300 text-sm sm:text-base leading-relaxed">
+              <p className="font-garamond text-neutral-200 text-sm sm:text-base leading-relaxed">
                 Step into the ancient tradition of dialectical reasoning. Receive curated weekly philosophical translations, seminar invites, and digital library access.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-[10px] uppercase tracking-[0.25em] text-neutral-400 mb-2">
+                <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2 font-mono">
                   Your Full Name
                 </label>
                 <input
@@ -82,12 +82,12 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   placeholder="e.g. Marcus Aurelius"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-neutral-900/90 border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors"
+                  className="w-full bg-neutral-900/90 border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-[0.25em] text-neutral-400 mb-2">
+                <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2 font-mono">
                   Email Address
                 </label>
                 <input
@@ -96,12 +96,12 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-neutral-900/90 border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-white transition-colors"
+                  className="w-full bg-neutral-900/90 border border-neutral-800 px-4 py-3 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] uppercase tracking-[0.25em] text-neutral-400 mb-2">
+                <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2 font-mono">
                   Primary Philosophical Discipline
                 </label>
                 <select
