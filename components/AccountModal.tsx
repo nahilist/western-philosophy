@@ -160,7 +160,18 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={async () => {
+                await logout();
+                onClose();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-red-900/60 hover:border-red-500 bg-red-950/20 hover:bg-red-950/50 text-red-300 hover:text-white text-xs uppercase tracking-wider font-mono transition-colors cursor-pointer rounded"
+              title={isHi ? "लॉग आउट करें" : "Sign Out"}
+            >
+              <LogOut className="w-3.5 h-3.5 text-red-400" />
+              <span className="hidden sm:inline font-semibold">{isHi ? "लॉग आउट" : "Sign Out"}</span>
+            </button>
             <button
               onClick={loadUserData}
               title={isHi ? "रीफ्रेश करें" : "Refresh Data"}
@@ -316,13 +327,25 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                     </h3>
                   </div>
 
-                  <button
-                    onClick={() => setActiveTab("settings")}
-                    className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-neutral-400 hover:text-white px-3 py-1.5 border border-neutral-800 hover:border-neutral-600 transition-colors w-fit"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>{isHi ? "संपादित करें" : "Edit Details"}</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setActiveTab("settings")}
+                      className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-neutral-300 hover:text-white px-3 py-1.5 border border-neutral-800 hover:border-neutral-600 transition-colors w-fit font-mono"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>{isHi ? "संपादित करें" : "Edit"}</span>
+                    </button>
+                    <button
+                      onClick={async () => {
+                        await logout();
+                        onClose();
+                      }}
+                      className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-red-400 hover:text-white px-3 py-1.5 border border-red-900/60 hover:border-red-500 bg-red-950/20 hover:bg-red-950/50 transition-colors w-fit font-mono cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-red-400" />
+                      <span>{isHi ? "लॉग आउट" : "Sign Out"}</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-xs">
