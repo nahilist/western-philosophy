@@ -12,12 +12,14 @@ import JoinModal from "@/components/JoinModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
 import AboutModal from "@/components/AboutModal";
 import AuthModal from "@/components/AuthModal";
+import DilemmaModal from "@/components/DilemmaModal";
 import { AuthProvider } from "@/context/AuthContext";
 
 function PhilosophyPlatform() {
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [dailyWisdomOpen, setDailyWisdomOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [dilemmaModalOpen, setDilemmaModalOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
@@ -25,6 +27,7 @@ function PhilosophyPlatform() {
       <Navbar
         onOpenAbout={() => setAboutModalOpen(true)}
         onOpenDailyWisdom={() => setDailyWisdomOpen(true)}
+        onOpenDilemma={() => setDilemmaModalOpen(true)}
       />
 
       {/* 2. Beloved Rich Hero Section: René Descartes (links to /course/descartes) */}
@@ -62,6 +65,11 @@ function PhilosophyPlatform() {
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => setAboutModalOpen(false)}
+      />
+
+      <DilemmaModal
+        isOpen={dilemmaModalOpen}
+        onClose={() => setDilemmaModalOpen(false)}
       />
     </main>
   );

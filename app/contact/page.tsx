@@ -37,6 +37,7 @@ function ContactPageContent() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [requestCritique, setRequestCritique] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -52,6 +53,7 @@ function ContactPageContent() {
       discipline,
       subject,
       message,
+      honeypot,
     });
 
     setIsSubmitting(false);
@@ -276,6 +278,18 @@ function ContactPageContent() {
                     <span>{errorMessage}</span>
                   </div>
                 )}
+
+                {/* Honeypot Anti-Spam Trap */}
+                <input
+                  type="text"
+                  name="bot_field_trap"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="opacity-0 absolute -z-50 pointer-events-none w-0 h-0"
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Sender's Name */}

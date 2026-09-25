@@ -1,19 +1,11 @@
 -- ==============================================================================
--- 🛡️ MILITARY-GRADE SECURE SUPABASE POSTGRESQL SCHEMA
--- ==============================================================================
--- SECURITY FEATURES IMPLEMENTED:
--- 1. SQL Injection Proof: 100% Parameterized, 0 Dynamic SQL, Strict Schema Isolation.
--- 2. Anti-DDoS & Buffer-Overflow: Hard character length & cardinality CHECK limits.
--- 3. Search-Path Hijack Protection: 'SET search_path = public, pg_temp' on functions.
--- 4. Strict Row-Level Security (RLS) with FORCE RLS on all tables.
--- 5. Anti-Tamper: Both USING and WITH CHECK policies prevent identity spoofing.
--- 6. Anti-Scan DoS: Optimized B-Tree composite indexes prevent CPU starvation.
--- 7. Automated Input Sanitization & RegEx validation for Emails & Slugs.
+-- MIGRATION 0001: INITIAL SCHEMA BASELINE
+-- ------------------------------------------------------------------------------
+-- Baseline schema creating profiles, user_course_progress, user_bookmarks,
+-- philosophical_reflections, waitlist_members, and auth trigger.
 -- ==============================================================================
 
--- ------------------------------------------------------------------------------
--- 1. PROFILES TABLE (User Accounts & Identity)
--- ------------------------------------------------------------------------------
+-- 1. PROFILES TABLE
 create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text not null check (
@@ -34,11 +26,9 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
--- Enable RLS and FORCE RLS (Prevents any bypass by table owners)
 alter table public.profiles enable row level security;
 alter table public.profiles force row level security;
 
--- Security Policies
 drop policy if exists "Public profiles are viewable by everyone" on public.profiles;
 create policy "Public profiles are viewable by everyone"
   on public.profiles for select
@@ -55,39 +45,30 @@ create policy "Users can insert their own profile"
   on public.profiles for insert
   with check ( auth.uid() = id );
 
--- ------------------------------------------------------------------------------
--- 2. USER COURSE PROGRESS TABLE (Anti-Spoofing & Anti-DDoS Limits)
--- ------------------------------------------------------------------------------
+-- 2. USER COURSE PROGRESS TABLE
 create table if not exists public.user_course_progress (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users on delete cascade not null,
-  -- Regex check ensures course_id only contains lowercase letters, numbers, hyphens
   course_id text not null check (
     char_length(course_id) between 1 and 50
     and course_id ~ '^[a-z0-9_-]+$'
   ),
-  -- Cardinality check prevents huge array payload DoS attack
   completed_modules text[] default array[]::text[] check (
     cardinality(completed_modules) <= 100
   ),
-  -- Range check prevents integer overflow or negative numbers
   progress_percent integer default 0 check (
     progress_percent between 0 and 100
   ),
   last_read_at timestamptz not null default now(),
-  -- Unique constraint prevents duplicate spam records for the same course
   constraint unique_user_course unique (user_id, course_id)
 );
 
--- Enable RLS and FORCE RLS
 alter table public.user_course_progress enable row level security;
 alter table public.user_course_progress force row level security;
 
--- Indexing for Lightning-Fast Queries (Prevents CPU-exhaustion DoS)
 create index if not exists idx_user_progress_lookup 
   on public.user_course_progress (user_id, course_id);
 
--- Security Policies (Explicit separation prevents escalation)
 drop policy if exists "Users can view own course progress" on public.user_course_progress;
 create policy "Users can view own course progress"
   on public.user_course_progress for select
@@ -102,7 +83,6 @@ drop policy if exists "Users can update own course progress" on public.user_cour
 create policy "Users can update own course progress"
   on public.user_course_progress for update
   using ( auth.uid() = user_id )
-  
   with check ( auth.uid() = user_id );
 
 drop policy if exists "Users can delete own course progress" on public.user_course_progress;
@@ -110,9 +90,7 @@ create policy "Users can delete own course progress"
   on public.user_course_progress for delete
   using ( auth.uid() = user_id );
 
--- ------------------------------------------------------------------------------
--- 3. USER BOOKMARKS TABLE (Saved Quotes & Treatises)
--- ------------------------------------------------------------------------------
+-- 3. USER BOOKMARKS TABLE
 create table if not exists public.user_bookmarks (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users on delete cascade not null,
@@ -129,15 +107,12 @@ create table if not exists public.user_bookmarks (
   created_at timestamptz not null default now()
 );
 
--- Enable RLS and FORCE RLS
 alter table public.user_bookmarks enable row level security;
 alter table public.user_bookmarks force row level security;
 
--- Performance Index
 create index if not exists idx_bookmarks_user_course 
   on public.user_bookmarks (user_id, course_id);
 
--- Bookmark Policies
 drop policy if exists "Users can read own bookmarks" on public.user_bookmarks;
 create policy "Users can read own bookmarks"
   on public.user_bookmarks for select
@@ -153,9 +128,7 @@ create policy "Users can delete own bookmarks"
   on public.user_bookmarks for delete
   using ( auth.uid() = user_id );
 
--- ------------------------------------------------------------------------------
--- 4. PHILOSOPHICAL REFLECTIONS TABLE (Personal Journal with Anti-Spam Limits)
--- ------------------------------------------------------------------------------
+-- 4. PHILOSOPHICAL REFLECTIONS TABLE
 create table if not exists public.philosophical_reflections (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references auth.users on delete cascade not null,
@@ -163,7 +136,6 @@ create table if not exists public.philosophical_reflections (
     char_length(course_id) between 1 and 50
     and course_id ~ '^[a-z0-9_-]+$'
   ),
-  -- Strict limit: max 5000 characters per entry (Prevents DB memory exhaustion)
   reflection_text text not null check (
     char_length(reflection_text) between 1 and 5000
   ),
@@ -172,15 +144,12 @@ create table if not exists public.philosophical_reflections (
   updated_at timestamptz not null default now()
 );
 
--- Enable RLS and FORCE RLS
 alter table public.philosophical_reflections enable row level security;
 alter table public.philosophical_reflections force row level security;
 
--- Performance Index
 create index if not exists idx_reflections_user 
   on public.philosophical_reflections (user_id, created_at desc);
 
--- Reflection Policies
 drop policy if exists "Users can read own reflections" on public.philosophical_reflections;
 create policy "Users can read own reflections"
   on public.philosophical_reflections for select
@@ -202,9 +171,7 @@ create policy "Users can delete own reflections"
   on public.philosophical_reflections for delete
   using ( auth.uid() = user_id );
 
--- ------------------------------------------------------------------------------
--- 5. WAITLIST & MEMBERSHIP TABLE (Anti-Bot & Anti-Spam Constraints)
--- ------------------------------------------------------------------------------
+-- 5. WAITLIST & MEMBERSHIP TABLE
 create table if not exists public.waitlist_members (
   id uuid default gen_random_uuid() primary key,
   email text unique not null check (
@@ -217,30 +184,22 @@ create table if not exists public.waitlist_members (
   created_at timestamptz not null default now()
 );
 
--- Enable RLS and FORCE RLS
 alter table public.waitlist_members enable row level security;
 alter table public.waitlist_members force row level security;
 
--- Performance Index
 create index if not exists idx_waitlist_email on public.waitlist_members (email);
 
--- Security Policies
--- Public can ONLY insert with strict validation (Cannot read or dump existing subscriber list!)
 drop policy if exists "Anyone can join waitlist" on public.waitlist_members;
 create policy "Anyone can join waitlist"
   on public.waitlist_members for insert
   with check ( true );
 
--- Block public read access: No outsider can scrape subscriber emails
 drop policy if exists "Disallow public reading waitlist" on public.waitlist_members;
 create policy "Disallow public reading waitlist"
   on public.waitlist_members for select
   using ( false );
 
--- ------------------------------------------------------------------------------
--- 6. SECURE AUTOMATIC TRIGGER WITH SEARCH-PATH HARDENING
--- ------------------------------------------------------------------------------
--- 'SET search_path = public, pg_temp' protects against Search Path Hijack attacks (CVE-standard)
+-- 6. TRIGGER FUNCTION WITH SEARCH-PATH HARDENING
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -250,7 +209,6 @@ as $$
 declare
   v_name text;
 begin
-  -- Sanitize and fallback name safely
   v_name := coalesce(
     trim(substring(new.raw_user_meta_data->>'full_name' from 1 for 100)),
     trim(substring(split_part(new.email, '@', 1) from 1 for 100)),
@@ -272,155 +230,14 @@ begin
   return new;
 exception
   when others then
-    -- Log error safely without crashing the main auth transaction
     raise warning 'handle_new_user error: %', SQLERRM;
     return new;
 end;
 $$;
 
--- Revoke default public execution rights and grant only to postgres
 revoke all on function public.handle_new_user() from public;
 
--- Recreate trigger safely
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
-
--- ------------------------------------------------------------------------------
--- 7. CONTACT INQUIRIES & MESSAGES TABLE
--- ------------------------------------------------------------------------------
-create table if not exists public.contact_messages (
-  id uuid default gen_random_uuid() primary key,
-  name text not null check (
-    char_length(name) between 2 and 100
-  ),
-  email text not null check (
-    char_length(email) between 3 and 255
-    and email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
-  ),
-  subject text not null check (
-    char_length(subject) between 2 and 150
-  ),
-  message text not null check (
-    char_length(message) between 5 and 3000
-  ),
-  status text not null default 'unread' check (
-    status in ('unread', 'read', 'replied', 'archived')
-  ),
-  ip_address text check (
-    char_length(ip_address) <= 45
-  ),
-  created_at timestamptz not null default now()
-);
-
-alter table public.contact_messages enable row level security;
-alter table public.contact_messages force row level security;
-
-create index if not exists idx_contact_created_status 
-  on public.contact_messages (status, created_at desc);
-
-drop policy if exists "Anyone can submit contact message" on public.contact_messages;
-create policy "Anyone can submit contact message"
-  on public.contact_messages for insert
-  with check ( true );
-
-drop policy if exists "Disallow public reading contact messages" on public.contact_messages;
-create policy "Disallow public reading contact messages"
-  on public.contact_messages for select
-  using ( false );
-
--- ------------------------------------------------------------------------------
--- 8. PHILOSOPHICAL DILEMMA VOTES TABLE
--- ------------------------------------------------------------------------------
-create table if not exists public.dilemma_votes (
-  id uuid default gen_random_uuid() primary key,
-  voter_identifier text not null check (
-    char_length(voter_identifier) between 8 and 100
-  ),
-  dilemma_id text not null check (
-    char_length(dilemma_id) between 1 and 50
-    and dilemma_id ~ '^[a-z0-9_-]+$'
-  ),
-  selected_choice text not null check (
-    char_length(selected_choice) between 1 and 100
-  ),
-  user_id uuid references auth.users on delete set null,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  constraint unique_voter_dilemma unique (voter_identifier, dilemma_id)
-);
-
-alter table public.dilemma_votes enable row level security;
-alter table public.dilemma_votes force row level security;
-
-create index if not exists idx_dilemma_votes_aggregate 
-  on public.dilemma_votes (dilemma_id, selected_choice);
-
-create index if not exists idx_dilemma_voter 
-  on public.dilemma_votes (voter_identifier, dilemma_id);
-
-drop policy if exists "Anyone can view dilemma votes" on public.dilemma_votes;
-create policy "Anyone can view dilemma votes"
-  on public.dilemma_votes for select
-  using ( true );
-
-drop policy if exists "Anyone can cast dilemma vote" on public.dilemma_votes;
-create policy "Anyone can cast dilemma vote"
-  on public.dilemma_votes for insert
-  with check ( true );
-
--- Stored Procedure for lightning-fast aggregates
-create or replace function public.get_dilemma_stats(p_dilemma_id text)
-returns json
-language plpgsql
-security definer
-set search_path = public, pg_temp
-as $$
-declare
-  v_total bigint;
-  v_results json;
-begin
-  select count(*) into v_total 
-  from public.dilemma_votes 
-  where dilemma_id = p_dilemma_id;
-
-  if v_total = 0 then
-    return json_build_object(
-      'total', 0,
-      'stats', json_build_array()
-    );
-  end if;
-
-  select json_build_object(
-    'total', v_total,
-    'stats', json_agg(
-      json_build_object(
-        'choice', selected_choice,
-        'count', cnt,
-        'percentage', round((cnt::numeric / v_total::numeric) * 100, 1)
-      )
-    )
-  ) into v_results
-  from (
-    select selected_choice, count(*) as cnt
-    from public.dilemma_votes
-    where dilemma_id = p_dilemma_id
-    group by selected_choice
-    order by cnt desc
-  ) t;
-
-  return v_results;
-end;
-$$;
-
-grant execute on function public.get_dilemma_stats(text) to anon, authenticated, service_role;
-
--- ==============================================================================
--- ✅ SCHEMA AUDIT SUMMARY
--- ------------------------------------------------------------------------------
--- • SQL Injection: 100% Blocked (No dynamic queries, strict type assertions).
--- • DDoS/Payload Flooding: Blocked (String caps, cardinality caps, integer bounds).
--- • Unauthorized Read/Write: Blocked (FORCE RLS with cryptographically signed JWTs).
--- • Search-Path Exploits: Blocked (Explicit security definer search path lock).
--- ==============================================================================

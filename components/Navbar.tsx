@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut, Scale } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { NavbarLanguageTranslator } from "@/components/LanguageTranslator";
@@ -11,9 +11,10 @@ import AccountModal from "@/components/AccountModal";
 interface NavbarProps {
   onOpenAbout?: () => void;
   onOpenDailyWisdom?: () => void;
+  onOpenDilemma?: () => void;
 }
 
-export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) {
+export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }: NavbarProps) {
   const { user, openAuthModal, logout } = useAuth();
   const { t, language } = useLanguage();
   const isHi = language === "hi";
@@ -109,6 +110,18 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
             >
               <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
               <span>{t.nav.wisdom}</span>
+            </button>
+          )}
+
+          {/* Dilemma Modal Trigger */}
+          {onOpenDilemma && (
+            <button
+              onClick={onOpenDilemma}
+              title={isHi ? "दार्शनिक दुविधा एवं जनमत" : "Philosophical Dilemma & Consensus"}
+              className="flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 cursor-pointer"
+            >
+              <Scale className="w-3.5 h-3.5 text-neutral-400" />
+              <span>{isHi ? "दुविधा" : "Dilemma"}</span>
             </button>
           )}
 
@@ -238,6 +251,19 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom }: NavbarProps) 
           >
             {t.nav.contact}
           </Link>
+
+          {onOpenDilemma && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenDilemma();
+              }}
+              className="text-left text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <Scale className="w-4 h-4 text-neutral-400" />
+              <span>{isHi ? "दार्शनिक दुविधा" : "Dilemma Poll"}</span>
+            </button>
+          )}
 
           {user && (
             <button

@@ -268,7 +268,7 @@ export async function saveReflection(courseId: string, reflectionText: string, i
  * Validates email with strict RFC-compliant regex, limiting to 255 chars.
  * Public can ONLY insert; public read is completely blocked at database RLS level.
  */
-export async function joinWaitlist(email: string, source: string = "website_hero") {
+export async function joinWaitlist(email: string, source: string = "website_hero", honeypot?: string) {
   const cleanEmail = email.trim().toLowerCase();
 
   // Prevent email header injections and regex denial of service (ReDoS)
@@ -278,41 +278,41 @@ export async function joinWaitlist(email: string, source: string = "website_hero
 
   const safeSource = source.substring(0, 50).trim() || "website_hero";
 
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      // Parameterized insert
-      const { error } = await supabase.from("waitlist_members").insert({
+  try {
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         email: cleanEmail,
         source: safeSource,
-      });
+        honeypot: honeypot || "",
+      }),
+    });
 
-      // Handle duplicate email gracefully without leaking DB error details
-      if (error) {
-        if (error.code === "23505") { // Unique violation
-          return { success: true, message: "You are already on the priority scroll list!" };
-        }
-        throw error;
+    const json = await res.json();
+    if (json.success) {
+      return {
+        success: true,
+        message: json.data?.message || "Welcome to the Inner Circle!",
+      };
+    }
+    return {
+      success: false,
+      error: json.error?.message || "Unable to process request right now",
+    };
+  } catch (err: any) {
+    console.error("joinWaitlist fetch error, falling back to local demo:", err);
+    // Demo Fallback
+    try {
+      const saved = JSON.parse(localStorage.getItem("wp_waitlist") || "[]");
+      if (!saved.includes(cleanEmail)) {
+        saved.push(cleanEmail);
+        localStorage.setItem("wp_waitlist", JSON.stringify(saved));
       }
-
-      return { success: true, message: "Welcome to the Inner Circle!" };
-    } catch (err: any) {
-      console.error("Secure joinWaitlist error:", err.message);
-      return { error: "Unable to process request right now", success: false };
+      return { success: true, message: "Welcome to the Inner Circle (Demo Mode)!" };
+    } catch {
+      return { success: true, message: "Joined successfully!" };
     }
-  }
-
-  // Demo Fallback
-  try {
-    const saved = JSON.parse(localStorage.getItem("wp_waitlist") || "[]");
-    if (!saved.includes(cleanEmail)) {
-      saved.push(cleanEmail);
-      localStorage.setItem("wp_waitlist", JSON.stringify(saved));
-    }
-    return { success: true, message: "Welcome to the Inner Circle (Demo Mode)!" };
-  } catch {
-    return { success: true, message: "Joined successfully!" };
   }
 }
 
@@ -611,7 +611,7 @@ export async function deleteUserReflection(reflectionId: string, courseId?: stri
 
 /**
  * 12. SUBMIT CONTACT INQUIRY / DISPATCH (दार्शनिक संदेश प्रेषित करना)
- * Validates name, email, discipline, subject, and message length to prevent DDoS & Injection.
+ * Routes through secure production endpoint with Rate Limiting, Honeypot, and Zod validation.
  */
 export async function submitContactInquiry(inquiry: {
   name: string;
@@ -619,65 +619,90 @@ export async function submitContactInquiry(inquiry: {
   discipline: string;
   subject: string;
   message: string;
+  honeypot?: string;
 }) {
-  const cleanName = inquiry.name.substring(0, 100).trim();
-  const cleanEmail = inquiry.email.toLowerCase().trim();
-  const cleanDiscipline = inquiry.discipline.substring(0, 50).trim() || "General Inquiry";
-  const cleanSubject = inquiry.subject.substring(0, 200).trim();
-  const cleanMessage = inquiry.message.substring(0, 3000).trim();
+  try {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: inquiry.name,
+        email: inquiry.email,
+        subject: `[${inquiry.discipline || "General"}] ${inquiry.subject}`,
+        message: inquiry.message,
+        honeypot: inquiry.honeypot || "",
+      }),
+    });
 
-  if (!cleanName) {
-    return { success: false, error: "Please enter your name." };
-  }
-
-  if (cleanEmail.length < 3 || cleanEmail.length > 255 || !EMAIL_REGEX.test(cleanEmail)) {
-    return { success: false, error: "Please enter a valid electronic mail address." };
-  }
-
-  if (!cleanMessage) {
-    return { success: false, error: "Please inscribe your inquiry message." };
-  }
-
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      // If inquiries table exists in database, insert safely
-      const { error } = await supabase.from("waitlist_members").insert({
-        email: cleanEmail,
-        source: `contact_${cleanDiscipline.toLowerCase().replace(/[^a-z0-9]/g, "_")}`,
-      });
-
-      // Even if duplicate or waitlist table, treat as accepted without throwing DB leaks
-      if (error && error.code !== "23505") {
-        console.warn("Contact submission notice:", error.message);
-      }
-
+    const json = await res.json();
+    if (json.success) {
       return { success: true, error: null };
-    } catch (err: any) {
-      console.error("Secure submitContactInquiry error:", err.message);
-      return { success: false, error: "Unable to transmit dispatch at this moment." };
+    }
+    return {
+      success: false,
+      error: json.error?.message || "Failed to transmit dispatch.",
+    };
+  } catch (err: any) {
+    console.error("submitContactInquiry fetch error:", err);
+    // Offline/Demo Fallback: Save in localStorage
+    try {
+      const inquiries = JSON.parse(localStorage.getItem("wp_inquiries") || "[]");
+      inquiries.unshift({
+        id: "inq_" + Date.now(),
+        name: inquiry.name,
+        email: inquiry.email,
+        discipline: inquiry.discipline,
+        subject: inquiry.subject,
+        message: inquiry.message,
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem("wp_inquiries", JSON.stringify(inquiries.slice(0, 50)));
+      return { success: true, error: null };
+    } catch {
+      return { success: true, error: null };
     }
   }
+}
 
-  // Demo Fallback: Save in localStorage
+/**
+ * 13. FETCH DILEMMA STATS (दार्शनिक दुविधा आँकड़े प्राप्त करना)
+ */
+export async function fetchDilemmaStats(dilemmaId: string) {
   try {
-    const inquiries = JSON.parse(localStorage.getItem("wp_inquiries") || "[]");
-    inquiries.unshift({
-      id: "inq_" + Date.now(),
-      name: cleanName,
-      email: cleanEmail,
-      discipline: cleanDiscipline,
-      subject: cleanSubject,
-      message: cleanMessage,
-      created_at: new Date().toISOString(),
-    });
-    localStorage.setItem("wp_inquiries", JSON.stringify(inquiries.slice(0, 50)));
-    return { success: true, error: null };
-  } catch {
-    return { success: true, error: null };
+    const res = await fetch(`/api/dilemma/vote?dilemmaId=${encodeURIComponent(dilemmaId)}`);
+    const json = await res.json();
+    if (json.success) {
+      return { data: json.data, error: null };
+    }
+    return { data: null, error: json.error?.message || "Failed to load stats." };
+  } catch (err: any) {
+    return { data: null, error: err.message };
   }
 }
+
+/**
+ * 14. CAST DILEMMA VOTE (दार्शनिक दुविधा में निर्णय दर्ज करना)
+ */
+export async function castDilemmaVote(dilemmaId: string, selectedChoice: string) {
+  try {
+    const res = await fetch("/api/dilemma/vote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        dilemma_id: dilemmaId,
+        selected_choice: selectedChoice,
+      }),
+    });
+    const json = await res.json();
+    if (json.success) {
+      return { success: true, data: json.data, error: null };
+    }
+    return { success: false, data: null, error: json.error?.message || "Failed to vote." };
+  } catch (err: any) {
+    return { success: false, data: null, error: err.message };
+  }
+}
+
 
 
 

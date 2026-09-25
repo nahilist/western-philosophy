@@ -13,6 +13,7 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [interest, setInterest] = useState("Existentialism");
+  const [honeypot, setHoneypot] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -25,7 +26,7 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
     setLoading(true);
     setErrorMsg(null);
 
-    const res = await joinWaitlist(email, interest);
+    const res = await joinWaitlist(email, interest, honeypot);
     setLoading(false);
 
     if (res.success) {
@@ -72,6 +73,18 @@ export default function JoinModal({ isOpen, onClose }: JoinModalProps) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Honeypot Anti-Spam Trap */}
+              <input
+                type="text"
+                name="join_bot_trap"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="opacity-0 absolute -z-50 pointer-events-none w-0 h-0"
+              />
+
               <div>
                 <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium mb-2 font-mono">
                   Your Full Name
