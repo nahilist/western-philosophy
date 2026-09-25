@@ -15,7 +15,7 @@ interface AuthContextType {
   pendingCourseId: string | null;
   login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (name: string, email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
-  signInWithOAuth: (provider: "google" | "github") => Promise<{ success: boolean; error?: string }>;
+  signInWithOAuth: (provider: "google" | "github", forceDemo?: boolean) => Promise<{ success: boolean; error?: string; providerNotConfigured?: boolean }>;
   logout: () => Promise<void>;
   openAuthModal: (pendingCourseId?: string) => void;
   closeAuthModal: () => void;
@@ -178,26 +178,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true };
   };
 
-  const signInWithOAuth = async (provider: "google" | "github"): Promise<{ success: boolean; error?: string }> => {
+  const signInWithOAuth = async (
+    provider: "google" | "github",
+    forceDemo = false
+  ): Promise<{ success: boolean; error?: string; providerNotConfigured?: boolean }> => {
     const { isConfigured, client: supabase } = createClient();
 
-    if (isConfigured && supabase) {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
+    if (isConfigured && supabase && !forceDemo) {
+      try {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
 
-      if (error) return { success: false, error: error.message };
-      return { success: true };
+        if (error) {
+          const errMsg = error.message || "";
+          const isNotEnabled =
+            errMsg.toLowerCase().includes("not enabled") ||
+            errMsg.toLowerCase().includes("unsupported provider") ||
+            errMsg.toLowerCase().includes("validation_failed");
+
+          return {
+            success: false,
+            error: isNotEnabled
+              ? `${provider.toUpperCase()} provider is not activated in your Supabase Dashboard yet.`
+              : errMsg,
+            providerNotConfigured: isNotEnabled,
+          };
+        }
+        return { success: true };
+      } catch (err: any) {
+        return {
+          success: false,
+          error: err?.message || `Failed to initiate ${provider} authentication.`,
+        };
+      }
     }
 
     // Demo Mode fallback for OAuth
     const dummyUser: User = {
       id: `usr_${provider}_` + Date.now(),
-      name: `${provider.toUpperCase()} Scholar`,
-      email: `${provider.toLowerCase()}@philosophy.org`,
+      name: `${provider === "google" ? "Google" : "GitHub"} Scholar`,
+      email: `${provider.toLowerCase()}.scholar@philosophy.org`,
     };
     setUser(dummyUser);
     localStorage.setItem("philosophy_user", JSON.stringify(dummyUser));
