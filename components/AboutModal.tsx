@@ -2,8 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
-import { X, Compass, ArrowRight, BookOpen, Layers } from "lucide-react";
+import { X, Compass, ArrowRight, BookOpen, Layers, ThumbsUp } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+
+// Ensure Turbopack factory is available for any legacy cache requests
+void ThumbsUp;
 
 interface AboutModalProps {
   isOpen: boolean;
