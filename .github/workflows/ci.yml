@@ -83,4 +83,3 @@ jobs:
           echo "🎉 All 14 Philosophers courses and pages compiled successfully!"
           echo "🚀 Your Next.js Western Philosophy app is ready for deployment."
           echo "=========================================================="
-
