@@ -230,18 +230,6 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             {t.nav.contact}
           </Link>
 
-          {onOpenDilemma && (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenDilemma();
-              }}
-              className="text-left text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors flex items-center gap-2 cursor-pointer"
-            >
-              <Scale className="w-4 h-4 text-neutral-400" />
-              <span>{isHi ? "दार्शनिक दुविधा" : "Dilemma Poll"}</span>
-            </button>
-          )}
 
           {user && (
             <button
