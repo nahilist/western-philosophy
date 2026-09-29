@@ -644,6 +644,26 @@ export async function submitContactInquiry(inquiry: {
     };
   } catch (err: any) {
     console.error("submitContactInquiry fetch error:", err);
+
+    // Direct Web3Forms Fallback when /api/contact is unavailable
+    try {
+      await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: "eb458e86-ef08-4398-890b-27cee0c347d9",
+          name: inquiry.name,
+          email: inquiry.email,
+          replyto: inquiry.email,
+          subject: `[${inquiry.discipline || "General"}] ${inquiry.subject}`,
+          message: inquiry.message,
+          from_name: "Western Philosophy Academy",
+        }),
+      });
+    } catch (fallbackErr) {
+      console.warn("Client fallback to Web3Forms error:", fallbackErr);
+    }
+
     // Offline/Demo Fallback: Save in localStorage
     try {
       const inquiries = JSON.parse(localStorage.getItem("wp_inquiries") || "[]");
