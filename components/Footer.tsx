@@ -71,7 +71,7 @@ export default function Footer({ onOpenAbout }: FooterProps) {
           <ul className="space-y-2.5 text-xs tracking-wider text-neutral-300">
             <li>
               <a
-                href="mailto:contact@philosophy.org"
+                href="mailto:himanshukx64@gmail.com"
                 className="hover:text-white transition-colors"
               >
                 Email

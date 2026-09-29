@@ -184,10 +184,10 @@ function ContactPageContent() {
                   <Mail className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
-                  href="mailto:inquiries@philosophy.org"
+                  href="mailto:himanshukx64@gmail.com"
                   className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
-                  inquiries@philosophy.org
+                  himanshukx64@gmail.com
                 </a>
                 <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
@@ -204,10 +204,10 @@ function ContactPageContent() {
                   <ScrollText className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
-                  href="mailto:translations@philosophy.org"
+                  href="mailto:himanshukx64@gmail.com?subject=Manuscript%20%26%20Translation%20Codex"
                   className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
-                  translations@philosophy.org
+                  himanshukx64@gmail.com
                 </a>
                 <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
@@ -224,10 +224,10 @@ function ContactPageContent() {
                   <Sparkles className="w-3.5 h-3.5 text-neutral-300" />
                 </div>
                 <a
-                  href="mailto:seminars@philosophy.org"
+                  href="mailto:himanshukx64@gmail.com?subject=Seminars%20%26%20Reading%20Chapters"
                   className="font-mono text-sm text-neutral-100 hover:text-white transition-colors block"
                 >
-                  seminars@philosophy.org
+                  himanshukx64@gmail.com
                 </a>
                 <p className="text-xs text-neutral-300 font-garamond leading-relaxed">
                   {isHi
