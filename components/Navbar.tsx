@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles, Volume2, VolumeX, User as UserIcon, LogOut, Scale } from "lucide-react";
+import { Menu, X, Volume2, VolumeX, User as UserIcon, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { NavbarLanguageTranslator } from "@/components/LanguageTranslator";
@@ -101,29 +101,7 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             {t.nav.contact}
           </Link>
 
-          {/* Wisdom Modal Trigger */}
-          {onOpenDailyWisdom && (
-            <button
-              onClick={onOpenDailyWisdom}
-              title="Daily Philosophical Aphorism"
-              className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-              <span>{t.nav.wisdom}</span>
-            </button>
-          )}
 
-          {/* Dilemma Modal Trigger */}
-          {onOpenDilemma && (
-            <button
-              onClick={onOpenDilemma}
-              title={isHi ? "दार्शनिक दुविधा एवं जनमत" : "Philosophical Dilemma & Consensus"}
-              className="flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase px-3 py-1.5 rounded-full border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-all duration-300 cursor-pointer"
-            >
-              <Scale className="w-3.5 h-3.5 text-neutral-400" />
-              <span>{isHi ? "दुविधा" : "Dilemma"}</span>
-            </button>
-          )}
 
           {/* Sound Ambience */}
           <button
