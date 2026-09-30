@@ -56,6 +56,14 @@ export default function Footer({ onOpenAbout }: FooterProps) {
               </Link>
             </li>
             <li>
+              <Link href="/arena" className="hover:text-white transition-colors flex items-center gap-1.5 group">
+                <span className="group-hover:text-white">The Dialectical Arena</span>
+                <span className="text-[9px] font-mono px-1 py-0.5 border border-zinc-700 bg-zinc-900 text-zinc-300">
+                  NEW
+                </span>
+              </Link>
+            </li>
+            <li>
               <Link href="/contact" className="hover:text-white transition-colors">
                 Contact &amp; Inquiries
               </Link>

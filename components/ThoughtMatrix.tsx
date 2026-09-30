@@ -306,6 +306,31 @@ const EDGES: MatrixEdge[] = [
   { source: "will-to-power", target: "nihilism", relation: "Overcoming Mechanism", type: "synthesis" },
 ];
 
+const BASE_W = 1050;
+const BASE_H = 650;
+
+function calculateResponsiveNodes(width: number, height: number): MatrixNode[] {
+  const isMobile = width < 768;
+  const paddingX = isMobile ? 32 : 60;
+  const paddingY = isMobile ? 40 : 60;
+  const usableW = Math.max(width - paddingX * 2, 280);
+  const usableH = Math.max(height - paddingY * 2, 380);
+
+  return INITIAL_NODES.map((n) => {
+    const rx = (n.x / BASE_W) * usableW + paddingX;
+    const ry = (n.y / BASE_H) * usableH + paddingY;
+    const rRadius = isMobile ? Math.max(n.radius * 0.72, 17) : n.radius;
+    return {
+      ...n,
+      x: rx,
+      y: ry,
+      radius: rRadius,
+      vx: 0,
+      vy: 0,
+    };
+  });
+}
+
 export default function ThoughtMatrix() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -317,7 +342,8 @@ export default function ThoughtMatrix() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isInspectorOpen, setIsInspectorOpen] = useState(true);
 
-  // Dragging and pan states
+  // Interaction and animation tracking
+  const hasUserInteractedRef = useRef(false);
   const dragNodeRef = useRef<MatrixNode | null>(null);
   const isDraggingRef = useRef(false);
   const panRef = useRef({ x: 0, y: 0 });
@@ -352,7 +378,13 @@ export default function ThoughtMatrix() {
   // Reset viewport pan
   const handleResetView = () => {
     panRef.current = { x: 0, y: 0 };
-    setNodes(INITIAL_NODES.map((n) => ({ ...n, vx: 0, vy: 0 })));
+    hasUserInteractedRef.current = false;
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setNodes(calculateResponsiveNodes(rect.width, rect.height));
+    } else {
+      setNodes(INITIAL_NODES.map((n) => ({ ...n, vx: 0, vy: 0 })));
+    }
     playNodeChime(440);
   };
 
@@ -372,6 +404,11 @@ export default function ThoughtMatrix() {
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
+
+      // On initial mount or screen orientation change, adjust coordinates if user hasn't moved them
+      if (!hasUserInteractedRef.current) {
+        setNodes(calculateResponsiveNodes(rect.width, rect.height));
+      }
     };
 
     handleResize();
@@ -634,6 +671,7 @@ export default function ThoughtMatrix() {
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    hasUserInteractedRef.current = true;
     const node = getNodeAtPos(e.clientX, e.clientY);
     lastMousePosRef.current = { x: e.clientX, y: e.clientY };
 
@@ -654,6 +692,7 @@ export default function ThoughtMatrix() {
     lastMousePosRef.current = { x: e.clientX, y: e.clientY };
 
     if (isDraggingRef.current && dragNodeRef.current) {
+      hasUserInteractedRef.current = true;
       dragNodeRef.current.x += dx;
       dragNodeRef.current.y += dy;
       setNodes([...nodes]);
@@ -667,6 +706,67 @@ export default function ThoughtMatrix() {
   };
 
   const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    isPanningRef.current = false;
+    dragNodeRef.current = null;
+  };
+
+  // Full Mobile Touch Gestures
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    hasUserInteractedRef.current = true;
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const node = getNodeAtPos(touch.clientX, touch.clientY);
+      lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
+
+      if (node) {
+        dragNodeRef.current = node;
+        isDraggingRef.current = true;
+        setSelectedNodeId(node.id);
+        setIsInspectorOpen(true);
+        playNodeChime(node.type === "thinker" ? 640 : 440);
+      } else {
+        isPanningRef.current = true;
+      }
+    } else if (e.touches.length === 2) {
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      lastMousePosRef.current = { x: midX, y: midY };
+      isPanningRef.current = true;
+      isDraggingRef.current = false;
+      dragNodeRef.current = null;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastMousePosRef.current.x;
+      const dy = touch.clientY - lastMousePosRef.current.y;
+      lastMousePosRef.current = { x: touch.clientX, y: touch.clientY };
+
+      if (isDraggingRef.current && dragNodeRef.current) {
+        hasUserInteractedRef.current = true;
+        dragNodeRef.current.x += dx;
+        dragNodeRef.current.y += dy;
+        setNodes([...nodes]);
+      } else if (isPanningRef.current) {
+        panRef.current.x += dx;
+        panRef.current.y += dy;
+      }
+    } else if (e.touches.length === 2) {
+      const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const dx = midX - lastMousePosRef.current.x;
+      const dy = midY - lastMousePosRef.current.y;
+      lastMousePosRef.current = { x: midX, y: midY };
+
+      panRef.current.x += dx;
+      panRef.current.y += dy;
+    }
+  };
+
+  const handleTouchEnd = () => {
     isDraggingRef.current = false;
     isPanningRef.current = false;
     dragNodeRef.current = null;
@@ -755,16 +855,18 @@ export default function ThoughtMatrix() {
         {/* Matrix Canvas Container */}
         <div
           ref={containerRef}
-          className="relative w-full h-[520px] sm:h-[620px] lg:h-[700px] border border-neutral-900 bg-black overflow-hidden group shadow-2xl cursor-grab active:cursor-grabbing"
+          className="relative w-full h-[520px] sm:h-[620px] lg:h-[700px] border border-neutral-900 bg-black overflow-hidden group shadow-2xl cursor-grab active:cursor-grabbing touch-none"
         >
           {/* Subtle Astrolabe Ambient Coordinate Legend */}
-          <div className="absolute top-4 left-6 pointer-events-none flex items-center gap-3 text-[10px] font-mono text-neutral-600 tracking-widest">
+          <div className="absolute top-3 left-4 sm:top-4 sm:left-6 pointer-events-none flex items-center gap-2 sm:gap-3 text-[9px] sm:text-[10px] font-mono text-neutral-600 tracking-widest">
             <Compass className="w-3.5 h-3.5 text-neutral-600" />
-            <span>ORIGIN: ATHENS • LAT: 37.98° N</span>
+            <span className="hidden sm:inline">ORIGIN: ATHENS • LAT: 37.98° N</span>
+            <span className="sm:hidden">COSMIC MATRIX</span>
           </div>
 
-          <div className="absolute top-4 right-6 pointer-events-none text-[10px] font-mono text-neutral-600 tracking-widest">
-            <span>DRAG NODES • PAN VOID</span>
+          <div className="absolute top-3 right-4 sm:top-4 sm:right-6 pointer-events-none text-[9px] sm:text-[10px] font-mono text-neutral-600 tracking-widest">
+            <span className="hidden sm:inline">DRAG NODES • PAN VOID</span>
+            <span className="sm:hidden">TOUCH &amp; DRAG NODES</span>
           </div>
 
           {/* HTML5 Dynamic Matrix Canvas */}
@@ -773,12 +875,16 @@ export default function ThoughtMatrix() {
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            className="w-full h-full block"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+            className="w-full h-full block touch-none"
           />
 
           {/* Slide-over HUD Inspection Monograph Drawer */}
           {isInspectorOpen && activeSelectedNode && (
-            <div className="absolute top-6 right-6 w-80 sm:w-96 max-h-[90%] overflow-y-auto bg-black/95 border border-neutral-800 p-6 text-white shadow-2xl space-y-5 backdrop-blur-xl animate-fade-in z-20">
+            <div className="absolute inset-x-3 bottom-3 sm:inset-x-auto sm:bottom-auto sm:top-6 sm:right-6 w-auto sm:w-96 max-h-[50vh] sm:max-h-[90%] overflow-y-auto bg-black/95 border border-neutral-800 p-4 sm:p-6 text-white shadow-2xl space-y-4 sm:space-y-5 backdrop-blur-xl animate-fade-in z-20">
               {/* Drawer Top Header */}
               <div className="flex items-center justify-between pb-3 border-b border-neutral-900">
                 <div className="flex items-center gap-2">
