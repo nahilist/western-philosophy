@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PHILOSOPHER_COURSES } from "@/data/philosophers";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -32,6 +32,11 @@ const EPOCH_MAP: Record<string, EraFilter> = {
   camus: "contemporary",
 };
 
+const ROMAN_NUMERALS = [
+  "I", "II", "III", "IV", "V", "VI", "VII", 
+  "VIII", "IX", "X", "XI", "XII", "XIII", "XIV"
+];
+
 export default function CoursesSection() {
   const { t, getPhilosopherData } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<EraFilter>("all");
@@ -53,43 +58,52 @@ export default function CoursesSection() {
   }, [activeFilter]);
 
   return (
-    <section id="courses" className="w-full bg-black text-white py-24 sm:py-32 px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-28 border-b border-neutral-900">
-      <div className="w-full mx-auto">
-        {/* Section Heading with subtle accent line */}
-        <div className="text-center mb-12 sm:mb-16 space-y-3">
+    <section 
+      id="courses" 
+      className="w-full bg-black text-white py-28 sm:py-36 px-6 sm:px-10 lg:px-16 xl:px-20 2xl:px-28 border-b border-neutral-900 relative"
+    >
+      {/* Precision Corner Crosshairs */}
+      <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-400 text-xs select-none pointer-events-none">+</span>
+      <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-400 text-xs select-none pointer-events-none">+</span>
+
+      <div className="w-full mx-auto space-y-16">
+        {/* Section Heading with Archival Framing */}
+        <div className="text-center space-y-4 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-3">
             <span className="w-8 h-px bg-neutral-800" />
-            <span className="text-xs uppercase tracking-[0.25em] text-neutral-300 font-medium">
+            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.35em] text-neutral-400 font-semibold">
               {t.canon.tag}
             </span>
             <span className="w-8 h-px bg-neutral-800" />
           </div>
-          <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-normal tracking-[0.25em] text-white uppercase">
+
+          <h2 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl font-normal tracking-[0.2em] text-white uppercase">
             {t.canon.title}
           </h2>
-          <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-neutral-300 max-w-2xl mx-auto font-light leading-relaxed">
+
+          <p className="font-garamond text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto font-light leading-relaxed">
             {t.canon.subtitle}
           </p>
         </div>
 
-        {/* Era Filter Navigation Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-14 sm:mb-16">
+        {/* Minimal Era Filter Navigation Tabs (Hairline Bar) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 border-y border-neutral-900/80 py-4 max-w-4xl mx-auto">
           {filterTabs.map((tab) => {
             const isActive = activeFilter === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveFilter(tab.id)}
-                className={`px-4 sm:px-5 py-2 text-xs sm:text-sm tracking-[0.15em] uppercase font-serif-classic transition-all duration-300 border cursor-pointer flex items-center gap-2 ${
+                className={`px-4 sm:px-5 py-2 text-xs tracking-[0.2em] uppercase font-serif-classic transition-all duration-300 cursor-pointer flex items-center gap-2.5 ${
                   isActive
-                    ? "bg-white text-black border-white font-semibold shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-                    : "bg-neutral-950 text-neutral-300 border-neutral-800 hover:border-neutral-500 hover:text-white"
+                    ? "bg-white text-black font-bold shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+                    : "text-neutral-400 hover:text-white hover:bg-neutral-950 border border-transparent hover:border-neutral-800"
                 }`}
               >
                 <span>{t.canon[tab.labelKey]}</span>
                 <span
-                  className={`text-xs px-2 py-0.5 rounded font-mono font-medium ${
-                    isActive ? "bg-black text-white" : "bg-neutral-900 text-neutral-300"
+                  className={`text-[10px] font-mono px-1.5 py-0.2 ${
+                    isActive ? "bg-black text-white" : "text-neutral-400"
                   }`}
                 >
                   {tab.count}
@@ -99,52 +113,53 @@ export default function CoursesSection() {
           })}
         </div>
 
-        {/* 14 Philosophers Grid: Perfectly balanced (7 cols on 2xl/xl screens = 2 rows of 7!) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-5 sm:gap-6 lg:gap-7">
-          {displayedPhilosophers.map((item) => {
+        {/* 14 Philosophers Grid: Architectural Hairline Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-px bg-neutral-900 border border-neutral-900">
+          {displayedPhilosophers.map((item, idx) => {
             const pData = getPhilosopherData(item);
+            const romanIndex = ROMAN_NUMERALS[idx] || String(idx + 1);
+
             return (
               <Link
                 key={item.id}
                 href={`/course/${item.id}`}
-                className="group flex flex-col items-center text-center space-y-3.5 transition-all duration-300 cursor-pointer"
+                className="group flex flex-col justify-between p-4 sm:p-5 bg-black hover:bg-neutral-950 transition-colors duration-300 cursor-pointer relative"
               >
-                {/* Image Frame */}
-                <div className="relative w-full aspect-[3/4] bg-neutral-950 border border-neutral-800/90 overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 group-hover:border-neutral-400 group-hover:shadow-[0_15px_40px_rgba(255,255,255,0.12)]">
+                {/* Top Metadatum: Roman Numeral & Year */}
+                <div className="flex items-center justify-between text-[10px] font-mono text-neutral-400 uppercase tracking-widest pb-3">
+                  <span className="font-semibold text-neutral-400 group-hover:text-white transition-colors">
+                    {romanIndex}
+                  </span>
+                  <span className="truncate max-w-[85px] text-right">
+                    {pData.era.split("(")[0].trim()}
+                  </span>
+                </div>
+
+                {/* Portrait Plate with High-Contrast Monochromatic Filter */}
+                <div className="relative w-full aspect-[3/4] bg-neutral-950 border border-neutral-800/80 overflow-hidden my-3">
                   <Image
                     src={item.image}
                     alt={pData.name}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 14vw"
-                    className="object-cover object-top grayscale-0 md:grayscale contrast-110 brightness-95 transition-all duration-700 group-hover:scale-105 md:group-hover:grayscale-0 group-hover:brightness-105"
+                    className="object-cover object-top grayscale contrast-125 brightness-90 transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-100"
                   />
 
-                  {/* Vignette layer */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-70 group-hover:opacity-40 transition-opacity" />
+                  {/* Subtle Archival Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
 
-                  {/* Subtle top era badge */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center opacity-85 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <span className="text-xs uppercase tracking-wider text-neutral-200 px-2 py-0.5 bg-black/85 backdrop-blur-[2px] border border-neutral-800 font-mono font-medium">
-                      {pData.era.split("(")[0].trim()}
-                    </span>
-                  </div>
-
-                  {/* Hover overlay button */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300">
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 border border-white text-xs tracking-wider text-white uppercase font-serif-classic bg-black/90 shadow-lg font-medium">
-                      <BookOpen className="w-3.5 h-3.5 text-white" />
-                      <span>{t.canon.openDossier}</span>
-                      <ArrowRight className="w-3 h-3 text-white" />
-                    </span>
+                  {/* Hover Floating Arrow Indicator */}
+                  <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-black/90 border border-white/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <ArrowRight className="w-3 h-3 text-white" />
                   </div>
                 </div>
 
-                {/* Philosopher Name & Primary School */}
-                <div className="space-y-1 w-full px-1">
-                  <h3 className="font-serif-classic text-sm sm:text-base font-semibold tracking-[0.14em] text-neutral-100 uppercase transition-colors group-hover:text-white truncate">
+                {/* Philosopher Name & Philosophical Tradition */}
+                <div className="pt-2 space-y-1 text-left">
+                  <h3 className="font-serif-classic text-sm sm:text-base font-semibold tracking-[0.12em] text-neutral-200 uppercase transition-colors group-hover:text-white truncate">
                     {pData.name}
                   </h3>
-                  <p className="text-xs uppercase tracking-[0.12em] text-neutral-400 font-medium group-hover:text-neutral-200 transition-colors truncate">
+                  <p className="text-[11px] font-garamond text-neutral-400 italic truncate group-hover:text-neutral-300 transition-colors">
                     {pData.school.split(",")[0]}
                   </p>
                 </div>
