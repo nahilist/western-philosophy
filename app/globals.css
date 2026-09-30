@@ -177,3 +177,26 @@ body {
   display: none !important;
 }
 
+/* ==========================================================================
+   Monastery Sanctuary Focus Mode (Triggered by 'M' key)
+   ========================================================================== */
+body.focus-monastery-active header,
+body.focus-monastery-active nav,
+body.focus-monastery-active footer,
+body.focus-monastery-active aside[aria-label="Treatise Section Index"] {
+  opacity: 0.05 !important;
+  pointer-events: none !important;
+  transition: opacity 0.5s ease-out;
+}
+
+body.focus-monastery-active aside[aria-label="Focus mode active"],
+body.focus-monastery-active aside[aria-label="Ambient Sound Controller"] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+body.focus-monastery-active {
+  background-color: #000000 !important;
+  box-shadow: inset 0 0 120px rgba(0, 0, 0, 0.95);
+}
+

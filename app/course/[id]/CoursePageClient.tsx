@@ -19,7 +19,8 @@ import {
   Send,
   ShieldCheck,
   Lock,
-  Loader2
+  Loader2,
+  Download
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -27,6 +28,7 @@ import AuthModal from "@/components/AuthModal";
 import JoinModal from "@/components/JoinModal";
 import AboutModal from "@/components/AboutModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
+import TypographicPosterModal, { PosterQuoteData } from "@/components/TypographicPosterModal";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { PhilosopherCourse, PHILOSOPHER_COURSES } from "@/data/philosophers";
@@ -44,6 +46,13 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [dailyWisdomOpen, setDailyWisdomOpen] = useState(false);
+  const [posterModalOpen, setPosterModalOpen] = useState(false);
+  const [posterData, setPosterData] = useState<PosterQuoteData | null>(null);
+
+  const openPoster = (d: PosterQuoteData) => {
+    setPosterData(d);
+    setPosterModalOpen(true);
+  };
 
   // Supabase Backend States (Protected & Parameterized)
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -408,9 +417,26 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               <p className="font-serif-classic text-xl sm:text-2xl text-white leading-snug uppercase">
                 &ldquo;{course.famousQuotes[0]}&rdquo;
               </p>
-              <span className="text-xs tracking-[0.25em] text-neutral-400 uppercase font-serif-classic block">
-                — {pData.name}
-              </span>
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-xs tracking-[0.25em] text-neutral-400 uppercase font-serif-classic block">
+                  — {pData.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openPoster({
+                      quote: course.famousQuotes[0],
+                      author: pData.name,
+                      school: pData.school,
+                      era: pData.era,
+                    })
+                  }
+                  className="flex items-center gap-1.5 px-2.5 py-1 border border-neutral-800 hover:border-white text-[10px] uppercase font-mono tracking-widest text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>Card</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -605,7 +631,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-neutral-900">
+                  <div className="pt-4 border-t border-neutral-900 grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -614,10 +640,28 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                         const el = document.getElementById("reflections");
                         if (el) el.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className="w-full py-2.5 px-3 border border-neutral-800 hover:border-white text-neutral-400 hover:text-white text-xs uppercase tracking-[0.2em] font-serif-classic transition-colors flex items-center justify-center gap-2 cursor-pointer bg-neutral-950"
+                      className="py-2.5 px-2 border border-neutral-800 hover:border-white text-neutral-400 hover:text-white text-[10px] uppercase tracking-[0.15em] font-serif-classic transition-colors flex items-center justify-center gap-1.5 cursor-pointer bg-neutral-950"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-                      <span>{t.coursePage.inscribeInCodex || "Inscribe into Codex"}</span>
+                      <Sparkles className="w-3 h-3 text-neutral-400" />
+                      <span>{t.coursePage.inscribeInCodex || "Codex"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openPoster({
+                          quote: item.essence,
+                          author: pData.name,
+                          axiom: item.axiom,
+                          latinOrGreek: item.latinOrGreek,
+                          school: pData.school,
+                          era: pData.era,
+                        })
+                      }
+                      className="py-2.5 px-2 border border-neutral-800 hover:border-white text-neutral-300 hover:text-white text-[10px] uppercase tracking-[0.15em] font-serif-classic transition-colors flex items-center justify-center gap-1.5 cursor-pointer bg-neutral-900"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>Card</span>
                     </button>
                   </div>
                 </div>
@@ -826,12 +870,29 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             {course.famousQuotes.map((q, idx) => (
               <blockquote
                 key={idx}
-                className="pl-8 border-l-2 border-white/80 space-y-3 font-garamond text-xl sm:text-2xl lg:text-3xl italic text-neutral-200 leading-relaxed"
+                className="pl-8 border-l-2 border-white/80 space-y-4 font-garamond text-xl sm:text-2xl lg:text-3xl italic text-neutral-200 leading-relaxed group"
               >
                 <p>&ldquo;{q}&rdquo;</p>
-                <span className="text-xs uppercase tracking-[0.25em] text-neutral-400 not-italic font-serif-classic block">
-                  — {pData.name}
-                </span>
+                <div className="flex items-center justify-between not-italic">
+                  <span className="text-xs uppercase tracking-[0.25em] text-neutral-400 font-serif-classic block">
+                    — {pData.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openPoster({
+                        quote: q,
+                        author: pData.name,
+                        school: pData.school,
+                        era: pData.era,
+                      })
+                    }
+                    className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 px-2.5 py-1 border border-neutral-800 hover:border-white text-[10px] uppercase font-mono tracking-widest text-neutral-400 hover:text-white cursor-pointer"
+                  >
+                    <Download className="w-3 h-3" />
+                    <span>Card</span>
+                  </button>
+                </div>
               </blockquote>
             ))}
           </div>
@@ -1017,6 +1078,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       <JoinModal isOpen={joinModalOpen} onClose={() => setJoinModalOpen(false)} />
       <DailyWisdomModal isOpen={dailyWisdomOpen} onClose={() => setDailyWisdomOpen(false)} />
       <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
+      <TypographicPosterModal
+        isOpen={posterModalOpen}
+        onClose={() => setPosterModalOpen(false)}
+        data={posterData}
+      />
     </div>
   );
 }
