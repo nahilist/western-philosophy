@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import Script from "next/script";
 import { LanguageProvider } from "@/context/LanguageContext";
+import MonasticSoundscape from "@/components/MonasticSoundscape";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -107,6 +108,7 @@ export default function RootLayout({
 
         <LanguageProvider>
           {children}
+          <MonasticSoundscape />
         </LanguageProvider>
       </body>
     </html>
