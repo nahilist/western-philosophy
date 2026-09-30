@@ -381,7 +381,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       {/* ========================================================
           2. SECTION 01: THE ODYSSEY (100% Full-Bleed 2-Column Layout)
          ======================================================== */}
-      <section id="biography" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section id="biography" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-28 items-start">
           {/* Left Column: Title & Grand Pull Quote */}
           <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-32">
@@ -438,7 +440,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       {/* ========================================================
           3. SECTION 02: FOUNDATIONAL CONCEPTS (Full-Width 4-Col Grid)
          ======================================================== */}
-      <section className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section id="concepts" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full space-y-16">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
@@ -498,7 +502,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
           3. SECTION 02B: PURE WISDOM & DIALECTICAL AXIOMS (Full-Width Minimal Section)
          ======================================================== */}
       {course.pureWisdom && course.pureWisdom.length > 0 && (
-        <section id="pure-wisdom" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950/90">
+        <section id="pure-wisdom" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950/90 relative">
+          <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+          <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
           <div className="w-full space-y-16">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
@@ -624,7 +630,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       {/* ========================================================
           4. SECTION 04: DIALECTICAL SYLLABUS (Full-Width Split Layout)
          ======================================================== */}
-      <section id="syllabus" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section id="syllabus" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-28 items-start">
           {/* Left Column: Curriculum Overview & Action */}
           <div className="lg:col-span-4 space-y-8 lg:sticky lg:top-32">
@@ -733,9 +741,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       </section>
 
       {/* ========================================================
-          5. SECTION 04: SEMINAL TREATISES (Full-Width 3-Column Grid)
+          5. SECTION 05: SEMINAL TREATISES (Full-Width 3-Column Grid)
          ======================================================== */}
-      <section className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section id="treatises" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full space-y-16">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
@@ -792,7 +802,9 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       {/* ========================================================
           6. SECTION 06: MEMORABLE APHORISMS (Full-Width 2-Col Grid)
          ======================================================== */}
-      <section className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section id="aphorisms" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full space-y-16">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -827,9 +839,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       </section>
 
       {/* ========================================================
-          6. SECTION 06: THE CONTEMPLATIVE CODEX (Reflections Journal)
+          7. SECTION 07: THE CONTEMPLATIVE CODEX (Reflections Journal)
          ======================================================== */}
-      <section id="reflections" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950">
+      <section id="reflections" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950 relative">
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-600 text-xs select-none pointer-events-none">+</span>
         <div className="w-full space-y-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
             <div className="space-y-2">
