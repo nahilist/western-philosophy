@@ -97,6 +97,12 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             {t.nav.courses}
           </Link>
           <Link
+            href="/#matrix"
+            className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
+          >
+            {isHi ? "नक्षत्र जाल" : "Matrix"}
+          </Link>
+          <Link
             href="/contact"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
@@ -223,6 +229,13 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
             {t.nav.courses}
+          </Link>
+          <Link
+            href="/#matrix"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
+          >
+            {isHi ? "नक्षत्र जाल (Matrix)" : "Thought Matrix"}
           </Link>
           <Link
             href="/contact"

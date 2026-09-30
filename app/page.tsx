@@ -6,6 +6,7 @@ import HeroDescartes from "@/components/HeroDescartes";
 import SocratesSection from "@/components/SocratesSection";
 import CosmicSection from "@/components/CosmicSection";
 import CoursesSection from "@/components/CoursesSection";
+import ThoughtMatrix from "@/components/ThoughtMatrix";
 import CreationBanner from "@/components/CreationBanner";
 import Footer from "@/components/Footer";
 import JoinModal from "@/components/JoinModal";
@@ -42,7 +43,10 @@ function PhilosophyPlatform() {
       {/* 5. Courses Grid: 4 Thinkers (opens dedicated Full Page /course/[id]) */}
       <CoursesSection />
 
-      {/* 6. Creation of Adam Banner: Michelangelo Hands + Kant */}
+      {/* 6. The Thought Matrix: Interactive 2500-Year Celestial Node Graph */}
+      <ThoughtMatrix />
+
+      {/* 7. Creation of Adam Banner: Michelangelo Hands + Kant */}
       <CreationBanner onJoinClick={() => setJoinModalOpen(true)} />
 
       {/* 7. Footer */}
