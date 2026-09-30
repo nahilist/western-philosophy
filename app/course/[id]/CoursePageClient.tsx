@@ -71,6 +71,16 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
   const nextPData = getPhilosopherData(nextPhilosopher);
   const prevPData = getPhilosopherData(prevPhilosopher);
 
+  const monographSections = [
+    { id: "biography", num: "01", label: t.coursePage.section01 || "Odyssey" },
+    { id: "concepts", num: "02", label: t.coursePage.section02 || "Doctrine" },
+    { id: "pure-wisdom", num: "03", label: t.coursePage.section02b || "Wisdom" },
+    { id: "syllabus", num: "04", label: t.coursePage.section03 || "Syllabus" },
+    { id: "treatises", num: "05", label: t.coursePage.section04 || "Texts" },
+    { id: "aphorisms", num: "06", label: t.coursePage.section05 || "Maxims" },
+    { id: "reflections", num: "07", label: "Codex" },
+  ];
+
   // Load progress & reflections on mount or user change
   useEffect(() => {
     let isMounted = true;
@@ -203,10 +213,40 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
         </div>
       </div>
 
+      {/* Floating Monastic Section Tracker (01 – 07) */}
+      <aside
+        aria-label="Treatise Section Index"
+        className="hidden 2xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-2.5 py-4 px-2 border border-neutral-900 bg-black/85 backdrop-blur-md shadow-2xl"
+      >
+        <span className="font-mono text-[8px] text-neutral-400 uppercase tracking-widest mb-1 select-none">
+          INDEX
+        </span>
+        {monographSections.map((s) => (
+          <a
+            key={s.id}
+            href={`#${s.id}`}
+            title={s.label}
+            className="group relative flex items-center justify-center p-1 cursor-pointer"
+          >
+            <span className="font-mono text-[10px] text-neutral-400 group-hover:text-white transition-colors">
+              {s.num}
+            </span>
+            {/* Minimalist Hover Tooltip */}
+            <span className="absolute right-9 px-2.5 py-1 bg-black border border-neutral-800 text-[10px] uppercase font-mono tracking-widest text-neutral-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+              {s.num} • {s.label}
+            </span>
+          </a>
+        ))}
+      </aside>
+
       {/* ========================================================
           1. FULL-BLEED 100% WIDTH HERO SECTION
          ======================================================== */}
-      <section className="w-full py-16 sm:py-24 lg:py-32 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
+      <section className="w-full py-16 sm:py-24 lg:py-32 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black relative">
+        {/* Precision Corner Crosshairs */}
+        <span className="absolute top-4 left-6 sm:left-12 font-mono text-neutral-400 text-xs select-none pointer-events-none">+</span>
+        <span className="absolute top-4 right-6 sm:right-12 font-mono text-neutral-400 text-xs select-none pointer-events-none">+</span>
+
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-28 items-center">
           {/* Left: Framed High-Res Portrait with Signature White Offset Frame */}
           <div className="lg:col-span-5 flex justify-center lg:justify-start">

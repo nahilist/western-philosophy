@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { NavbarLanguageTranslator } from "@/components/LanguageTranslator";
 import AccountModal from "@/components/AccountModal";
+import ScrollGauge from "@/components/ScrollGauge";
 
 interface NavbarProps {
   onOpenAbout?: () => void;
@@ -56,10 +57,11 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 w-full ${
         scrolled
-          ? "bg-black/90 backdrop-blur-md border-b border-neutral-900/80 py-4 shadow-2xl"
-          : "bg-transparent py-7"
+          ? "bg-black/95 backdrop-blur-md border-b border-neutral-900/90 py-3.5 shadow-2xl"
+          : "bg-transparent py-6"
       }`}
     >
+      <ScrollGauge />
       <div className="w-full px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 flex items-center justify-between">
         {/* Brand Logo */}
         <Link
