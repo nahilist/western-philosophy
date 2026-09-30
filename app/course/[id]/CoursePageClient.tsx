@@ -262,6 +262,17 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               Primary Source: {course.quoteSource}
             </p>
 
+            {course.coreQuestion && (
+              <div className="p-4 sm:p-5 border-l-2 border-white/80 bg-neutral-950/90 border border-neutral-900 space-y-1.5 text-left">
+                <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-neutral-400 font-semibold block">
+                  {t.coursePage.fundamentalInquiry || "The Fundamental Inquiry"}
+                </span>
+                <p className="font-serif-classic text-sm sm:text-base text-neutral-100 italic leading-relaxed">
+                  &ldquo;{course.coreQuestion}&rdquo;
+                </p>
+              </div>
+            )}
+
             {/* Quick Metrics Bar across full width */}
             <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-neutral-900 py-4 text-xs">
               <div className="flex items-center gap-2 text-neutral-300">
@@ -291,8 +302,14 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
                 Read Odyssey
               </a>
               <a
+                href="#pure-wisdom"
+                className="px-7 py-3.5 border border-white/80 hover:bg-white hover:text-black text-white text-xs uppercase tracking-[0.25em] transition-all font-semibold"
+              >
+                {t.coursePage.section02b || "Pure Wisdom"}
+              </a>
+              <a
                 href="#syllabus"
-                className="px-7 py-3.5 border border-white/70 hover:border-white text-white text-xs uppercase tracking-[0.25em] transition-colors"
+                className="px-7 py-3.5 border border-neutral-700 hover:border-white text-neutral-300 hover:text-white text-xs uppercase tracking-[0.25em] transition-colors"
               >
                 View Syllabus
               </a>
@@ -438,7 +455,134 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       </section>
 
       {/* ========================================================
-          4. SECTION 03: DIALECTICAL SYLLABUS (Full-Width Split Layout)
+          3. SECTION 02B: PURE WISDOM & DIALECTICAL AXIOMS (Full-Width Minimal Section)
+         ======================================================== */}
+      {course.pureWisdom && course.pureWisdom.length > 0 && (
+        <section id="pure-wisdom" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950/90">
+          <div className="w-full space-y-16">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-neutral-900">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
+                    03
+                  </span>
+                  <div className="w-8 h-px bg-neutral-800" />
+                  <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
+                    {t.coursePage.section02b || "Pure Wisdom"}
+                  </span>
+                </div>
+                <h2 className="font-serif-classic text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[0.12em] text-white uppercase">
+                  {t.coursePage.section02bTitle || "PURE WISDOM & DIALECTICAL AXIOMS"}
+                </h2>
+              </div>
+              <p className="text-xs text-neutral-400 tracking-widest uppercase font-mono max-w-md text-left sm:text-right">
+                {t.coursePage.section02bSub ||
+                  "Essential philosophical maxims stripped of superficial ornamentation—pure, eternal reflections designed for meditative contemplation."}
+              </p>
+            </div>
+
+            {/* Dialectical Inquiry & Paradox Highlight Banner */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {course.coreQuestion && (
+                <div className="p-8 border border-neutral-800 bg-black/80 space-y-3 relative group hover:border-neutral-700 transition-colors">
+                  <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-neutral-400 font-semibold block">
+                    {t.coursePage.fundamentalInquiry || "The Fundamental Inquiry"}
+                  </span>
+                  <h3 className="font-serif-classic text-xl sm:text-2xl text-white leading-relaxed font-light">
+                    &ldquo;{course.coreQuestion}&rdquo;
+                  </h3>
+                  <div className="w-12 h-px bg-neutral-800" />
+                  <p className="text-xs text-neutral-400 font-garamond leading-relaxed">
+                    The ontological axis around which the thinker&apos;s entire intellectual and ethical life rotated.
+                  </p>
+                </div>
+              )}
+
+              {course.epistemicParadox && (
+                <div className="p-8 border border-neutral-800 bg-black/80 space-y-3 relative group hover:border-neutral-700 transition-colors">
+                  <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-neutral-400 font-semibold block">
+                    {t.coursePage.dialecticalParadox || "The Dialectical Paradox"}
+                  </span>
+                  <h3 className="font-serif-classic text-xl sm:text-2xl text-neutral-200 leading-relaxed font-light italic">
+                    &ldquo;{course.epistemicParadox}&rdquo;
+                  </h3>
+                  <div className="w-12 h-px bg-neutral-800" />
+                  <p className="text-xs text-neutral-400 font-garamond leading-relaxed">
+                    The irreducible contradiction that shatters dogmatic complacency and awakens conscious inquiry.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Pure Wisdom Cards (Minimal 3-Column Responsive Grid) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+              {course.pureWisdom.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-8 border border-neutral-800/90 bg-black flex flex-col justify-between space-y-8 hover:border-neutral-600 transition-all duration-300 relative group"
+                >
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-neutral-400 tracking-widest font-semibold">
+                        AXIOM 0{idx + 1}
+                      </span>
+                      {item.latinOrGreek && (
+                        <span className="text-neutral-400 italic font-garamond text-sm">
+                          {item.latinOrGreek}
+                        </span>
+                      )}
+                    </div>
+
+                    <h4 className="font-serif-classic text-2xl font-bold text-white tracking-wide uppercase leading-snug">
+                      {item.axiom}
+                    </h4>
+
+                    <div className="w-10 h-px bg-neutral-800 group-hover:w-16 group-hover:bg-neutral-500 transition-all" />
+
+                    <div className="space-y-2">
+                      <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-neutral-400 font-semibold block">
+                        The Pure Essence
+                      </span>
+                      <p className="font-garamond text-base sm:text-lg text-neutral-200 leading-relaxed font-light">
+                        {item.essence}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 space-y-2 border-t border-neutral-900">
+                      <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-neutral-400 font-semibold block">
+                        Contemplative Practice
+                      </span>
+                      <p className="font-garamond text-sm sm:text-base text-neutral-300 leading-relaxed italic">
+                        &ldquo;{item.contemplation}&rdquo;
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-neutral-900">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const note = `[Contemplating ${pData.name} — ${item.axiom}]: ${item.contemplation}`;
+                        setReflectionInput(note);
+                        const el = document.getElementById("reflections");
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="w-full py-2.5 px-3 border border-neutral-800 hover:border-white text-neutral-400 hover:text-white text-xs uppercase tracking-[0.2em] font-serif-classic transition-colors flex items-center justify-center gap-2 cursor-pointer bg-neutral-950"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>{t.coursePage.inscribeInCodex || "Inscribe into Codex"}</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================
+          4. SECTION 04: DIALECTICAL SYLLABUS (Full-Width Split Layout)
          ======================================================== */}
       <section id="syllabus" className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 xl:gap-28 items-start">
@@ -447,7 +591,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
-                  03
+                  04
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
@@ -558,7 +702,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
-                  04
+                  05
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
@@ -606,14 +750,14 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       </section>
 
       {/* ========================================================
-          6. SECTION 05: MEMORABLE APHORISMS (Full-Width 2-Col Grid)
+          6. SECTION 06: MEMORABLE APHORISMS (Full-Width 2-Col Grid)
          ======================================================== */}
       <section className="w-full py-20 sm:py-28 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-black">
         <div className="w-full space-y-16">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
-                05
+                06
               </span>
               <div className="w-8 h-px bg-neutral-800" />
               <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">
@@ -651,7 +795,7 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-sm text-neutral-400 tracking-widest font-semibold">
-                  06
+                  07
                 </span>
                 <div className="w-8 h-px bg-neutral-800" />
                 <span className="text-xs uppercase tracking-[0.35em] text-neutral-400">

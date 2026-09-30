@@ -10,6 +10,13 @@ export interface SeminalWork {
   summary: string;
 }
 
+export interface PureWisdomPrinciple {
+  axiom: string;
+  latinOrGreek?: string;
+  essence: string;
+  contemplation: string;
+}
+
 export interface PhilosopherCourse {
   id: string;
   name: string;
@@ -21,6 +28,9 @@ export interface PhilosopherCourse {
   quoteSource: string;
   overview: string;
   biography: string;
+  coreQuestion: string;
+  epistemicParadox: string;
+  pureWisdom: PureWisdomPrinciple[];
   keyConcepts: PhilosophicalConcept[];
   seminalWorks: SeminalWork[];
   famousQuotes: string[];
@@ -48,6 +58,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Regarded as the Father of Modern Western Philosophy, René Descartes fundamentally disrupted Scholastic traditions by refusing to accept any belief that could possibly be doubted. Through radical doubt, he reconstructed knowledge on the bedrock of self-conscious thought.",
     biography:
       "Born in La Haye en Touraine, France, in 1596, Descartes was educated by the Jesuits at Collège Henri IV, studying mathematics, physics, and classical philosophy. Dissatisfied with dogmatic tradition, he enlisted in the military to travel and study the 'book of the world'. In a heated stove-room in Germany in 1619, he experienced a series of dreams that revealed to him a universal mathematical science of nature. Later settling in the Dutch Republic, he composed his epochal works on optics, geometry, epistemology, and the passions of the soul, before passing away in Stockholm, Sweden in 1650.",
+    coreQuestion: "Can the human intellect, through radical and relentless doubt, discover a foundational truth that is utterly immune to skepticism?",
+    epistemicParadox: "To doubt everything is to unveil the one truth that cannot be doubted: the self-luminous reality of the doubting consciousness itself.",
+    pureWisdom: [
+      {
+            "axiom": "The Indubitable Sovereign",
+            "latinOrGreek": "Cogito, Ergo Sum",
+            "essence": "Even under the supreme illusion of an omnipotent deceiver, consciousness cannot doubt its own immediate reality. The very act of doubting confirms the thinker.",
+            "contemplation": "Notice the silent observer behind every passing worry, concept, and sensation. Who is aware of the thought right now?"
+      },
+      {
+            "axiom": "Methodical Dissolution",
+            "latinOrGreek": "De Omnibus Dubitandum Est",
+            "essence": "Strip away acquired opinions, inherited dogmas, and sensory appearances until only that which is self-evident and crystalline survives.",
+            "contemplation": "Identify one core belief you hold purely because society or tradition handed it to you. Question it down to its first principles."
+      },
+      {
+            "axiom": "The Clear & Distinct Intellect",
+            "latinOrGreek": "Clara et Distincta Perceptio",
+            "essence": "Truth reveals itself not through emotional conviction or rhetorical eloquence, but through intellectual lucidity that leaves zero room for ambiguity.",
+            "contemplation": "When facing a chaotic dilemma, divide it into its irreducible components until the next true step becomes unmistakable."
+      }
+],
     keyConcepts: [
       {
         name: "Method of Hyperbolic Doubt",
@@ -137,6 +169,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Confronting the supreme existential crisis of Western civilization—the collapse of traditional religious metaphysics—Nietzsche waged intellectual war on dogmatic morality, championing life affirmation, creative overcoming, and the revaluation of all values.",
     biography:
       "Born in Röcken, Saxony, in 1844, Friedrich Wilhelm Nietzsche was appointed full professor at Basel at just 24 years old. Resigning ten years later due to health afflictions, he lived as an itinerant wanderer between the Swiss Alps of Sils Maria, Turin, Genoa, and Nice, penning monumental philosophical aphorisms with lyrical fury before his collapse in Turin in 1889.",
+    coreQuestion: "When all metaphysical and religious illusions crumble, how can humanity affirm life with unconditional joy, beauty, and creative strength?",
+    epistemicParadox: "The truth that frees us is that there are no absolute dogmatic truths—only perspectives fighting to elevate or diminish human vitality.",
+    pureWisdom: [
+      {
+            "axiom": "The Supreme Affirmation of Fate",
+            "latinOrGreek": "Amor Fati",
+            "essence": "Do not merely tolerate necessity, much less conceal it; love it entirely. Every tear, tragedy, and triumph was essential to forge who you are.",
+            "contemplation": "Take the single most painful disappointment in your life and contemplate how it sculpted your resilience and depth. Affirm it completely."
+      },
+      {
+            "axiom": "The Eternal Recurrence of the Same",
+            "latinOrGreek": "Die Ewige Wiederkunft",
+            "essence": "Live each second with such uncompromising presence and nobility that you would joyfully desire to repeat this exact life an infinite number of times.",
+            "contemplation": "Ask yourself before every major decision: 'Would I choose to repeat this action across an eternity of cycles?'"
+      },
+      {
+            "axiom": "Self-Overcoming as Highest Art",
+            "latinOrGreek": "Selbstüberwindung",
+            "essence": "Man is a bridge, not a destination. Greatness does not lie in comfortable equilibrium, but in the relentless willingness to surpass one's past self.",
+            "contemplation": "Where have you become complacent? What obsolete habit or fear must you shed to cross the next threshold?"
+      }
+],
     keyConcepts: [
       {
         name: "The Death of God & Nihilism",
@@ -226,6 +280,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Socrates revolutionized human thought by bringing philosophy down from the stars into the Agora of Athens. Rather than studying cosmology, he interrogated human ethics: What is justice? What is courage? What makes life truly worthwhile?",
     biography:
       "Born in Alopece near Athens around 470 BCE, Socrates was the son of a stonemason and a midwife. He served with heroic valor as a hoplite soldier in the Peloponnesian War. Choosing poverty over paid rhetoric, he spent his life questioning politicians, poets, and craftsmen in Athens. In 399 BCE, accused of corrupting the youth and impiety, he defended himself with defiant integrity before an Athenian jury of 501 citizens, drinking hemlock poison in serene philosophical dignity.",
+    coreQuestion: "What is the true nature of virtue, and how does a human being cultivate a soul worthy of existence?",
+    epistemicParadox: "The wisest man in Athens is he who alone understands that his human wisdom is worth nothing.",
+    pureWisdom: [
+      {
+            "axiom": "The Sanity of Learned Ignorance",
+            "latinOrGreek": "Scio Me Nihil Scire / Aporia",
+            "essence": "The greatest impediment to truth is not ignorance, but the illusion of knowledge. The admission of not knowing is the sanctuary where genuine inquiry begins.",
+            "contemplation": "Observe how often your ego rushes to pretend certainty. Sit in quiet humility with the vast mystery of existence."
+      },
+      {
+            "axiom": "The Inviolability of the Examined Life",
+            "latinOrGreek": "Ho De Anexetastos Bios Ou Biōtos Anthrōpō",
+            "essence": "To wander through the years driven by unexamined desires, cultural scripts, and tribal impulses is to sleepwalk through mortality.",
+            "contemplation": "Audit the routine of your days: Which desires are authentically your own, and which are passive imitations of external pressure?"
+      },
+      {
+            "axiom": "Integrity over Survival",
+            "latinOrGreek": "Epimeleia Heautou",
+            "essence": "It is infinitely better to suffer injustice than to commit it; for inflicting injustice poisons the soul, whereas suffering it touches only the perishable body.",
+            "contemplation": "When tempted to compromise your conscience for convenience or approval, remember that your character is the only possession you never leave behind."
+      }
+],
     keyConcepts: [
       {
         name: "Socratic Ignorance",
@@ -315,6 +391,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Niccolò Machiavelli decoupled politics from theological moralism, pioneering modern political science through the cold-eyed observation of how leaders actually govern rather than how they ought to govern. His philosophy balances audacious human agency (Virtù) against the unpredictable floods of fate (Fortuna).",
     biography:
       "Born in Florence in 1469, Machiavelli served as senior secretary to the Second Chancery of the Florentine Republic for fourteen years, undertaking diplomatic missions to Cesare Borgia, France, and Rome. When the Medici returned in 1512, he was imprisoned, tortured, and exiled to his country estate, where he channeled his genius into writing The Prince and Discourses on Livy.",
+    coreQuestion: "How does political and moral power actually operate in the treacherous, shifting reality of the human condition?",
+    epistemicParadox: "The leader who attempts to be good in all circumstances inevitably brings about ruin among so many who are not good.",
+    pureWisdom: [
+      {
+            "axiom": "The Effectual Truth of Reality",
+            "latinOrGreek": "La Verità Effettuale della Cosa",
+            "essence": "Distrust idealistic utopias and pious illusions. Observe the world as it genuinely functions, not as poets and theologians wish it were.",
+            "contemplation": "In your work and relationships, strip away wishful thinking. What are the unspoken incentives and real forces at play?"
+      },
+      {
+            "axiom": "The Mastery of the Unforeseen",
+            "latinOrGreek": "Virtù contro Fortuna",
+            "essence": "Fortune is like a raging torrential river; it drowns those who took no precautions, but yields its riches to those who build dykes and dams in quiet times.",
+            "contemplation": "Prepare in peace for the storms of adversity. Cultivate discipline, foresight, and adaptability before crisis strikes."
+      },
+      {
+            "axiom": "The Dual Nature of Leadership",
+            "latinOrGreek": "Il Leone e la Volpe",
+            "essence": "Strength without cunning falls into hidden snares; cunning without strength is devoured by wolves. Mastery requires knowing when to roar and when to vanish.",
+            "contemplation": "Are you relying exclusively on blunt force or naive diplomacy? How can strategic patience serve your long-term aims?"
+      }
+],
     keyConcepts: [
       {
         name: "The Effective Truth of Things",
@@ -404,6 +502,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Student of Socrates and teacher of Aristotle, Plato founded the Academy in Athens, the Western world's first institution of higher learning. His dialogues laid the metaphysical, epistemological, and political foundations of Western civilization, postulating an eternal realm of transcendent Forms beyond sensory illusions.",
     biography:
       "Born to an aristocratic Athenian family during the Peloponnesian War, Plato's youth was transformed by encountering Socrates. Following Socrates' execution in 399 BCE, Plato traveled through Egypt, Italy, and Sicily before returning to Athens around 387 BCE to establish the Academy. His immortal dialogues span ethics, metaphysics, love, mathematics, and the nature of the just republic.",
+    coreQuestion: "What is the eternal, unchanging reality that transcends the fleeting shadows of sensory experience?",
+    epistemicParadox: "The shadows on the cave wall appear vivid and real to the chained prisoners, while the blinding sun of absolute truth is perceived as madness.",
+    pureWisdom: [
+      {
+            "axiom": "The Metanoia of the Soul",
+            "latinOrGreek": "Hē Periagōgē Tēs Psychēs",
+            "essence": "Education is not putting sight into blind eyes, but turning the entire eye of the soul away from darkness toward the radiance of True Being.",
+            "contemplation": "Turn your attention away from sensory distractions and digital spectacles. Contemplate the timeless ideals of Truth, Beauty, and Goodness."
+      },
+      {
+            "axiom": "The Architecture of the Good",
+            "latinOrGreek": "To Agathon",
+            "essence": "Just as the sun gives light and life to the physical earth, the Form of the Good illuminates all intelligible truth and gives meaning to reality.",
+            "contemplation": "Let your actions be guided not by temporary gains, but by an enduring standard of moral harmony and objective goodness."
+      },
+      {
+            "axiom": "Inner Justice as Harmony",
+            "latinOrGreek": "Dikaiosynē",
+            "essence": "Justice is not external law; it is the perfect internal symphony of the soul, where Reason rules with wisdom, Spirit defends with courage, and Appetite obeys in temperance.",
+            "contemplation": "Look inside: Is your rational mind governing your impulsive appetites, or are your appetites driving your intellect?"
+      }
+],
     keyConcepts: [
       {
         name: "The Theory of Forms",
@@ -493,6 +613,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Known throughout the Middle Ages simply as 'The Philosopher', Aristotle was the master of those who know. Tutored by Plato for twenty years and later tutor to Alexander the Great, Aristotle founded the Lyceum, pioneering formal logic, biology, physics, metaphysics, poetics, and virtue ethics.",
     biography:
       "Born in Stagira in northern Greece, Aristotle entered Plato's Academy at age seventeen. Following Plato's death, he traveled across Asia Minor and Macedonia, tutoring young Alexander the Great. In 335 BCE, he returned to Athens to establish the Lyceum, lecturing while walking along the colonnades (the Peripatetic school). Following Alexander's death, facing Athenian anti-Macedonian hostility, he retreated to Chalcis, famously stating he would not allow Athens to sin twice against philosophy.",
+    coreQuestion: "What constitutes the supreme, flourishing realization (Telos) of a human life?",
+    epistemicParadox: "We become just by doing just acts, temperate by doing temperate acts, and brave by doing brave acts—virtue is formed by the very actions it produces.",
+    pureWisdom: [
+      {
+            "axiom": "The Flourishing of Being",
+            "latinOrGreek": "Eudaimonia",
+            "essence": "Supreme happiness is neither passive contentment nor hedonistic indulgence; it is a life of active excellence in accordance with reason over a complete lifespan.",
+            "contemplation": "Do not ask: 'How can I feel pleasure today?' Ask: 'How can I exercise my highest rational and creative potential today?'"
+      },
+      {
+            "axiom": "The Golden Mean",
+            "latinOrGreek": "To Meson",
+            "essence": "Virtue is an exquisite equilibrium between two vices: deficiency and excess. Courage stands poised between cowardice and recklessness.",
+            "contemplation": "Examine your habits: Where are you in deficiency (neglect, fear) or in excess (obsession, arrogance)? Seek the dynamic center."
+      },
+      {
+            "axiom": "Teleological Purpose",
+            "latinOrGreek": "Telos & Energeia",
+            "essence": "An acorn holds within it the blueprint of the oak; nature does nothing in vain. Understand every living entity by the ultimate perfection it is meant to realize.",
+            "contemplation": "What is your unique potential waiting to be actualized? Move each day from dormant potency (dynamis) into radiant activity (energeia)."
+      }
+],
     keyConcepts: [
       {
         name: "Teleology & The Final Cause",
@@ -582,6 +724,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Baruch Spinoza was one of the boldest minds in human history. Excommunicated from the Jewish community of Amsterdam for his radical heresies, Spinoza lived a quiet life grinding optical lenses while composing his geometric masterpiece, 'Ethics'—demonstrating that God and Nature are one single infinite substance.",
     biography:
       "Born in Amsterdam in 1632 to Sephardic Portuguese refugees, Spinoza received rigorous rabbinic education before absorbing Cartesian philosophy and Latin scholarship. In 1656, the synagogue issued against him the harshest cherem (excommunication) in its history. Refusing prestigious university chairs to safeguard his complete intellectual freedom, he died in The Hague in 1677 from lung illness exacerbated by glass dust.",
+    coreQuestion: "How does understanding the absolute, infinite unity of Nature liberate the human soul from fear, superstition, and bondage?",
+    epistemicParadox: "The moment we understand that all things happen by eternal necessity, we attain the supreme peace of absolute freedom.",
+    pureWisdom: [
+      {
+            "axiom": "The Infinite Singularity",
+            "latinOrGreek": "Deus Sive Natura",
+            "essence": "There is only one infinite, indivisible Substance: Nature, or God. Mind and matter are not separate entities, but two eternal expressions of the same single reality.",
+            "contemplation": "Look upon the universe not as an external creation, but as an infinite living ocean of which you are an inseparable wave."
+      },
+      {
+            "axiom": "The Gaze of Eternity",
+            "latinOrGreek": "Sub Specie Aeternitatis",
+            "essence": "View individual events not through the narrow lens of personal anxiety, but from the vantage point of eternal universal causality. Sorrow dissolves when seen in its cosmic context.",
+            "contemplation": "When anger or disappointment strikes, pull back your perspective: See this event as a tiny, necessary ripple in an eternal cosmos."
+      },
+      {
+            "axiom": "The Intellectual Love of Reality",
+            "latinOrGreek": "Amor Dei Intellectualis",
+            "essence": "Freedom is not arbitrary caprice, but the clear rational comprehension of necessity. To understand why things are as they are is to experience serene, indestructible joy.",
+            "contemplation": "Shift your mental energy from futile resentment against reality into clear, scientific comprehension of causes and effects."
+      }
+],
     keyConcepts: [
       {
         name: "God or Nature",
@@ -671,6 +835,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "David Hume was the great champion of British Empiricism and the Scottish Enlightenment. By subjecting human reason, causation, miracles, and the concept of the self to relentless empirical scrutiny, Hume famously awoke Immanuel Kant from his 'dogmatic slumber'.",
     biography:
       "Born in Edinburgh in 1711, Hume composed his masterwork 'A Treatise of Human Nature' while in France in his twenties, though it initially 'fell dead-born from the press'. Later gaining widespread fame as a brilliant essayist and historian of England, he lived as a cheerful skeptic and beloved companion of Adam Smith, dying peacefully in Edinburgh in 1776 while calmly maintaining his philosophical skepticism to his final breath.",
+    coreQuestion: "What are the true, modest limits of human understanding when stripped of metaphysical fantasies and grounded in sensory experience?",
+    epistemicParadox: "Reason cannot logically prove that the sun will rise tomorrow, yet human life flourishes through the steady grace of natural custom.",
+    pureWisdom: [
+      {
+            "axiom": "Custom as the Compass of Life",
+            "latinOrGreek": "Consuetudo Est Altera Natura",
+            "essence": "It is not cold mathematical reason, but instinct, habit, and sensory custom that guides human survival across the uncharted waters of experience.",
+            "contemplation": "Recognize that your daily certainties are rooted in natural habit rather than absolute deduction. Cultivate philosophical modesty."
+      },
+      {
+            "axiom": "The Dissolution of the Ego",
+            "latinOrGreek": "Bundle of Perceptions",
+            "essence": "When you look deeply within yourself, you never stumble upon a fixed, isolated 'Self'—only an ever-flowing river of fleeting sensations, memories, and impressions.",
+            "contemplation": "Sit in meditation and look for the 'I'. Notice that there are thoughts, sounds, and breaths, but no rigid, unmoving ego trapped inside."
+      },
+      {
+            "axiom": "Mitigated Skeptical Tranquility",
+            "latinOrGreek": "Scepticismus Mitigatus",
+            "essence": "Do not let philosophical doubt paralyze life. Dine with friends, play backgammon, and balance sharp intellect with warm human sentiment.",
+            "contemplation": "Use skepticism to dismantle fanaticism and intolerance, but retain the warmth of human sympathy to live fully in the everyday world."
+      }
+],
     keyConcepts: [
       {
         name: "The Problem of Induction",
@@ -760,6 +946,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Immanuel Kant orchestrated a Copernican Revolution in Western philosophy. Synthesizing rationalism and empiricism, Kant demonstrated that while our knowledge begins with experience, the mind actively structures that experience through a priori categories of space, time, and causality.",
     biography:
       "Born in Königsberg, Prussia (now Kaliningrad), Kant led a life of legendary clockwork discipline, never traveling more than a few miles from his home city. After years as a respected university lecturer, he entered a decade of silence to write his revolutionary 'Critique of Pure Reason' at age 57, permanently redefining epistemology, ethics, aesthetics, and political philosophy.",
+    coreQuestion: "How does the human mind synthesize experience, and what is our unconditional moral duty as autonomous, rational beings?",
+    epistemicParadox: "We can never know the Thing-in-Itself (Noumenon), yet our mind actively structures and illuminates the entire phenomenal world we experience.",
+    pureWisdom: [
+      {
+            "axiom": "The Moral Law Within",
+            "latinOrGreek": "Lex Moralis / Imperativus Categoricus",
+            "essence": "Two things fill the mind with ever new and increasing admiration: the starry heavens above me and the moral law within me. Duty is unconditional.",
+            "contemplation": "Before acting, universalize your maxim: 'If every person on earth did what I am about to do, would the world remain coherent and just?'"
+      },
+      {
+            "axiom": "The Sacred Kingdom of Ends",
+            "latinOrGreek": "Reich der Zwecke",
+            "essence": "Never treat humanity—whether in your own person or in that of any other—merely as a means to an end, but always at the same time as an end in itself.",
+            "contemplation": "Are you using any person in your life merely for convenience, utility, or ego? Restore their absolute, unconditional human dignity."
+      },
+      {
+            "axiom": "The Courage of Intellectual Autonomy",
+            "latinOrGreek": "Sapere Aude!",
+            "essence": "Enlightenment is humanity's emergence from its self-imposed immaturity. Have the courage to think for yourself without the crutch of authority.",
+            "contemplation": "Break free from mental dependency. Think through moral and intellectual issues using your own rigorous, impartial reason."
+      }
+],
     keyConcepts: [
       {
         name: "The Copernican Revolution",
@@ -849,6 +1057,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Georg Wilhelm Friedrich Hegel constructed the most comprehensive and ambitious system in Western idealism. For Hegel, reality is not static substance, but dynamic historical process: the unfolding of Spirit (Geist) through dialectical struggle and self-recognition toward absolute freedom.",
     biography:
       "Born in Stuttgart in 1770, Hegel studied theology at the Tübingen Stift alongside poet Friedrich Hölderlin and philosopher Friedrich Schelling. Witnessing Napoleon ride through Jena in 1806—whom he described as the 'world-soul on horseback'—he rushed to finish his masterpiece 'Phenomenology of Spirit'. Appointed rector of the University of Berlin in 1830, he became the intellectual titan of 19th-century European thought.",
+    coreQuestion: "How does cosmic Reason (Geist) awaken to its own freedom through the dialectical struggle of human history?",
+    epistemicParadox: "Contradiction is not the failure of thought, but the very engine and lifeblood through which all truth moves and evolves.",
+    pureWisdom: [
+      {
+            "axiom": "The Living Whole is the True",
+            "latinOrGreek": "Das Wahre ist das Ganze",
+            "essence": "Truth is not a static dogma or isolated proposition; it is the complete, unfolding dialectical process that includes its own stages of error and growth.",
+            "contemplation": "When judging an event or your own past, do not isolate one painful fragment. Look at the whole developmental journey."
+      },
+      {
+            "axiom": "The Alchemy of Aufhebung",
+            "latinOrGreek": "Negation & Preservation",
+            "essence": "Every thesis generates its antithesis. Maturity does not destroy opposition, but elevates and preserves the core truth of both into a higher synthesis.",
+            "contemplation": "When confronted with deep conflict, look beyond either/or polarities. Search for the higher vantage point that integrates both truths."
+      },
+      {
+            "axiom": "Freedom through Mutual Recognition",
+            "latinOrGreek": "Anerkennung",
+            "essence": "A solitary consciousness cannot know its own dignity in isolation; we become truly free and self-conscious only when we recognize and are recognized by another.",
+            "contemplation": "Acknowledge the full humanity and freedom of those around you; in elevating their dignity, your own consciousness deepens."
+      }
+],
     keyConcepts: [
       {
         name: "The Dialectical Method",
@@ -938,6 +1168,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Arthur Schopenhauer was the great contrarian of 19th-century philosophy. Bridging Kantian idealism with Eastern Buddhist and Hindu philosophy, Schopenhauer revealed reality to be a blind, insatiable, irrational metaphysical force—the Will—and championed artistic contemplation and compassion as the only escapes from cosmic suffering.",
     biography:
       "Born in Danzig in 1788, Schopenhauer inherited financial independence from his merchant father, allowing him to write free of academic dogma. He scheduled his lectures at Berlin at the exact same hour as Hegel to challenge the giant, lecturing to nearly empty halls while Hegel drew crowds. Retiring to Frankfurt, he lived with his beloved poodles, enjoying late-in-life international acclaim as the master of existential pessimism and dark philosophical elegance.",
+    coreQuestion: "In a world driven by a blind, insatiable, and suffering cosmic Will, how can the human intellect find lasting liberation and peace?",
+    epistemicParadox: "All life is suffering because all desire is lack; yet by seeing through the illusion of individuality, the door to universal compassion swings wide.",
+    pureWisdom: [
+      {
+            "axiom": "The Veil of Maya and the Cosmic Will",
+            "latinOrGreek": "Principium Individuationis",
+            "essence": "Beneath the physical world of separate objects burns the single, blind Will to Live. Space and time are merely illusions dividing what is fundamentally one.",
+            "contemplation": "Notice the insatiable hunger of your ego desires: as soon as one is fed, another starves. Step back from the wheel of craving."
+      },
+      {
+            "axiom": "The Sanctuary of Disinterested Contemplation",
+            "latinOrGreek": "Aesthetica Meditatio",
+            "essence": "In the sublime contemplation of pure music, art, and philosophical thought, the frantic clamor of personal appetite ceases. The mind rests in timeless tranquility.",
+            "contemplation": "Immerse yourself completely in a piece of great art or the quiet stillness of nature. Relinquish wanting anything from the moment."
+      },
+      {
+            "axiom": "Compassion as Ontological Truth",
+            "latinOrGreek": "Tat Tvam Asi (Thou Art That) / Mitleid",
+            "essence": "Genuine morality is not born of abstract duty, but of spontaneous compassion—the intuitive realization that the person suffering before you is yourself in another form.",
+            "contemplation": "When someone hurts or offends you, remember: they too are trapped in the agonizing restlessness of the Will. Respond with boundless mercy."
+      }
+],
     keyConcepts: [
       {
         name: "The World as Will",
@@ -1027,6 +1279,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Karl Marx turned Hegelian idealism on its head, arguing that history is driven not by disembodied Spirit, but by the material conditions of economic production and class struggle. His critique of capitalism, wage labor, and alienation remains one of the most consequential forces in modern global history.",
     biography:
       "Born in Trier, Prussia, in 1818, Marx studied law and philosophy in Bonn and Berlin, joining the radical Young Hegelians. Exiled from Germany, France, and Belgium for his revolutionary writings, he settled in London in 1849. Supported by his lifelong friend Friedrich Engels, he spent decades in the Reading Room of the British Museum researching the mechanics of capitalism before dying in London in 1883.",
+    coreQuestion: "How do material economic structures condition human consciousness, and how can humanity emancipate itself from alienation?",
+    epistemicParadox: "The ideas that rule every age are the ideas of its ruling class, yet the material contradictions of society inevitably produce the tools for its own liberation.",
+    pureWisdom: [
+      {
+            "axiom": "The Primacy of Praxis",
+            "latinOrGreek": "Thesen über Feuerbach",
+            "essence": "Philosophers have hitherto only interpreted the world in various ways; the point, however, is to change it. Pure theory without ethical action is sterile.",
+            "contemplation": "Do not let philosophy remain a decorative hobby for passive intellects. Ask how your knowledge directly serves human emancipation and justice."
+      },
+      {
+            "axiom": "Consciousness Grounded in Reality",
+            "latinOrGreek": "Materialismus Historicus",
+            "essence": "It is not the consciousness of men that determines their existence, but their social and material existence that determines their consciousness.",
+            "contemplation": "Analyze your own opinions and worldview: To what degree were they molded by your economic class, material conditions, and cultural era?"
+      },
+      {
+            "axiom": "The Overcoming of Alienation",
+            "latinOrGreek": "Entfremdung",
+            "essence": "Human beings flourish when their work is an authentic expression of creative dignity, rather than a coerced commodity stripped of soul.",
+            "contemplation": "Reclaim your creative agency. Transform routine tasks into acts of conscious craft and communal contribution."
+      }
+],
     keyConcepts: [
       {
         name: "Historical Materialism",
@@ -1116,6 +1390,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Nobel Laureate, mathematician, and public intellectual, Bertrand Russell co-founded modern Analytic Philosophy. By striving to ground mathematics in formal symbolic logic in 'Principia Mathematica', Russell revolutionized epistemology, language analysis, and secular humanism.",
     biography:
       "Born into an aristocratic British family (his grandfather was Prime Minister Lord John Russell), Bertrand Russell studied mathematics and philosophy at Trinity College, Cambridge. Over a ninety-seven-year life, he co-authored 'Principia Mathematica' with Alfred North Whitehead, mentored Ludwig Wittgenstein, was imprisoned for pacifism during WWI, won the Nobel Prize in Literature in 1950, and led global campaigns against nuclear weapons.",
+    coreQuestion: "How can logical clarity, empirical skepticism, and compassionate humanism free the mind from dogmatism and cruelty?",
+    epistemicParadox: "The fundamental cause of the trouble is that in the modern world the stupid are cocksure while the intelligent are full of doubt.",
+    pureWisdom: [
+      {
+            "axiom": "The Freedom of Intellectual Humility",
+            "latinOrGreek": "The Enlargement of the Self",
+            "essence": "Philosophy is to be studied not for the sake of definitive dogmatic answers, but for the sake of the questions themselves—because they expand our conception of what is possible.",
+            "contemplation": "Cherish the open questions that resist easy closure. An unsettled, questing mind is the badge of a free human spirit."
+      },
+      {
+            "axiom": "The Golden Rule of Evidence",
+            "latinOrGreek": "Ratio et Veritas",
+            "essence": "Never permit yourself to be diverted either by what you wish to believe, or by what you think would have beneficent social effects if it were believed. Look solely at the facts.",
+            "contemplation": "Where are you clinging to a belief merely because it brings emotional comfort? Dare to look at empirical reality with absolute clarity."
+      },
+      {
+            "axiom": "The Trinity of a Worthy Life",
+            "latinOrGreek": "Amor, Scientia, Misericordia",
+            "essence": "Three passions have governed my life: the longing for love, the search for knowledge, and unbearable pity for the suffering of mankind.",
+            "contemplation": "Harmonize your intellectual pursuit of truth with active kindness toward the vulnerability of all living beings."
+      }
+],
     keyConcepts: [
       {
         name: "Russell's Paradox",
@@ -1205,6 +1501,28 @@ export const PHILOSOPHER_COURSES: PhilosopherCourse[] = [
       "Awarded the Nobel Prize in Literature at age 44, Albert Camus was the luminous voice of French Absurdism. Confronting an indifferent universe stripped of cosmic meaning, Camus rejected both physical and philosophical suicide, demanding that humanity live with passionate defiance, lucid freedom, and profound solidarity.",
     biography:
       "Born in Mondovi, French Algeria, to a working-class family, Camus lost his father in WWI and was raised in poverty by his illiterate mother. A star athlete whose football career was cut short by tuberculosis, he became an investigative journalist, joined the French Resistance editing the clandestine newspaper Combat during WWII, and wrote iconic novels and essays before tragically dying in an automobile crash in 1960.",
+    coreQuestion: "In a silent, indifferent universe where existence has no pre-packaged meaning, how can one live with lucidity, passion, and uncompromising freedom?",
+    epistemicParadox: "The Absurd is born of the confrontation between human longing for meaning and the unreasonable silence of the world—yet from this collision springs absolute rebellion and joy.",
+    pureWisdom: [
+      {
+            "axiom": "Lucid Rebellion against the Void",
+            "latinOrGreek": "La Révolte",
+            "essence": "Do not escape into superstitious hope or collapse into nihilistic despair. Living without appeal is the highest act of human dignity and defiance.",
+            "contemplation": "Accept the fleeting, unscripted nature of life without flinching. Find boundless gratitude in the crisp reality of the present hour."
+      },
+      {
+            "axiom": "The Invincible Summer Within",
+            "latinOrGreek": "L'Été Invincible",
+            "essence": "In the midst of winter, I found there was, within me, an invincible summer. No circumstance can extinguish the flame of a conscious soul that refuses to surrender.",
+            "contemplation": "When facing sorrow, despair, or desolation, breathe deeply into the core of your being. Rediscover your unconquerable inner vitality."
+      },
+      {
+            "axiom": "The Joy of Sisyphus",
+            "latinOrGreek": "Il Faut Imaginer Sisyphe Heureux",
+            "essence": "The struggle itself toward the heights is enough to fill a man's heart. One must imagine Sisyphus smiling as he descends the mountain to roll the stone once more.",
+            "contemplation": "Reframe the heavy, repetitive duties of your life not as an onerous punishment, but as your own deliberate, heroic creation of meaning."
+      }
+],
     keyConcepts: [
       {
         name: "The Absurd",
