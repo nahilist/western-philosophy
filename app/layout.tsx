@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import Script from "next/script";
 import { LanguageProvider } from "@/context/LanguageContext";
 import MonasticSoundscape from "@/components/MonasticSoundscape";
+import PWAProvider from "@/components/pwa/PWAProvider";
 import JsonLd from "@/components/seo/JsonLd";
 import { websiteSchema } from "@/lib/seo/schema";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo/site";
@@ -79,6 +80,11 @@ export const metadata: Metadata = {
   category: "education",
 };
 
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#000000",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -86,32 +92,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (typeof window !== 'undefined') {
-                  if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(regs) {
-                      for (var i = 0; i < regs.length; i++) {
-                        regs[i].unregister();
-                      }
-                    });
-                  }
-                  if ('caches' in window) {
-                    caches.keys().then(function(names) {
-                      for (var i = 0; i < names.length; i++) {
-                        caches.delete(names[i]);
-                      }
-                    });
-                  }
-                }
-              } catch(e) {}
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${cinzel.variable} ${cormorant.variable} ${inter.variable} bg-black text-white antialiased min-h-screen selection:bg-white selection:text-black overflow-x-hidden`}
       >
@@ -148,6 +128,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
           <MonasticSoundscape />
+          <PWAProvider />
         </LanguageProvider>
       </body>
     </html>
