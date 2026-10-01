@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
 /**
  * Production Proxy:
@@ -13,27 +14,11 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
-
-  const isValidUrl =
-    Boolean(supabaseUrl) &&
-    supabaseUrl!.startsWith("https://") &&
-    !supabaseUrl!.includes("api.supabase.com") &&
-    !supabaseUrl!.includes("your-supabase") &&
-    !supabaseUrl!.includes("placeholder");
-
-  const isValidKey =
-    Boolean(supabaseAnonKey) &&
-    supabaseAnonKey!.length > 20 &&
-    !supabaseAnonKey!.includes("your-supabase");
-
-  if (!isValidUrl || !isValidKey) {
-    return response;
-  }
+  const { url, key, isConfigured } = getSupabasePublicConfig();
+  if (!isConfigured) return response;
 
   try {
-    const supabase = createServerClient(supabaseUrl!, supabaseAnonKey!, {
+    const supabase = createServerClient(url, key, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -52,8 +37,15 @@ export async function proxy(request: NextRequest) {
       },
     });
 
-    // Refresh auth session token if expired
-    await supabase.auth.getUser();
+    // Verify the token signature and refresh cookies when necessary.
+    const { data } = await supabase.auth.getClaims();
+
+    if (request.nextUrl.pathname.startsWith("/account") && !data?.claims?.sub) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/";
+      redirectUrl.searchParams.set("auth", "required");
+      return NextResponse.redirect(redirectUrl);
+    }
   } catch (err: unknown) {
     // Failure in middleware session refresh should not bring down public site
     console.error("Middleware session refresh warning:", err);

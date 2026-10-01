@@ -23,6 +23,6 @@ export const contactSchema = z.object({
     .min(5, { message: "Message must be at least 5 characters long." })
     .max(3000, { message: "Message cannot exceed 3,000 characters." }),
   honeypot: z.string().optional(), // Invisible spam trap - should always be empty
-});
+}).strict();
 
 export type ContactInput = z.infer<typeof contactSchema>;

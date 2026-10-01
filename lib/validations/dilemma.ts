@@ -11,12 +11,6 @@ export const dilemmaVoteSchema = z.object({
     .trim()
     .min(1, { message: "Selected choice cannot be empty." })
     .max(100, { message: "Selected choice cannot exceed 100 characters." }),
-  voter_identifier: z
-    .string()
-    .trim()
-    .min(8, { message: "Voter fingerprint must be at least 8 characters." })
-    .max(100, { message: "Voter fingerprint cannot exceed 100 characters." })
-    .optional(),
-});
+}).strict();
 
 export type DilemmaVoteInput = z.infer<typeof dilemmaVoteSchema>;

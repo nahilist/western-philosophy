@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { loginSchema, signupSchema } from "@/lib/validations/auth";
 
 export interface User {
   id: string;
@@ -28,12 +29,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [pendingCourseId, setPendingCourseId] = useState<string | null>(null);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const [isSupabaseConnected] = useState(() => createClient().isConfigured);
 
   // Initialize Supabase Client
   useEffect(() => {
     const { isConfigured, client: supabase } = createClient();
-    setIsSupabaseConnected(isConfigured);
 
     if (isConfigured && supabase) {
       // 1. Get current active session safely
@@ -76,25 +76,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } else {
       // Local fallback for testing before keys are entered
-      try {
-        const saved = localStorage.getItem("philosophy_user");
-        if (saved) {
-          setUser(JSON.parse(saved));
+      const restoreTimer = window.setTimeout(() => {
+        try {
+          const saved = localStorage.getItem("philosophy_user");
+          if (saved) setUser(JSON.parse(saved));
+        } catch {
+          // Ignore localStorage errors
         }
-      } catch {
-        // Ignore localStorage errors
-      }
+      }, 0);
+      return () => window.clearTimeout(restoreTimer);
     }
   }, []);
 
   const login = async (email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    const validation = loginSchema.safeParse({ email, password: pass });
+    if (!validation.success) {
+      return { success: false, error: validation.error.issues[0]?.message ?? "Invalid credentials." };
+    }
     const { isConfigured, client: supabase } = createClient();
 
     if (isConfigured && supabase) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password: pass,
+          email: validation.data.email,
+          password: validation.data.password,
         });
 
         if (error) {
@@ -110,15 +115,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setIsAuthModalOpen(false);
         return { success: true };
-      } catch (networkErr: any) {
+      } catch (networkErr: unknown) {
         return {
           success: false,
-          error: networkErr?.message || "Network error connecting to authentication service",
+          error:
+            networkErr instanceof Error
+              ? networkErr.message
+              : "Network error connecting to authentication service",
         };
       }
     }
 
-    // Demo Mode Fallback:
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, error: "Authentication service is not configured." };
+    }
+
+    // Development-only demo fallback.
     const dummyUser: User = {
       id: "usr_" + Date.now(),
       name: email.split("@")[0] || "Philosopher",
@@ -131,16 +143,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (name: string, email: string, pass: string): Promise<{ success: boolean; error?: string }> => {
+    const validation = signupSchema.safeParse({ full_name: name, email, password: pass });
+    if (!validation.success) {
+      return { success: false, error: validation.error.issues[0]?.message ?? "Invalid registration." };
+    }
     const { isConfigured, client: supabase } = createClient();
 
     if (isConfigured && supabase) {
       try {
         const { data, error } = await supabase.auth.signUp({
-          email,
-          password: pass,
+          email: validation.data.email,
+          password: validation.data.password,
           options: {
             data: {
-              full_name: name,
+              full_name: validation.data.full_name,
             },
           },
         });
@@ -152,21 +168,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (data.user) {
           setUser({
             id: data.user.id,
-            name: name || data.user.email?.split("@")[0] || "Seeker of Wisdom",
+            name: validation.data.full_name,
             email: data.user.email || "",
           });
         }
         setIsAuthModalOpen(false);
         return { success: true };
-      } catch (networkErr: any) {
+      } catch (networkErr: unknown) {
         return {
           success: false,
-          error: networkErr?.message || "Network error connecting to registration service",
+          error:
+            networkErr instanceof Error
+              ? networkErr.message
+              : "Network error connecting to registration service",
         };
       }
     }
 
-    // Demo Mode Fallback:
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, error: "Registration service is not configured." };
+    }
+
+    // Development-only demo fallback.
     const dummyUser: User = {
       id: "usr_" + Date.now(),
       name: name || email.split("@")[0] || "Seeker of Wisdom",
@@ -209,15 +232,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
         }
         return { success: true };
-      } catch (err: any) {
+      } catch (err: unknown) {
         return {
           success: false,
-          error: err?.message || `Failed to initiate ${provider} authentication.`,
+          error:
+            err instanceof Error
+              ? err.message
+              : `Failed to initiate ${provider} authentication.`,
         };
       }
     }
 
-    // Demo Mode fallback for OAuth
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, error: "OAuth service is not configured." };
+    }
+
+    // Development-only demo fallback for OAuth.
     const dummyUser: User = {
       id: `usr_${provider}_` + Date.now(),
       name: `${provider === "google" ? "Google" : "GitHub"} Scholar`,

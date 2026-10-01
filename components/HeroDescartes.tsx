@@ -39,7 +39,7 @@ export default function HeroDescartes() {
             {/* Archival Portrait Frame */}
             <div className="relative z-10 w-64 sm:w-80 lg:w-88 h-80 sm:h-100 lg:h-112 overflow-hidden bg-neutral-950 border border-neutral-800 shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
               <Image
-                src="/images/descartes.jpg"
+                src="/images/descartes.webp"
                 alt="René Descartes by Frans Hals"
                 fill
                 priority

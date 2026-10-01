@@ -10,9 +10,10 @@ export const waitlistSchema = z.object({
   source: z
     .string()
     .trim()
+    .min(1, { message: "Source tag cannot be empty." })
     .max(50, { message: "Source tag cannot exceed 50 characters." })
     .default("website_hero"),
   honeypot: z.string().optional(),
-});
+}).strict();
 
 export type WaitlistInput = z.infer<typeof waitlistSchema>;

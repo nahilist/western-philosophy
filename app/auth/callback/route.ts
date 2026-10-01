@@ -1,23 +1,36 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+function getSafeRedirectOrigin(requestOrigin: string) {
+  if (process.env.NODE_ENV !== "production") return requestOrigin;
+
+  const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!configuredOrigin) return requestOrigin;
+
+  try {
+    return new URL(configuredOrigin).origin;
+  } catch {
+    console.error("NEXT_PUBLIC_SITE_URL is not a valid absolute URL.");
+    return requestOrigin;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  const requestedNext = searchParams.get("next") ?? "/";
+  const next =
+    requestedNext.startsWith("/") && !requestedNext.startsWith("//")
+      ? requestedNext
+      : "/";
 
   if (code) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
     if (supabaseUrl && supabaseAnonKey) {
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-      const redirectUrl = isLocalEnv
-        ? `${origin}${next}`
-        : forwardedHost
-        ? `https://${forwardedHost}${next}`
-        : `${origin}${next}`;
+      const safeOrigin = getSafeRedirectOrigin(origin);
+      const redirectUrl = `${safeOrigin}${next}`;
 
       const response = NextResponse.redirect(redirectUrl);
 

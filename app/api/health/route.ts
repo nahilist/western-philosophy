@@ -1,76 +1,60 @@
 import { NextResponse } from "next/server";
-import { createServerSideClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Production Health Check Probe
- * Endpoint: GET /api/health
- * 
- * Used by uptime monitors (UptimeRobot, Datadog, BetterStack) and container orchestrators
- * to verify web server responsiveness, database connection health, and memory stats.
- */
-export async function GET() {
-  const startTime = Date.now();
-  const uptime = Math.floor(process.uptime());
-  const memory = process.memoryUsage();
+export async function GET(request: Request) {
+  const startedAt = performance.now();
+  const admin = createAdminClient();
+  let databaseStatus: "connected" | "unavailable" | "unconfigured" = admin
+    ? "unavailable"
+    : "unconfigured";
+  let databaseLatencyMs: number | null = null;
 
-  let dbStatus: "connected" | "disconnected" | "demo_mode" = "demo_mode";
-  let dbLatencyMs: number | null = null;
-  let dbError: string | null = null;
-
-  try {
-    const supabase = await createServerSideClient();
-
-    if (supabase) {
-      const dbStart = Date.now();
-      // Lightweight ping to database to verify connection pooler responsiveness
-      const { error } = await supabase
-        .from("profiles")
-        .select("id", { count: "exact", head: true })
-        .limit(1);
-
-      dbLatencyMs = Date.now() - dbStart;
-
-      if (error && error.code !== "PGRST116") {
-        dbStatus = "disconnected";
-        dbError = error.message;
-      } else {
-        dbStatus = "connected";
-      }
-    }
-  } catch (err: unknown) {
-    dbStatus = "disconnected";
-    dbError = err instanceof Error ? err.message : "Unknown database error";
+  if (admin) {
+    const databaseStartedAt = performance.now();
+    const { error } = await admin.from("profiles").select("id", { head: true }).limit(1);
+    databaseLatencyMs = Math.round((performance.now() - databaseStartedAt) * 100) / 100;
+    databaseStatus = error ? "unavailable" : "connected";
+    if (error) console.error("[Health] Database check failed", error.code);
   }
 
-  const isHealthy = dbStatus !== "disconnected";
-  const statusCode = isHealthy ? 200 : 503;
+  const healthy = databaseStatus === "connected";
+  const configuredSecret = process.env.HEALTHCHECK_SECRET?.trim();
+  const suppliedSecret = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const showDiagnostics =
+    process.env.NODE_ENV !== "production" ||
+    Boolean(configuredSecret && suppliedSecret === configuredSecret);
 
   const payload = {
-    status: isHealthy ? "healthy" : "unhealthy",
+    status: healthy ? "healthy" : "unhealthy",
     timestamp: new Date().toISOString(),
-    uptimeSeconds: uptime,
-    environment: process.env.NODE_ENV || "development",
-    totalResponseTimeMs: Date.now() - startTime,
-    database: {
-      status: dbStatus,
-      latencyMs: dbLatencyMs,
-      error: dbError,
+    checks: {
+      application: "available",
+      database: databaseStatus,
     },
-    system: {
-      heapUsedMb: Math.round((memory.heapUsed / 1024 / 1024) * 100) / 100,
-      heapTotalMb: Math.round((memory.heapTotal / 1024 / 1024) * 100) / 100,
-      rssMb: Math.round((memory.rss / 1024 / 1024) * 100) / 100,
-    },
+    responseTimeMs: Math.round((performance.now() - startedAt) * 100) / 100,
+    ...(showDiagnostics
+      ? {
+          diagnostics: {
+            databaseLatencyMs,
+            uptimeSeconds: Math.floor(process.uptime()),
+            environment: process.env.NODE_ENV,
+            nodeVersion: process.version,
+          },
+        }
+      : {}),
   };
 
   return NextResponse.json(payload, {
-    status: statusCode,
+    status: healthy ? 200 : 503,
     headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
+      "Cache-Control": "no-store, max-age=0",
+      "X-Content-Type-Options": "nosniff",
     },
   });
+}
+export async function HEAD(request: Request) {
+  const response = await GET(request);
+  return new Response(null, { status: response.status, headers: response.headers });
 }

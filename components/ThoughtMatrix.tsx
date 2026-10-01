@@ -334,6 +334,7 @@ function calculateResponsiveNodes(width: number, height: number): MatrixNode[] {
 export default function ThoughtMatrix() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const canvasSizeRef = useRef({ width: 0, height: 0, dpr: 0 });
 
   const [nodes, setNodes] = useState<MatrixNode[]>(INITIAL_NODES);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>("nietzsche");
@@ -401,13 +402,28 @@ export default function ThoughtMatrix() {
       if (!canvas || !containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+      const previousSize = canvasSizeRef.current;
+
+      // This effect also depends on `nodes`. Avoid setting node state again when
+      // the effect restarts but the viewport dimensions have not changed.
+      if (
+        previousSize.width === width &&
+        previousSize.height === height &&
+        previousSize.dpr === dpr
+      ) {
+        return;
+      }
+
+      canvasSizeRef.current = { width, height, dpr };
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
       ctx.scale(dpr, dpr);
 
       // On initial mount or screen orientation change, adjust coordinates if user hasn't moved them
       if (!hasUserInteractedRef.current) {
-        setNodes(calculateResponsiveNodes(rect.width, rect.height));
+        setNodes(calculateResponsiveNodes(width, height));
       }
     };
 

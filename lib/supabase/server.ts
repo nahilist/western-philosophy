@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getSupabasePublicConfig } from "./config";
 
 /**
  * Server-side Supabase Client
@@ -8,28 +9,10 @@ import { cookies } from "next/headers";
 export async function createServerSideClient() {
   const cookieStore = await cookies();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+  const { url, key, isConfigured } = getSupabasePublicConfig();
+  if (!isConfigured) return null;
 
-  const isValidUrl =
-    Boolean(supabaseUrl) &&
-    supabaseUrl!.startsWith("https://") &&
-    !supabaseUrl!.includes("api.supabase.com") &&
-    !supabaseUrl!.includes("your-supabase") &&
-    !supabaseUrl!.includes("your-project-ref") &&
-    !supabaseUrl!.includes("placeholder");
-
-  const isValidKey =
-    Boolean(supabaseAnonKey) &&
-    supabaseAnonKey!.length > 20 &&
-    !supabaseAnonKey!.includes("your-supabase") &&
-    !supabaseAnonKey!.includes("your-project-key");
-
-  if (!isValidUrl || !isValidKey) {
-    return null;
-  }
-
-  return createServerClient(supabaseUrl!, supabaseAnonKey!, {
+  return createServerClient(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

@@ -14,7 +14,7 @@ export default function SocratesSection() {
       {/* Background Painting: The Death of Socrates by Jacques-Louis David */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/socrates_death.jpg"
+          src="/images/socrates_death.webp"
           alt="The Death of Socrates by Jacques-Louis David"
           fill
           priority

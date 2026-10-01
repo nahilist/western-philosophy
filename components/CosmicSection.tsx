@@ -16,10 +16,12 @@ export default function CosmicSection() {
         <div className="relative flex flex-col items-center justify-center">
           <div className="relative w-[320px] sm:w-[420px] md:w-[480px] h-[150px] sm:h-[190px] md:h-[220px]">
             <Image
-              src="/design_assets/angel_hd.png"
+              src="/design_assets/angel_clear.webp"
               alt="Angel Statue with Halo Arcs"
               fill
               priority
+              quality={100}
+              sizes="(max-width: 640px) 320px, (max-width: 768px) 420px, 480px"
               className="object-contain"
             />
           </div>
@@ -37,9 +39,11 @@ export default function CosmicSection() {
               title="Open full Friedrich Nietzsche page"
             >
               <Image
-                src="/design_assets/nietzsche_orbit_hd.png"
+                src="/design_assets/nietzsche_orbit_clear.webp"
                 alt="Friedrich Nietzsche Orbital Composition"
                 fill
+                quality={100}
+                sizes="(max-width: 640px) 220px, (max-width: 768px) 260px, 300px"
                 className="object-contain transition-transform duration-500 group-hover:scale-105"
               />
             </Link>
@@ -86,9 +90,11 @@ export default function CosmicSection() {
                 title="Open full Nicolau Maquiavel page"
               >
                 <Image
-                  src="/design_assets/machiavelli_pill_hd.png"
+                  src="/design_assets/machiavelli_pill_clear.webp"
                   alt="Nicolau Maquiavel Capsule Composition"
                   fill
+                  quality={100}
+                  sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, 320px"
                   className="object-contain transition-transform duration-500 group-hover:scale-105"
                 />
               </Link>
