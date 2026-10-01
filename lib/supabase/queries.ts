@@ -61,6 +61,30 @@ export interface UserProfileData {
   created_at: string;
 }
 
+export interface CourseProgressData {
+  course_id: string;
+  completed_modules: string[];
+  progress_percent: number;
+  last_read_at: string;
+}
+
+export interface BookmarkData {
+  id: string;
+  course_id: string;
+  quote_text: string | null;
+  work_title: string | null;
+  created_at: string;
+}
+
+export interface ReflectionData {
+  id: string;
+  course_id: string;
+  reflection_text: string;
+  is_private: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export async function getCourseProgress(courseId: string) {
   const safeCourseId = courseId.trim().toLowerCase();
   if (!SLUG_REGEX.test(safeCourseId)) {
@@ -282,16 +306,16 @@ export async function updateUserProfile(updates: {
 }
 
 export async function getAllUserProgress() {
-  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/progress");
+  const result = await apiRequest<CourseProgressData[]>("/api/account/progress");
   if (result.data) return { data: result.data, error: null };
 
   if (canUseDevelopmentFallback()) {
-    const data: Array<Record<string, unknown>> = [];
+    const data: CourseProgressData[] = [];
     try {
       for (let index = 0; index < localStorage.length; index++) {
         const key = localStorage.key(index);
         if (key?.startsWith("wp_progress_")) {
-          data.push(JSON.parse(localStorage.getItem(key) || "{}") as Record<string, unknown>);
+          data.push(JSON.parse(localStorage.getItem(key) || "{}") as CourseProgressData);
         }
       }
     } catch {
@@ -303,16 +327,16 @@ export async function getAllUserProgress() {
 }
 
 export async function getAllUserBookmarks() {
-  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/bookmarks");
+  const result = await apiRequest<BookmarkData[]>("/api/account/bookmarks");
   if (result.data) return { data: result.data, error: null };
 
   if (canUseDevelopmentFallback()) {
-    const data: Array<Record<string, unknown>> = [];
+    const data: BookmarkData[] = [];
     try {
       for (let index = 0; index < localStorage.length; index++) {
         const key = localStorage.key(index);
         if (key?.startsWith("wp_bookmark_")) {
-          const item = JSON.parse(localStorage.getItem(key) || "{}") as Record<string, unknown>;
+          const item = JSON.parse(localStorage.getItem(key) || "{}") as Omit<BookmarkData, "id" | "created_at">;
           data.push({ id: key, ...item, created_at: new Date().toISOString() });
         }
       }
@@ -325,16 +349,16 @@ export async function getAllUserBookmarks() {
 }
 
 export async function getAllUserReflections() {
-  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/reflections");
+  const result = await apiRequest<ReflectionData[]>("/api/account/reflections");
   if (result.data) return { data: result.data, error: null };
 
   if (canUseDevelopmentFallback()) {
-    const data: Array<Record<string, unknown>> = [];
+    const data: ReflectionData[] = [];
     try {
       for (let index = 0; index < localStorage.length; index++) {
         const key = localStorage.key(index);
         if (key?.startsWith("wp_reflections_")) {
-          const list = JSON.parse(localStorage.getItem(key) || "[]") as Array<Record<string, unknown>>;
+          const list = JSON.parse(localStorage.getItem(key) || "[]") as ReflectionData[];
           data.push(...list);
         }
       }

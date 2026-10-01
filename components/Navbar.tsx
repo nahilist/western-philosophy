@@ -91,10 +91,10 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             {t.nav.about}
           </Link>
           <Link
-            href="/#courses"
+            href="/philosophers"
             className="text-xs font-medium tracking-[0.25em] text-neutral-300 hover:text-white transition-colors uppercase"
           >
-            {t.nav.courses}
+            {isHi ? "दार्शनिक" : "Philosophers"}
           </Link>
           <Link
             href="/#matrix"
@@ -224,11 +224,11 @@ export default function Navbar({ onOpenAbout, onOpenDailyWisdom, onOpenDilemma }
             {t.nav.about}
           </Link>
           <Link
-            href="/#courses"
+            href="/philosophers"
             onClick={() => setMobileMenuOpen(false)}
             className="text-sm tracking-[0.25em] text-neutral-300 hover:text-white uppercase transition-colors"
           >
-            {t.nav.courses}
+            {isHi ? "दार्शनिक" : "Philosophers"}
           </Link>
           <Link
             href="/#matrix"

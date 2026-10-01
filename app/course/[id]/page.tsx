@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { PHILOSOPHER_COURSES } from "@/data/philosophers";
+import JsonLd from "@/components/seo/JsonLd";
+import { buildPhilosopherMetadata } from "@/lib/seo/metadata";
+import { philosopherSchema } from "@/lib/seo/schema";
 import CoursePageClient from "./CoursePageClient";
 
 interface CoursePageProps {
@@ -13,15 +16,13 @@ export async function generateStaticParams() {
   }));
 }
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: CoursePageProps): Promise<Metadata> {
   const { id } = await params;
   const course = PHILOSOPHER_COURSES.find((c) => c.id === id);
-  if (!course) return { title: "Philosopher Not Found" };
-
-  return {
-    title: `${course.name} — Full Philosophical Dossier & Course | PHILOSOPHY Φ`,
-    description: course.overview,
-  };
+  if (!course) return { title: "Philosopher Not Found", robots: { index: false } };
+  return buildPhilosopherMetadata(course);
 }
 
 export default async function CoursePage({ params }: CoursePageProps) {
@@ -32,6 +33,11 @@ export default async function CoursePage({ params }: CoursePageProps) {
     notFound();
   }
 
-  return <CoursePageClient course={course} />;
+  return (
+    <>
+      <JsonLd data={philosopherSchema(course)} />
+      <CoursePageClient course={course} />
+    </>
+  );
 }
 

@@ -34,6 +34,9 @@ import {
   getAllUserReflections,
   deleteUserReflection,
   UserProfileData,
+  CourseProgressData,
+  BookmarkData,
+  ReflectionData,
 } from "@/lib/supabase/queries";
 
 interface AccountModalProps {
@@ -51,9 +54,9 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfileData | null>(null);
-  const [progressList, setProgressList] = useState<any[]>([]);
-  const [bookmarksList, setBookmarksList] = useState<any[]>([]);
-  const [reflectionsList, setReflectionsList] = useState<any[]>([]);
+  const [progressList, setProgressList] = useState<CourseProgressData[]>([]);
+  const [bookmarksList, setBookmarksList] = useState<BookmarkData[]>([]);
+  const [reflectionsList, setReflectionsList] = useState<ReflectionData[]>([]);
 
   // Edit states
   const [isEditing, setIsEditing] = useState(false);
@@ -89,9 +92,10 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
   };
 
   useEffect(() => {
-    if (isOpen && user) {
-      loadUserData();
-    }
+    const timer = window.setTimeout(() => {
+      if (isOpen && user) void loadUserData();
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [isOpen, user]);
 
   if (!isOpen || !user) return null;
@@ -373,11 +377,11 @@ export default function AccountModal({ isOpen, onClose }: AccountModalProps) {
                       {isHi ? "पंजीकरण तिथि" : "Academy Member Since"}
                     </span>
                     <span className="font-mono text-neutral-300">
-                      {new Date(profile?.created_at || Date.now()).toLocaleDateString(undefined, {
+                      {profile?.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
-                      })}
+                      }) : "—"}
                     </span>
                   </div>
                 </div>

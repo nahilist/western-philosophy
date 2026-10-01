@@ -34,6 +34,9 @@ import {
   getAllUserReflections,
   deleteUserReflection,
   UserProfileData,
+  CourseProgressData,
+  BookmarkData,
+  ReflectionData,
 } from "@/lib/supabase/queries";
 
 type TabType = "overview" | "progress" | "bookmarks" | "reflections" | "settings";
@@ -46,9 +49,9 @@ function AccountContent() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfileData | null>(null);
-  const [progressList, setProgressList] = useState<any[]>([]);
-  const [bookmarksList, setBookmarksList] = useState<any[]>([]);
-  const [reflectionsList, setReflectionsList] = useState<any[]>([]);
+  const [progressList, setProgressList] = useState<CourseProgressData[]>([]);
+  const [bookmarksList, setBookmarksList] = useState<BookmarkData[]>([]);
+  const [reflectionsList, setReflectionsList] = useState<ReflectionData[]>([]);
 
   // Edit fields
   const [editName, setEditName] = useState("");
@@ -82,11 +85,11 @@ function AccountContent() {
   };
 
   useEffect(() => {
-    if (user) {
-      loadUserData();
-    } else {
-      setLoading(false);
-    }
+    const timer = window.setTimeout(() => {
+      if (user) void loadUserData();
+      else setLoading(false);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [user]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {

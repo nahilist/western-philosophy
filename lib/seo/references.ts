@@ -1,0 +1,16 @@
+export const PHILOSOPHER_REFERENCES: Record<string, { title: string; url: string }[]> = {
+  descartes: [{ title: "René Descartes — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/descartes/" }],
+  nietzsche: [{ title: "Friedrich Nietzsche — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/nietzsche/" }],
+  socrates: [{ title: "Socrates — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/socrates/" }],
+  machiavelli: [{ title: "Niccolò Machiavelli — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/machiavelli/" }],
+  plato: [{ title: "Plato — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/plato/" }],
+  aristotle: [{ title: "Aristotle — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/aristotle/" }],
+  spinoza: [{ title: "Baruch Spinoza — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/spinoza/" }],
+  hume: [{ title: "David Hume — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/hume/" }],
+  kant: [{ title: "Immanuel Kant — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/kant/" }],
+  hegel: [{ title: "Georg Wilhelm Friedrich Hegel — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/hegel/" }],
+  schopenhauer: [{ title: "Arthur Schopenhauer — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/schopenhauer/" }],
+  marx: [{ title: "Karl Marx — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/marx/" }],
+  russell: [{ title: "Bertrand Russell — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/russell/" }],
+  camus: [{ title: "Albert Camus — Stanford Encyclopedia of Philosophy", url: "https://plato.stanford.edu/entries/camus/" }],
+};

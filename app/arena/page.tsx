@@ -72,7 +72,7 @@ function ArenaContent() {
 
           <div className="flex items-center gap-2 text-zinc-500 text-[11px] tracking-widest uppercase">
             <span>SANCTUARY</span>
-            <span>//</span>
+            <span aria-hidden="true">{"//"}</span>
             <span className="text-zinc-300 font-semibold">THE DIALECTICAL ARENA</span>
           </div>
         </div>

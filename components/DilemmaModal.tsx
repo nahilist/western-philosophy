@@ -167,20 +167,18 @@ export default function DilemmaModal({
 
     loadStats();
 
-    // Check if user previously voted in localStorage
-    try {
-      const stored = localStorage.getItem(`dilemma_vote_${activeDilemmaId}`);
-      if (stored && isMounted) {
-        setSelectedChoice(stored);
-      } else if (isMounted) {
-        setSelectedChoice(null);
+    const storageTimer = window.setTimeout(() => {
+      try {
+        const stored = localStorage.getItem(`dilemma_vote_${activeDilemmaId}`);
+        if (isMounted) setSelectedChoice(stored || null);
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
+    }, 0);
 
     return () => {
       isMounted = false;
+      window.clearTimeout(storageTimer);
     };
   }, [isOpen, activeDilemmaId]);
 

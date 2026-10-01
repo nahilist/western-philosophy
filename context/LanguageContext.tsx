@@ -26,14 +26,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   // Read saved preference on mount
   useEffect(() => {
-    try {
-      const savedLang = localStorage.getItem("preferred_language") as Language | null;
-      if (savedLang === "hi" || savedLang === "en") {
-        setLanguageState(savedLang);
+    const timer = window.setTimeout(() => {
+      try {
+        const savedLang = localStorage.getItem("preferred_language") as Language | null;
+        if (savedLang === "hi" || savedLang === "en") {
+          setLanguageState(savedLang);
+        }
+      } catch {
+        // Ignore storage errors
       }
-    } catch {
-      // Ignore storage errors
-    }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const setLanguage = useCallback((lang: Language) => {

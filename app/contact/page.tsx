@@ -40,6 +40,7 @@ function ContactPageContent() {
   const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [receiptId, setReceiptId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +60,7 @@ function ContactPageContent() {
     setIsSubmitting(false);
 
     if (res.success) {
+      setReceiptId(crypto.randomUUID().replaceAll("-", "").slice(0, 8).toUpperCase());
       setIsSubmitted(true);
     } else {
       setErrorMessage(
@@ -69,6 +71,7 @@ function ContactPageContent() {
 
   const handleReset = () => {
     setIsSubmitted(false);
+    setReceiptId(null);
     setSubject("");
     setMessage("");
   };
@@ -441,7 +444,7 @@ function ContactPageContent() {
                 </div>
 
                 <div className="p-4 bg-neutral-900/60 border border-neutral-800 text-xs font-mono text-neutral-300 max-w-sm mx-auto">
-                  <span>DISPATCH RECEIPT: #{Math.floor(100000 + Math.random() * 900000)}</span>
+                  <span>DISPATCH RECEIPT: #{receiptId}</span>
                 </div>
 
                 <div className="pt-4">

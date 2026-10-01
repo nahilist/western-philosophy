@@ -51,8 +51,8 @@ export default function Footer({ onOpenAbout }: FooterProps) {
               </Link>
             </li>
             <li>
-              <Link href="/#courses" className="hover:text-white transition-colors">
-                Courses
+              <Link href="/philosophers" className="hover:text-white transition-colors">
+                Philosophers
               </Link>
             </li>
             <li>
@@ -66,6 +66,21 @@ export default function Footer({ onOpenAbout }: FooterProps) {
             <li>
               <Link href="/contact" className="hover:text-white transition-colors">
                 Contact &amp; Inquiries
+              </Link>
+            </li>
+            <li>
+              <Link href="/editorial-policy" className="hover:text-white transition-colors">
+                Editorial Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/methodology" className="hover:text-white transition-colors">
+                Methodology
+              </Link>
+            </li>
+            <li>
+              <Link href="/sources" className="hover:text-white transition-colors">
+                Sources
               </Link>
             </li>
           </ul>

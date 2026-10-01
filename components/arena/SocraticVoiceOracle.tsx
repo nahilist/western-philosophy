@@ -8,6 +8,31 @@ interface SocraticDialogueItem {
   text: string;
 }
 
+interface SpeechRecognitionEventLike {
+  results: ArrayLike<ArrayLike<{ transcript: string }>>;
+}
+
+interface SpeechRecognitionLike {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognitionLike;
+}
+
+type SpeechWindow = Window &
+  typeof globalThis & {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  };
+
 const PRESET_INQUIRIES = [
   "I seek wealth and status, but feel hollow inside.",
   "Why should I fear death if it is the natural end of all life?",
@@ -63,15 +88,14 @@ export default function SocraticVoiceOracle() {
   ]);
 
   // Speech Recognition reference
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const dialogueEndRef = useRef<HTMLDivElement | null>(null);
 
   // Check speech capabilities
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const setupTimer = window.setTimeout(() => {
+      const speechWindow = window as SpeechWindow;
+      const SpeechRecognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
       if (SpeechRecognition) {
         setSpeechSupported(true);
         const recog = new SpeechRecognition();
@@ -79,8 +103,7 @@ export default function SocraticVoiceOracle() {
         recog.interimResults = false;
         recog.lang = "en-US";
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        recog.onresult = (event: any) => {
+        recog.onresult = (event: SpeechRecognitionEventLike) => {
           const transcript = event.results[0][0].transcript;
           if (transcript) {
             handleUserSubmit(transcript);
@@ -102,7 +125,9 @@ export default function SocraticVoiceOracle() {
       if ("speechSynthesis" in window) {
         setVoiceSynthesisSupported(true);
       }
-    }
+    }, 0);
+
+    return () => window.clearTimeout(setupTimer);
   }, []);
 
   // Auto-scroll to bottom of dialogue
@@ -157,7 +182,7 @@ export default function SocraticVoiceOracle() {
     }
   };
 
-  const handleUserSubmit = (query: string) => {
+  function handleUserSubmit(query: string) {
     const trimmed = query.trim();
     if (!trimmed) return;
 
@@ -173,7 +198,7 @@ export default function SocraticVoiceOracle() {
     setTimeout(() => {
       speakSocratesText(socratesReply);
     }, 400);
-  };
+  }
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();

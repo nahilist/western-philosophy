@@ -3,6 +3,9 @@ import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import Script from "next/script";
 import { LanguageProvider } from "@/context/LanguageContext";
 import MonasticSoundscape from "@/components/MonasticSoundscape";
+import JsonLd from "@/components/seo/JsonLd";
+import { websiteSchema } from "@/lib/seo/schema";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/seo/site";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -27,18 +30,53 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PHILOSOPHY Φ — The Great Thinkers & Classical Inquiry",
-  description:
-    "An exploration of Western Philosophy: René Descartes, Friedrich Nietzsche, Sócrates, and Nicolau Maquiavel. Comprehensive courses, aphorisms, and timeless inquiries into truth, reality, and morality.",
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
+  title: {
+    default: "Western Philosophy: Thinkers, Ideas & Courses | PHILOSOPHY Φ",
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
   keywords: [
-    "Western Philosophy",
+    "Western philosophy",
     "René Descartes",
     "Friedrich Nietzsche",
     "Socrates",
     "Machiavelli",
-    "Epistemology",
-    "Existentialism",
+    "philosophy courses",
+    "history of philosophy",
   ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: SITE_NAME,
+    title: "Western Philosophy: Thinkers, Ideas & Courses",
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${SITE_NAME} — Western philosophy knowledge platform` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Western Philosophy: Thinkers, Ideas & Courses",
+    description: SITE_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "education",
 };
 
 export default function RootLayout({
@@ -77,6 +115,7 @@ export default function RootLayout({
       <body
         className={`${cinzel.variable} ${cormorant.variable} ${inter.variable} bg-black text-white antialiased min-h-screen selection:bg-white selection:text-black overflow-x-hidden`}
       >
+        <JsonLd data={websiteSchema()} />
         {/* Hidden Google Translate Element Anchor (offscreen so script initializes combo) */}
         <div
           id="google_translate_element"

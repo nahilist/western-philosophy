@@ -29,9 +29,11 @@ import JoinModal from "@/components/JoinModal";
 import AboutModal from "@/components/AboutModal";
 import DailyWisdomModal from "@/components/DailyWisdomModal";
 import TypographicPosterModal, { PosterQuoteData } from "@/components/TypographicPosterModal";
+import Breadcrumbs from "@/components/seo/Breadcrumbs";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { PhilosopherCourse, PHILOSOPHER_COURSES } from "@/data/philosophers";
+import { PHILOSOPHER_REFERENCES } from "@/lib/seo/references";
 import { 
   getCourseProgress, 
   saveCourseProgress, 
@@ -116,12 +118,17 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
       try {
         const savedRefls = localStorage.getItem(`wp_reflections_${course.id}`);
         if (isMounted && savedRefls) {
-          const parsed = JSON.parse(savedRefls);
+          const parsed = JSON.parse(savedRefls) as Array<{
+            id?: string;
+            reflection_text?: string;
+            created_at?: string;
+            is_private?: boolean;
+          }>;
           setSavedReflections(
-            parsed.map((r: any) => ({
-              id: r.id || String(Math.random()),
-              text: r.reflection_text,
-              date: new Date(r.created_at || Date.now()).toLocaleDateString(),
+            parsed.map((r, index) => ({
+              id: r.id || `local-${course.id}-${index}`,
+              text: r.reflection_text ?? "",
+              date: r.created_at ? new Date(r.created_at).toLocaleDateString() : "Saved locally",
               isPrivate: r.is_private ?? true,
             }))
           );
@@ -208,13 +215,13 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
 
       {/* Top Full-Bleed Breadcrumb Bar */}
       <div className="pt-28 pb-6 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 w-full flex items-center justify-between border-b border-neutral-900">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 text-xs uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-colors group"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-          <span>{t.coursePage.homeLink}</span>
-        </Link>
+        <Breadcrumbs
+          items={[
+            { name: t.coursePage.homeLink || "Home", path: "/" },
+            { name: "Philosophers", path: "/philosophers" },
+            { name: pData.name, path: `/course/${course.id}` },
+          ]}
+        />
         <div className="flex items-center gap-4 text-xs tracking-widest text-neutral-400 uppercase">
           <span>{pData.school.split(",")[0]}</span>
           <span className="text-neutral-600">•</span>
@@ -293,11 +300,11 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               </div>
 
               <h1 className="font-serif-classic text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-[0.14em] text-white leading-tight uppercase">
-                {pData.quote.split(".")[0].replace("(", "").replace(")", "")}
+                {pData.name}
               </h1>
 
               <p className="font-serif-classic text-base sm:text-xl xl:text-2xl tracking-[0.3em] text-neutral-300 uppercase font-semibold">
-                {pData.name}
+                {course.title}
               </p>
             </div>
 
@@ -306,6 +313,10 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
             <blockquote className="font-garamond text-lg sm:text-2xl xl:text-3xl italic text-neutral-200 leading-relaxed font-light">
               &ldquo;{pData.quote}&rdquo;
             </blockquote>
+
+            <p className="font-garamond text-lg text-neutral-300 leading-relaxed max-w-3xl">
+              {pData.overview}
+            </p>
 
             <p className="font-garamond text-sm text-neutral-400">
               Primary Source: {course.quoteSource}
@@ -384,6 +395,26 @@ function CoursePageContent({ course }: { course: PhilosopherCourse }) {
               </button>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="sources-heading" className="w-full py-16 px-6 sm:px-12 lg:px-20 xl:px-28 2xl:px-36 border-b border-neutral-900 bg-neutral-950/35">
+        <div className="max-w-5xl">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-neutral-500 uppercase">Evidence trail</p>
+          <h2 id="sources-heading" className="font-serif-classic text-2xl sm:text-3xl font-bold uppercase tracking-wider mt-3">Sources &amp; Further Reading</h2>
+          <p className="font-garamond text-lg text-neutral-300 mt-4 leading-relaxed">
+            Begin with the primary works listed in this guide, then consult the academic reference below for scholarly context and bibliography.
+          </p>
+          <ul className="mt-6 space-y-3 text-sm text-neutral-300">
+            {(PHILOSOPHER_REFERENCES[course.id] ?? []).map((reference) => (
+              <li key={reference.url}>
+                <a href={reference.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-neutral-700 hover:decoration-white hover:text-white transition-colors">
+                  {reference.title}
+                </a>
+              </li>
+            ))}
+            <li><Link href="/sources" className="underline underline-offset-4 decoration-neutral-700 hover:decoration-white hover:text-white">Read the platform source policy</Link></li>
+          </ul>
         </div>
       </section>
 
