@@ -32,7 +32,7 @@ bubblewrap init --manifest https://western-philosophy.vercel.app/manifest.webman
 Recommended values:
 
 - App name: `PHILOSOPHY Φ`
-- Package/application ID: `app.westernphilosophy`
+- Package/application ID: `app.vercel.western_philosophy.twa`
 - Host: `western-philosophy.vercel.app`
 - Start URL: `/`
 - Display mode: `standalone`
@@ -53,8 +53,10 @@ Its final content must use the exact Android package name and real certificate f
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "app.westernphilosophy",
-      "sha256_cert_fingerprints": ["REAL_SHA256_FINGERPRINT"]
+      "package_name": "app.vercel.western_philosophy.twa",
+      "sha256_cert_fingerprints": [
+        "8C:4C:DF:FC:47:E4:AC:48:34:15:70:A2:1F:7F:CC:03:E1:A0:96:9D:01:17:CA:B0:C2:29:2A:EA:4B:4B:5C:B5"
+      ]
     }
   }
 ]
