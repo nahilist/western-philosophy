@@ -1,127 +1,100 @@
-import { NextResponse } from "next/server";
 import { waitlistSchema } from "@/lib/validations/waitlist";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { getClientIp } from "@/lib/security/client-ip";
-import { createServerSideClient } from "@/lib/supabase/server";
-import { apiSuccess, apiError } from "@/lib/types/api";
+import { createRequestFingerprint } from "@/lib/security/fingerprint";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  jsonError,
+  jsonSuccess,
+  rateLimitHeaders,
+  requestBodyErrorResponse,
+} from "@/lib/server/http";
+import { readJsonBody, RequestBodyError } from "@/lib/server/request";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Waitlist / Early Access Subscription Endpoint
- * POST /api/waitlist
- */
 export async function POST(request: Request) {
   try {
     const clientIp = getClientIp(request);
-
-    // 1. Rate Limiting Check (5 signups per 10 minutes per IP)
     const rateLimit = await checkRateLimit(`waitlist:${clientIp}`, {
       windowSeconds: 600,
       maxRequests: 5,
     });
+    const limitHeaders = rateLimitHeaders(rateLimit);
 
     if (!rateLimit.success) {
-      return NextResponse.json(
-        apiError(
-          `Too many subscription attempts. Please wait ${rateLimit.resetSeconds} seconds.`,
-          "RATE_LIMIT_EXCEEDED"
-        ),
-        {
-          status: 429,
-          headers: {
-            "Retry-After": String(rateLimit.resetSeconds),
-          },
-        }
-      );
+      return jsonError("Too many signup attempts. Please try again later.", "RATE_LIMIT_EXCEEDED", 429, undefined, {
+        ...limitHeaders,
+        "Retry-After": String(rateLimit.resetSeconds),
+      });
     }
 
-    // 2. Parse & Validate Payload
-    const body = await request.json().catch(() => null);
-    if (!body) {
-      return NextResponse.json(
-        apiError("Invalid request body. JSON payload expected.", "INVALID_JSON"),
-        { status: 400 }
-      );
+    const body = await readJsonBody(request, 4_096);
+    if (
+      typeof body === "object" &&
+      body !== null &&
+      "honeypot" in body &&
+      String(body.honeypot).trim().length > 0
+    ) {
+      return jsonSuccess({ message: "You have been added to the early access list." }, 200, limitHeaders);
     }
 
-    // 3. Honeypot check
-    if (body.honeypot && String(body.honeypot).trim().length > 0) {
-      console.warn(`[Bot Defense] Spambot trapped on waitlist from IP ${clientIp}`);
-      return NextResponse.json(
-        apiSuccess({ message: "You have been added to the early access list." }),
-        { status: 200 }
-      );
-    }
-
-    // 4. Zod Validation
     const validation = waitlistSchema.safeParse(body);
     if (!validation.success) {
-      const firstError = validation.error.issues[0]?.message || "Validation failed";
-      return NextResponse.json(
-        apiError(firstError, "VALIDATION_ERROR", validation.error.format()),
-        { status: 400 }
+      return jsonError(
+        validation.error.issues[0]?.message ?? "Invalid signup.",
+        "VALIDATION_ERROR",
+        400,
+        validation.error.flatten(),
+        limitHeaders
       );
     }
 
-    const { email, source } = validation.data;
-
-    // 5. Database Persistence
-    const supabase = await createServerSideClient();
-
-    if (supabase) {
-      const { data, error: dbError } = await supabase
-        .from("waitlist_members")
-        .insert({
-          email,
-          source,
-        })
-        .select("id, created_at")
-        .single();
-
-      if (dbError) {
-        // PostgreSQL unique violation code 23505 (duplicate email)
-        if (dbError.code === "23505") {
-          return NextResponse.json(
-            apiSuccess({
-              message: "You are already registered on our early access list!",
-              alreadyRegistered: true,
-            }),
-            { status: 200 }
-          );
-        }
-
-        console.error("[Waitlist API] Supabase insert error:", dbError);
-        return NextResponse.json(
-          apiError("Unable to register email at this time.", "DATABASE_ERROR"),
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json(
-        apiSuccess({
-          id: data.id,
-          message: "Welcome to the Academy. You are on the priority access list.",
-        }),
-        { status: 201 }
+    const admin = createAdminClient();
+    if (!admin) {
+      return jsonError(
+        "Waitlist service is not configured.",
+        "SERVICE_UNAVAILABLE",
+        503,
+        undefined,
+        limitHeaders
       );
     }
 
-    // Demo / Offline fallback
-    console.info(`[Demo Mode] Waitlist signup for ${email} from ${source}`);
-    return NextResponse.json(
-      apiSuccess({
-        id: `demo-${Date.now()}`,
-        message: "You have been registered for early access in demo mode.",
-      }),
-      { status: 200 }
+    const { data, error } = await admin
+      .from("waitlist_members")
+      .insert({
+        email: validation.data.email,
+        source: validation.data.source,
+        request_fingerprint: createRequestFingerprint(request),
+      })
+      .select("id, created_at")
+      .single();
+
+    if (error?.code === "23505") {
+      return jsonSuccess(
+        { message: "You are already registered.", alreadyRegistered: true },
+        200,
+        limitHeaders
+      );
+    }
+    if (error) {
+      console.error("[Waitlist API] Database insert failed", error.code);
+      return jsonError("Unable to join the waitlist.", "DATABASE_ERROR", 503, undefined, limitHeaders);
+    }
+
+    return jsonSuccess(
+      {
+        id: data.id,
+        created_at: data.created_at,
+        message: "Welcome. You are on the priority access list.",
+      },
+      201,
+      limitHeaders
     );
-  } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : "Unexpected server error";
-    console.error("[Waitlist API] Uncaught exception:", errorMsg);
-    return NextResponse.json(
-      apiError("An internal server error occurred while processing your request.", "INTERNAL_ERROR"),
-      { status: 500 }
-    );
+  } catch (error) {
+    if (error instanceof RequestBodyError) return requestBodyErrorResponse(error);
+    console.error("[Waitlist API] Unexpected failure", error);
+    return jsonError("Internal server error.", "INTERNAL_ERROR", 500);
   }
 }

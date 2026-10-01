@@ -1,326 +1,56 @@
-import { createClient } from "./client";
+type ApiEnvelope<T> =
+  | { success: true; data: T; error: null }
+  | { success: false; data: null; error: { message?: string } | null };
 
-/**
- * ==============================================================================
- * 🛡️ MILITARY-GRADE SECURE QUERY LAYER (सुरक्षित डेटाबेस क्वेरी लेयर)
- * ==============================================================================
- * HOW THIS PREVENTS HACKING & EXPLOITS:
- * 
- * 1. 🛑 SQL INJECTION PROOF (एसक्यूएल इंजेक्शन से 100% सुरक्षा):
- *    - Uses Supabase PostgREST client where queries use parameterized prepared statements.
- *    - Never concatenates user input strings into SQL text (`WHERE user_id = '${id}'` is NEVER used).
- *    - Even if an attacker types `'; DROP TABLE profiles; --`, it is treated strictly as an escaped literal string!
- * 
- * 2. 🛑 ANTI-DDOS & BUFFER OVERFLOW (डीडीओएस और पेलोड अटैक से सुरक्षा):
- *    - All arguments undergo strict validation (char length caps, regex matching, range checks).
- *    - Payloads exceeding safety limits are discarded immediately before hitting the database.
- * 
- * 3. 🛑 IDENTITY SPOOFING & TAMPERING PROOF (पहचान चोरी से सुरक्षा):
- *    - Database enforces Row-Level Security (RLS) with `FORCE RLS`.
- *    - Even if a client modifies the request payload, PostgreSQL validates `auth.uid() = user_id`.
- * 
- * 4. 🛑 DEMO MODE FALLBACK:
- *    - Works seamlessly in demo/offline mode using safe localStorage until real Supabase keys are provided.
- * ==============================================================================
- */
+type ApiResult<T> = {
+  data: T | null;
+  error: string | null;
+  status: number;
+};
 
-// Safe regex rules for inputs
 const SLUG_REGEX = /^[a-z0-9_-]{1,50}$/;
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-/**
- * 1. GET USER COURSE PROGRESS (पाठ्यक्रम प्रगति प्राप्त करना)
- * Uses parameterized `.eq("course_id", safeCourseId)` - Immune to SQL Injection.
- */
-export async function getCourseProgress(courseId: string) {
-  // Input validation against query exploits
-  const safeCourseId = courseId.trim().toLowerCase();
-  if (!SLUG_REGEX.test(safeCourseId)) {
-    return { error: "Invalid course identifier format", data: null };
-  }
-
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { error: "Unauthorized", data: null };
-
-      // Parameterized PostgREST query: Prepared statement under the hood
-      const { data, error } = await supabase
-        .from("user_course_progress")
-        .select("course_id, completed_modules, progress_percent, last_read_at")
-        .eq("course_id", safeCourseId)
-        .maybeSingle();
-
-      if (error) throw error;
-      return { data, error: null };
-    } catch (err: any) {
-      console.error("Secure getCourseProgress error:", err.message);
-      return { error: "Failed to fetch progress", data: null };
-    }
-  }
-
-  // Safe Demo Fallback
+async function apiRequest<T>(url: string, init?: RequestInit): Promise<ApiResult<T>> {
   try {
-    const raw = localStorage.getItem(`wp_progress_${safeCourseId}`);
-    return { data: raw ? JSON.parse(raw) : null, error: null };
-  } catch {
-    return { data: null, error: null };
-  }
-}
-
-/**
- * 2. SAVE OR UPDATE COURSE PROGRESS (पाठ्यक्रम प्रगति सहेजना)
- * Validates progress percentage (0-100) and module array limit (<=100) before sending.
- */
-export async function saveCourseProgress(
-  courseId: string,
-  completedModules: string[],
-  progressPercent: number
-) {
-  // Strict sanitization against buffer overflow & DDoS
-  const safeCourseId = courseId.trim().toLowerCase();
-  if (!SLUG_REGEX.test(safeCourseId)) {
-    return { error: "Invalid course identifier", success: false };
-  }
-
-  // Cap array size to prevent database memory exhaustion DoS
-  const safeModules = completedModules
-    .slice(0, 100)
-    .map((m) => String(m).substring(0, 100).trim());
-
-  // Strict integer clamp
-  const safePercent = Math.min(100, Math.max(0, Math.floor(progressPercent)));
-
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { error: "Authentication required", success: false };
-
-      // Parameterized upsert query
-      const { error } = await supabase
-        .from("user_course_progress")
-        .upsert(
-          {
-            user_id: user.id,
-            course_id: safeCourseId,
-            completed_modules: safeModules,
-            progress_percent: safePercent,
-            last_read_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,course_id" }
-        );
-
-      if (error) throw error;
-      return { success: true, error: null };
-    } catch (err: any) {
-      console.error("Secure saveCourseProgress error:", err.message);
-      return { error: "Failed to save progress", success: false };
-    }
-  }
-
-  // Safe Demo Fallback
-  try {
-    localStorage.setItem(
-      `wp_progress_${safeCourseId}`,
-      JSON.stringify({
-        course_id: safeCourseId,
-        completed_modules: safeModules,
-        progress_percent: safePercent,
-        last_read_at: new Date().toISOString(),
-      })
-    );
-    return { success: true, error: null };
-  } catch {
-    return { error: "Storage failure", success: false };
-  }
-}
-
-/**
- * 3. TOGGLE OR SAVE BOOKMARK (उद्धरण और ग्रंथ बुकमार्क करना)
- * Hard limits string length to prevent memory-filling attack.
- */
-export async function toggleBookmark(courseId: string, quoteText?: string, workTitle?: string) {
-  const safeCourseId = courseId.trim().toLowerCase();
-  if (!SLUG_REGEX.test(safeCourseId)) {
-    return { error: "Invalid course identifier", bookmarked: false };
-  }
-
-  // String caps against DDoS
-  const safeQuote = quoteText ? quoteText.substring(0, 1000).trim() : "";
-  const safeWork = workTitle ? workTitle.substring(0, 200).trim() : "";
-
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { error: "Authentication required", bookmarked: false };
-
-      // Check if already bookmarked
-      const { data: existing } = await supabase
-        .from("user_bookmarks")
-        .select("id")
-        .eq("course_id", safeCourseId)
-        .maybeSingle();
-
-      if (existing) {
-        // Delete bookmark (Parameterized)
-        await supabase.from("user_bookmarks").delete().eq("id", existing.id);
-        return { bookmarked: false, error: null };
-      } else {
-        // Insert bookmark (Parameterized)
-        await supabase.from("user_bookmarks").insert({
-          user_id: user.id,
-          course_id: safeCourseId,
-          quote_text: safeQuote,
-          work_title: safeWork,
-        });
-        return { bookmarked: true, error: null };
-      }
-    } catch (err: any) {
-      console.error("Secure toggleBookmark error:", err.message);
-      return { error: "Bookmark action failed", bookmarked: false };
-    }
-  }
-
-  // Demo Fallback
-  try {
-    const key = `wp_bookmark_${safeCourseId}`;
-    const isBookmarked = Boolean(localStorage.getItem(key));
-    if (isBookmarked) {
-      localStorage.removeItem(key);
-      return { bookmarked: false, error: null };
-    } else {
-      localStorage.setItem(key, JSON.stringify({ course_id: safeCourseId, safeQuote, safeWork }));
-      return { bookmarked: true, error: null };
-    }
-  } catch {
-    return { bookmarked: false, error: null };
-  }
-}
-
-/**
- * 4. SAVE PHILOSOPHICAL REFLECTION (दार्शनिक विचार और नोट्स)
- * Anti-spam cap: Maximum 5000 characters per reflection.
- */
-export async function saveReflection(courseId: string, reflectionText: string, isPrivate: boolean = true) {
-  const safeCourseId = courseId.trim().toLowerCase();
-  if (!SLUG_REGEX.test(safeCourseId)) {
-    return { error: "Invalid course identifier", success: false };
-  }
-
-  const trimmedText = reflectionText.trim();
-  if (trimmedText.length === 0) {
-    return { error: "Reflection cannot be empty", success: false };
-  }
-
-  // Hard cap to prevent PostgreSQL disk/RAM exhaustion
-  if (trimmedText.length > 5000) {
-    return { error: "Reflection exceeds maximum length of 5000 characters", success: false };
-  }
-
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { error: "Authentication required", success: false };
-
-      // Parameterized insert
-      const { error } = await supabase.from("philosophical_reflections").insert({
-        user_id: user.id,
-        course_id: safeCourseId,
-        reflection_text: trimmedText,
-        is_private: Boolean(isPrivate),
-      });
-
-      if (error) throw error;
-      return { success: true, error: null };
-    } catch (err: any) {
-      console.error("Secure saveReflection error:", err.message);
-      return { error: "Failed to save reflection", success: false };
-    }
-  }
-
-  // Demo Fallback
-  try {
-    const list = JSON.parse(localStorage.getItem(`wp_reflections_${safeCourseId}`) || "[]");
-    list.unshift({
-      id: "demo-" + Date.now(),
-      course_id: safeCourseId,
-      reflection_text: trimmedText,
-      created_at: new Date().toISOString(),
-      is_private: isPrivate,
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        ...(init?.body ? { "Content-Type": "application/json" } : {}),
+        ...init?.headers,
+      },
+      cache: "no-store",
     });
-    localStorage.setItem(`wp_reflections_${safeCourseId}`, JSON.stringify(list.slice(0, 50)));
-    return { success: true, error: null };
-  } catch {
-    return { error: "Storage error", success: false };
-  }
-}
+    const payload = (await response.json().catch(() => null)) as ApiEnvelope<T> | null;
 
-/**
- * 5. JOIN WAITLIST / DISPATCH HERO SUBSCRIPTION (सुरक्षित सदस्यता सूची)
- * Validates email with strict RFC-compliant regex, limiting to 255 chars.
- * Public can ONLY insert; public read is completely blocked at database RLS level.
- */
-export async function joinWaitlist(email: string, source: string = "website_hero", honeypot?: string) {
-  const cleanEmail = email.trim().toLowerCase();
-
-  // Prevent email header injections and regex denial of service (ReDoS)
-  if (cleanEmail.length < 3 || cleanEmail.length > 255 || !EMAIL_REGEX.test(cleanEmail)) {
-    return { error: "कृपया एक मान्य ईमेल दर्ज करें (Please enter a valid email)", success: false };
-  }
-
-  const safeSource = source.substring(0, 50).trim() || "website_hero";
-
-  try {
-    const res = await fetch("/api/waitlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: cleanEmail,
-        source: safeSource,
-        honeypot: honeypot || "",
-      }),
-    });
-
-    const json = await res.json();
-    if (json.success) {
+    if (!response.ok || !payload?.success) {
       return {
-        success: true,
-        message: json.data?.message || "Welcome to the Inner Circle!",
+        data: null,
+        error:
+          (payload && !payload.success ? payload.error?.message : null) ??
+          `Request failed with status ${response.status}.`,
+        status: response.status,
       };
     }
+
+    return { data: payload.data, error: null, status: response.status };
+  } catch (error) {
     return {
-      success: false,
-      error: json.error?.message || "Unable to process request right now",
+      data: null,
+      error: error instanceof Error ? error.message : "Network request failed.",
+      status: 0,
     };
-  } catch (err: any) {
-    console.error("joinWaitlist fetch error, falling back to local demo:", err);
-    // Demo Fallback
-    try {
-      const saved = JSON.parse(localStorage.getItem("wp_waitlist") || "[]");
-      if (!saved.includes(cleanEmail)) {
-        saved.push(cleanEmail);
-        localStorage.setItem("wp_waitlist", JSON.stringify(saved));
-      }
-      return { success: true, message: "Welcome to the Inner Circle (Demo Mode)!" };
-    } catch {
-      return { success: true, message: "Joined successfully!" };
-    }
   }
 }
 
-/**
- * ==============================================================================
- * 👤 USER ACCOUNT & PROFILE QUERIES (खाता एवं प्रोफ़ाइल प्रबंधन)
- * ==============================================================================
- */
+function canUseDevelopmentFallback() {
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") return false;
+  try {
+    return Boolean(localStorage.getItem("philosophy_user"));
+  } catch {
+    return false;
+  }
+}
 
 export interface UserProfileData {
   id: string;
@@ -331,288 +61,315 @@ export interface UserProfileData {
   created_at: string;
 }
 
-/**
- * 6. GET USER FULL PROFILE (उपयोगकर्ता प्रोफ़ाइल विवरण)
- * Safe PostgREST query protected by Row Level Security.
- */
-export async function getUserFullProfile(): Promise<{ data: UserProfileData | null; error: string | null }> {
-  const { isConfigured, client: supabase } = createClient();
+export async function getCourseProgress(courseId: string) {
+  const safeCourseId = courseId.trim().toLowerCase();
+  if (!SLUG_REGEX.test(safeCourseId)) {
+    return { error: "Invalid course identifier format", data: null };
+  }
 
-  if (isConfigured && supabase) {
+  const result = await apiRequest<Record<string, unknown>>(
+    `/api/account/progress?courseId=${encodeURIComponent(safeCourseId)}`
+  );
+  if (!result.error) return { data: result.data, error: null };
+
+  if (canUseDevelopmentFallback()) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { data: null, error: "Unauthorized" };
+      const raw = localStorage.getItem(`wp_progress_${safeCourseId}`);
+      return { data: raw ? JSON.parse(raw) : null, error: null };
+    } catch {
+      return { data: null, error: null };
+    }
+  }
+  return { data: null, error: result.error };
+}
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, email, full_name, avatar_url, favorite_tradition, created_at")
-        .eq("id", user.id)
-        .maybeSingle();
+export async function saveCourseProgress(
+  courseId: string,
+  completedModules: string[],
+  progressPercent: number
+) {
+  const safeCourseId = courseId.trim().toLowerCase();
+  if (!SLUG_REGEX.test(safeCourseId)) {
+    return { error: "Invalid course identifier", success: false };
+  }
 
-      if (error) throw error;
-      if (data) {
-        return { data: data as UserProfileData, error: null };
+  const payload = {
+    course_id: safeCourseId,
+    completed_modules: completedModules.slice(0, 100).map((module) => module.slice(0, 100).trim()),
+    progress_percent: Math.min(100, Math.max(0, Math.floor(progressPercent))),
+  };
+  const result = await apiRequest("/api/account/progress", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+  if (!result.error) return { success: true, error: null };
+
+  if (canUseDevelopmentFallback()) {
+    try {
+      localStorage.setItem(
+        `wp_progress_${safeCourseId}`,
+        JSON.stringify({ ...payload, last_read_at: new Date().toISOString() })
+      );
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: "Storage failure" };
+    }
+  }
+  return { success: false, error: result.error };
+}
+
+export async function toggleBookmark(courseId: string, quoteText = "", workTitle = "") {
+  const safeCourseId = courseId.trim().toLowerCase();
+  if (!SLUG_REGEX.test(safeCourseId)) {
+    return { error: "Invalid course identifier", bookmarked: false };
+  }
+
+  const result = await apiRequest<{ bookmarked: boolean }>("/api/account/bookmarks", {
+    method: "POST",
+    body: JSON.stringify({
+      course_id: safeCourseId,
+      quote_text: quoteText.slice(0, 1000).trim(),
+      work_title: workTitle.slice(0, 200).trim(),
+    }),
+  });
+  if (result.data) return { bookmarked: result.data.bookmarked, error: null };
+
+  if (canUseDevelopmentFallback()) {
+    const key = `wp_bookmark_${safeCourseId}`;
+    try {
+      const bookmarked = !localStorage.getItem(key);
+      if (bookmarked) {
+        localStorage.setItem(
+          key,
+          JSON.stringify({
+            course_id: safeCourseId,
+            quote_text: quoteText.slice(0, 1000).trim(),
+            work_title: workTitle.slice(0, 200).trim(),
+          })
+        );
+      } else {
+        localStorage.removeItem(key);
       }
+      return { bookmarked, error: null };
+    } catch {
+      return { bookmarked: false, error: "Storage failure" };
+    }
+  }
+  return { bookmarked: false, error: result.error };
+}
 
-      // If profile row doesn't exist yet, return auth defaults
+export async function saveReflection(
+  courseId: string,
+  reflectionText: string,
+  isPrivate = true
+) {
+  const safeCourseId = courseId.trim().toLowerCase();
+  const trimmedText = reflectionText.trim();
+  if (!SLUG_REGEX.test(safeCourseId)) return { error: "Invalid course identifier", success: false };
+  if (!trimmedText || trimmedText.length > 5000) {
+    return { error: "Reflection must contain 1 to 5,000 characters", success: false };
+  }
+
+  const result = await apiRequest("/api/account/reflections", {
+    method: "POST",
+    body: JSON.stringify({
+      course_id: safeCourseId,
+      reflection_text: trimmedText,
+      is_private: Boolean(isPrivate),
+    }),
+  });
+  if (!result.error) return { success: true, error: null };
+
+  if (canUseDevelopmentFallback()) {
+    try {
+      const key = `wp_reflections_${safeCourseId}`;
+      const list = JSON.parse(localStorage.getItem(key) || "[]") as Array<Record<string, unknown>>;
+      list.unshift({
+        id: `demo-${Date.now()}`,
+        course_id: safeCourseId,
+        reflection_text: trimmedText,
+        is_private: isPrivate,
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem(key, JSON.stringify(list.slice(0, 50)));
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: "Storage failure" };
+    }
+  }
+  return { success: false, error: result.error };
+}
+
+export async function joinWaitlist(email: string, source = "website_hero", honeypot = "") {
+  const cleanEmail = email.trim().toLowerCase();
+  if (cleanEmail.length > 255 || !EMAIL_REGEX.test(cleanEmail)) {
+    return { error: "Please enter a valid email.", success: false };
+  }
+
+  const result = await apiRequest<{ message: string }>("/api/waitlist", {
+    method: "POST",
+    body: JSON.stringify({ email: cleanEmail, source: source.slice(0, 50), honeypot }),
+  });
+  return result.data
+    ? { success: true, message: result.data.message }
+    : { success: false, error: result.error ?? "Unable to join the waitlist." };
+}
+
+export async function getUserFullProfile(): Promise<{
+  data: UserProfileData | null;
+  error: string | null;
+}> {
+  const result = await apiRequest<UserProfileData>("/api/account/profile");
+  if (result.data) return { data: result.data, error: null };
+
+  if (canUseDevelopmentFallback()) {
+    try {
+      const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "null") as {
+        id?: string;
+        email?: string;
+        name?: string;
+      } | null;
+      if (!localUser) return { data: null, error: "Not logged in" };
       return {
         data: {
-          id: user.id,
-          email: user.email || "",
-          full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Philosopher",
-          favorite_tradition: "Rationalism",
-          created_at: user.created_at || new Date().toISOString(),
+          id: localUser.id ?? "demo-id",
+          email: localUser.email ?? "scholar@philosophy.org",
+          full_name: localUser.name ?? "Dialectical Scholar",
+          favorite_tradition: localStorage.getItem("wp_user_tradition") ?? "Rationalism",
+          created_at: new Date().toISOString(),
         },
         error: null,
       };
-    } catch (err: any) {
-      console.error("Secure getUserFullProfile error:", err.message);
-      return { data: null, error: "Failed to load profile" };
+    } catch {
+      return { data: null, error: "Storage failure" };
     }
   }
-
-  // Demo Fallback
-  try {
-    const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "null");
-    if (!localUser) return { data: null, error: "Not logged in" };
-
-    const tradition = localStorage.getItem("wp_user_tradition") || "Rationalism";
-    return {
-      data: {
-        id: localUser.id || "demo-id",
-        email: localUser.email || "scholar@philosophy.org",
-        full_name: localUser.name || "Dialectical Scholar",
-        favorite_tradition: tradition,
-        created_at: new Date().toISOString(),
-      },
-      error: null,
-    };
-  } catch {
-    return { data: null, error: "Storage error" };
-  }
+  return { data: null, error: result.error };
 }
 
-/**
- * 7. UPDATE USER PROFILE (प्रोफ़ाइल विवरण अपडेट करना)
- * Hard caps full_name (<=100) and favorite_tradition (<=50).
- */
 export async function updateUserProfile(updates: {
   full_name?: string;
   favorite_tradition?: string;
 }) {
-  const safeName = updates.full_name ? updates.full_name.substring(0, 100).trim() : undefined;
-  const safeTradition = updates.favorite_tradition
-    ? updates.favorite_tradition.substring(0, 50).trim()
-    : undefined;
+  const payload = {
+    ...(updates.full_name ? { full_name: updates.full_name.slice(0, 100).trim() } : {}),
+    ...(updates.favorite_tradition
+      ? { favorite_tradition: updates.favorite_tradition.slice(0, 50).trim() }
+      : {}),
+  };
+  const result = await apiRequest("/api/account/profile", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  if (!result.error) return { success: true, error: null };
 
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
+  if (canUseDevelopmentFallback()) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { success: false, error: "Unauthorized" };
-
-      const payload: Record<string, any> = { updated_at: new Date().toISOString() };
-      if (safeName) payload.full_name = safeName;
-      if (safeTradition) payload.favorite_tradition = safeTradition;
-
-      const { error } = await supabase
-        .from("profiles")
-        .update(payload)
-        .eq("id", user.id);
-
-      if (error) throw error;
-      return { success: true, error: null };
-    } catch (err: any) {
-      console.error("Secure updateUserProfile error:", err.message);
-      return { success: false, error: "Failed to update profile" };
-    }
-  }
-
-  // Demo Fallback
-  try {
-    const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "{}");
-    if (safeName) localUser.name = safeName;
-    localStorage.setItem("philosophy_user", JSON.stringify(localUser));
-    if (safeTradition) localStorage.setItem("wp_user_tradition", safeTradition);
-    return { success: true, error: null };
-  } catch {
-    return { success: false, error: "Storage error" };
-  }
-}
-
-/**
- * 8. GET ALL USER COURSE PROGRESS (सभी पाठ्यक्रमों की प्रगति)
- */
-export async function getAllUserProgress() {
-  const { isConfigured, client: supabase } = createClient();
-
-  if (isConfigured && supabase) {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { data: [], error: "Unauthorized" };
-
-      const { data, error } = await supabase
-        .from("user_course_progress")
-        .select("course_id, completed_modules, progress_percent, last_read_at")
-        .order("last_read_at", { ascending: false });
-
-      if (error) throw error;
-      return { data: data || [], error: null };
-    } catch (err: any) {
-      console.error("Secure getAllUserProgress error:", err.message);
-      return { data: [], error: "Failed to load progress" };
-    }
-  }
-
-  // Demo Fallback: Scan localStorage keys
-  try {
-    const results: any[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("wp_progress_")) {
-        const item = JSON.parse(localStorage.getItem(key) || "{}");
-        if (item.course_id) results.push(item);
+      const localUser = JSON.parse(localStorage.getItem("philosophy_user") || "{}") as {
+        name?: string;
+      };
+      if (payload.full_name) localUser.name = payload.full_name;
+      localStorage.setItem("philosophy_user", JSON.stringify(localUser));
+      if (payload.favorite_tradition) {
+        localStorage.setItem("wp_user_tradition", payload.favorite_tradition);
       }
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: "Storage failure" };
     }
-    return { data: results, error: null };
-  } catch {
-    return { data: [], error: null };
   }
+  return { success: false, error: result.error };
 }
 
-/**
- * 9. GET ALL USER BOOKMARKS (सभी सुरक्षित ग्रंथ और उद्धरण)
- */
-export async function getAllUserBookmarks() {
-  const { isConfigured, client: supabase } = createClient();
+export async function getAllUserProgress() {
+  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/progress");
+  if (result.data) return { data: result.data, error: null };
 
-  if (isConfigured && supabase) {
+  if (canUseDevelopmentFallback()) {
+    const data: Array<Record<string, unknown>> = [];
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { data: [], error: "Unauthorized" };
-
-      const { data, error } = await supabase
-        .from("user_bookmarks")
-        .select("id, course_id, quote_text, work_title, created_at")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return { data: data || [], error: null };
-    } catch (err: any) {
-      console.error("Secure getAllUserBookmarks error:", err.message);
-      return { data: [], error: "Failed to load bookmarks" };
-    }
-  }
-
-  // Demo Fallback
-  try {
-    const results: any[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("wp_bookmark_")) {
-        const item = JSON.parse(localStorage.getItem(key) || "{}");
-        if (item.course_id) {
-          results.push({
-            id: key,
-            course_id: item.course_id,
-            quote_text: item.safeQuote,
-            work_title: item.safeWork,
-            created_at: new Date().toISOString(),
-          });
+      for (let index = 0; index < localStorage.length; index++) {
+        const key = localStorage.key(index);
+        if (key?.startsWith("wp_progress_")) {
+          data.push(JSON.parse(localStorage.getItem(key) || "{}") as Record<string, unknown>);
         }
       }
+    } catch {
+      return { data: [], error: "Storage failure" };
     }
-    return { data: results, error: null };
-  } catch {
-    return { data: [], error: null };
+    return { data, error: null };
   }
+  return { data: [], error: result.error };
 }
 
-/**
- * 10. GET ALL USER REFLECTIONS (व्यक्तिगत दार्शनिक विचार)
- */
-export async function getAllUserReflections() {
-  const { isConfigured, client: supabase } = createClient();
+export async function getAllUserBookmarks() {
+  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/bookmarks");
+  if (result.data) return { data: result.data, error: null };
 
-  if (isConfigured && supabase) {
+  if (canUseDevelopmentFallback()) {
+    const data: Array<Record<string, unknown>> = [];
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { data: [], error: "Unauthorized" };
-
-      const { data, error } = await supabase
-        .from("philosophical_reflections")
-        .select("id, course_id, reflection_text, is_private, created_at")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return { data: data || [], error: null };
-    } catch (err: any) {
-      console.error("Secure getAllUserReflections error:", err.message);
-      return { data: [], error: "Failed to load reflections" };
-    }
-  }
-
-  // Demo Fallback
-  try {
-    const results: any[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith("wp_reflections_")) {
-        const list = JSON.parse(localStorage.getItem(key) || "[]");
-        results.push(...list);
+      for (let index = 0; index < localStorage.length; index++) {
+        const key = localStorage.key(index);
+        if (key?.startsWith("wp_bookmark_")) {
+          const item = JSON.parse(localStorage.getItem(key) || "{}") as Record<string, unknown>;
+          data.push({ id: key, ...item, created_at: new Date().toISOString() });
+        }
       }
+    } catch {
+      return { data: [], error: "Storage failure" };
     }
-    results.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    return { data: results, error: null };
-  } catch {
-    return { data: [], error: null };
+    return { data, error: null };
   }
+  return { data: [], error: result.error };
 }
 
-/**
- * 11. DELETE USER REFLECTION (दार्शनिक विचार हटाना)
- * Validates uuid or string id, safe delete with RLS auth.uid() check.
- */
-export async function deleteUserReflection(reflectionId: string, courseId?: string) {
-  const { isConfigured, client: supabase } = createClient();
+export async function getAllUserReflections() {
+  const result = await apiRequest<Array<Record<string, unknown>>>("/api/account/reflections");
+  if (result.data) return { data: result.data, error: null };
 
-  if (isConfigured && supabase) {
+  if (canUseDevelopmentFallback()) {
+    const data: Array<Record<string, unknown>> = [];
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { success: false, error: "Unauthorized" };
-
-      const { error } = await supabase
-        .from("philosophical_reflections")
-        .delete()
-        .eq("id", reflectionId);
-
-      if (error) throw error;
-      return { success: true, error: null };
-    } catch (err: any) {
-      console.error("Secure deleteUserReflection error:", err.message);
-      return { success: false, error: "Failed to delete reflection" };
+      for (let index = 0; index < localStorage.length; index++) {
+        const key = localStorage.key(index);
+        if (key?.startsWith("wp_reflections_")) {
+          const list = JSON.parse(localStorage.getItem(key) || "[]") as Array<Record<string, unknown>>;
+          data.push(...list);
+        }
+      }
+      data.sort(
+        (a, b) =>
+          new Date(String(b.created_at)).getTime() - new Date(String(a.created_at)).getTime()
+      );
+    } catch {
+      return { data: [], error: "Storage failure" };
     }
+    return { data, error: null };
   }
-
-  // Demo Fallback
-  try {
-    if (courseId) {
-      const key = `wp_reflections_${courseId}`;
-      const list = JSON.parse(localStorage.getItem(key) || "[]");
-      const filtered = list.filter((r: any) => r.id !== reflectionId);
-      localStorage.setItem(key, JSON.stringify(filtered));
-    }
-    return { success: true, error: null };
-  } catch {
-    return { success: false, error: "Storage error" };
-  }
+  return { data: [], error: result.error };
 }
 
-/**
- * 12. SUBMIT CONTACT INQUIRY / DISPATCH (दार्शनिक संदेश प्रेषित करना)
- * Routes through secure production endpoint with Rate Limiting, Honeypot, and Zod validation.
- */
+export async function deleteUserReflection(reflectionId: string, courseId?: string) {
+  const result = await apiRequest("/api/account/reflections", {
+    method: "DELETE",
+    body: JSON.stringify({ reflection_id: reflectionId }),
+  });
+  if (!result.error) return { success: true, error: null };
+
+  if (canUseDevelopmentFallback() && courseId) {
+    try {
+      const key = `wp_reflections_${courseId}`;
+      const list = JSON.parse(localStorage.getItem(key) || "[]") as Array<{ id?: string }>;
+      localStorage.setItem(key, JSON.stringify(list.filter((item) => item.id !== reflectionId)));
+      return { success: true, error: null };
+    } catch {
+      return { success: false, error: "Storage failure" };
+    }
+  }
+  return { success: false, error: result.error };
+}
+
 export async function submitContactInquiry(inquiry: {
   name: string;
   email: string;
@@ -621,108 +378,35 @@ export async function submitContactInquiry(inquiry: {
   message: string;
   honeypot?: string;
 }) {
-  try {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: inquiry.name,
-        email: inquiry.email,
-        subject: `[${inquiry.discipline || "General"}] ${inquiry.subject}`,
-        message: inquiry.message,
-        honeypot: inquiry.honeypot || "",
-      }),
-    });
-
-    const json = await res.json();
-    if (json.success) {
-      return { success: true, error: null };
-    }
-    return {
-      success: false,
-      error: json.error?.message || "Failed to transmit dispatch.",
-    };
-  } catch (err: any) {
-    console.error("submitContactInquiry fetch error:", err);
-
-    // Direct Web3Forms Fallback when /api/contact is unavailable
-    try {
-      await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: "eb458e86-ef08-4398-890b-27cee0c347d9",
-          name: inquiry.name,
-          email: inquiry.email,
-          replyto: inquiry.email,
-          subject: `[${inquiry.discipline || "General"}] ${inquiry.subject}`,
-          message: inquiry.message,
-          from_name: "Western Philosophy Academy",
-        }),
-      });
-    } catch (fallbackErr) {
-      console.warn("Client fallback to Web3Forms error:", fallbackErr);
-    }
-
-    // Offline/Demo Fallback: Save in localStorage
-    try {
-      const inquiries = JSON.parse(localStorage.getItem("wp_inquiries") || "[]");
-      inquiries.unshift({
-        id: "inq_" + Date.now(),
-        name: inquiry.name,
-        email: inquiry.email,
-        discipline: inquiry.discipline,
-        subject: inquiry.subject,
-        message: inquiry.message,
-        created_at: new Date().toISOString(),
-      });
-      localStorage.setItem("wp_inquiries", JSON.stringify(inquiries.slice(0, 50)));
-      return { success: true, error: null };
-    } catch {
-      return { success: true, error: null };
-    }
-  }
+  const result = await apiRequest<{ id: string }>("/api/contact", {
+    method: "POST",
+    body: JSON.stringify({
+      name: inquiry.name,
+      email: inquiry.email,
+      subject: `[${inquiry.discipline || "General"}] ${inquiry.subject}`,
+      message: inquiry.message,
+      honeypot: inquiry.honeypot ?? "",
+    }),
+  });
+  return result.data
+    ? { success: true, error: null }
+    : { success: false, error: result.error ?? "Failed to submit inquiry." };
 }
 
-/**
- * 13. FETCH DILEMMA STATS (दार्शनिक दुविधा आँकड़े प्राप्त करना)
- */
 export async function fetchDilemmaStats(dilemmaId: string) {
-  try {
-    const res = await fetch(`/api/dilemma/vote?dilemmaId=${encodeURIComponent(dilemmaId)}`);
-    const json = await res.json();
-    if (json.success) {
-      return { data: json.data, error: null };
-    }
-    return { data: null, error: json.error?.message || "Failed to load stats." };
-  } catch (err: any) {
-    return { data: null, error: err.message };
-  }
+  const result = await apiRequest<unknown>(
+    `/api/dilemma/vote?dilemmaId=${encodeURIComponent(dilemmaId)}`
+  );
+  return { data: result.data, error: result.error };
 }
 
-/**
- * 14. CAST DILEMMA VOTE (दार्शनिक दुविधा में निर्णय दर्ज करना)
- */
 export async function castDilemmaVote(dilemmaId: string, selectedChoice: string) {
-  try {
-    const res = await fetch("/api/dilemma/vote", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        dilemma_id: dilemmaId,
-        selected_choice: selectedChoice,
-      }),
-    });
-    const json = await res.json();
-    if (json.success) {
-      return { success: true, data: json.data, error: null };
-    }
-    return { success: false, data: null, error: json.error?.message || "Failed to vote." };
-  } catch (err: any) {
-    return { success: false, data: null, error: err.message };
-  }
+  const result = await apiRequest<unknown>("/api/dilemma/vote", {
+    method: "POST",
+    body: JSON.stringify({ dilemma_id: dilemmaId, selected_choice: selectedChoice }),
+  });
+  return result.data
+    ? { success: true, data: result.data, error: null }
+    : { success: false, data: null, error: result.error ?? "Failed to record vote." };
 }
-
-
-
 

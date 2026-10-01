@@ -17,7 +17,7 @@ export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
         {/* Left Hand: Hand of Adam from Sistine Chapel */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-40 sm:w-64 md:w-80 h-32 sm:h-48 md:h-56 pointer-events-none opacity-90">
           <Image
-            src="/images/adam_hand_left.jpg"
+            src="/images/adam_hand_left.webp"
             alt="Hand of Adam"
             fill
             className="object-contain object-left grayscale contrast-130 brightness-95"
@@ -29,7 +29,7 @@ export default function CreationBanner({ onJoinClick }: CreationBannerProps) {
         {/* Right Hand: Hand of God */}
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-40 sm:w-64 md:w-80 h-32 sm:h-48 md:h-56 pointer-events-none opacity-90">
           <Image
-            src="/images/god_hand_right.jpg"
+            src="/images/god_hand_right.webp"
             alt="Hand of God"
             fill
             className="object-contain object-right grayscale contrast-130 brightness-95"
