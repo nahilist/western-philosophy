@@ -83,3 +83,8 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Make Wrangler bindings available when running `next dev` locally.
+import("@opennextjs/cloudflare").then((module) =>
+  module.initOpenNextCloudflareForDev(),
+);
